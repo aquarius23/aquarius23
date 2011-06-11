@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory.h>
 #include "matrix.h"
 #include "ida.h"
 
@@ -38,71 +39,70 @@ static struct gf2_matrix *alloc_matrix(int w, int n, int m)
 	return matrix;
 }
 
-struct ida_data *create_ida(int width, int n, int m)
+struct ida_encode *ida_encode_create(int width, int n, int m)
 {
-	struct ida_data *ret;
+	struct ida_encode *ret;
 	if(n < m)
 		return NULL;
 	if((width != 1) && (width != 2))
 		return NULL;
-	ret = malloc(sizeof(struct ida_data));
+	ret = malloc(sizeof(struct ida_encode));
 	if(!ret)
 		return NULL;
 
+	memset(ret, 0, sizeof(struct ida_encode));
 	ret->key = generate_cauchy_matrix(width, n, m);
 	if(!ret->key)
 	{
 		free(ret);
 		return NULL;
 	}
-	ret->split = alloc_matrix(width, n, m);
-	if(!ret->split)
+	ret->input = alloc_empty_matrix(width, m, m);
+	if(!ret->input)
 	{
 		free_matrix(ret->key);
 		free(ret);
 		return NULL;
 	}
-	ret->encode = alloc_empty_matrix(width, m, m);
-	if(!ret->encode)
+	ret->output = alloc_matrix(width, n, m);
+	if(!ret->output)
 	{
-		free_matrix(ret->split);
+		free_matrix2(ret->input);
 		free_matrix(ret->key);
 		free(ret);
 		return NULL;
 	}
-	ret->decode = alloc_empty_matrix(width, m, m);
-	if(!ret->decode)
-	{
-		free_matrix(ret->encode);
-		free_matrix(ret->split);
-		free_matrix(ret->key);
-		free(ret);
-		return NULL;
-	}
-	ret->reverse = NULL;
 	ret->width = width;
 	ret->n = n;
 	ret->m = m;
-	ret->size = width * m * m;
+	ret->size = width * n * m;
 	return ret;
 }
 
-int get_ida_block_size(struct ida_data *ida)
+void ida_encode_free(struct ida_encode *ida)
 {
-	return ida->size;
+	if(!ida)
+		return;
+	free_matrix(ida->key);
+	free_matrix(ida->output);
+	free_matrix2(ida->input);
+	free(ida);
 }
 
-void free_ida(struct ida_data *ida)
+int ida_encode_block_size(struct ida_encode *ida)
 {
-	free_matrix(ida->key);
-	free_matrix(ida->split);
-	ida->encode->values = NULL;
-	free_matrix(ida->encode);
-	ida->decode->values = NULL;
-	free_matrix(ida->decode);
-	if(ida->reverse)
-		free_matrix(ida->reverse);
-	free(ida);
+	if(!ida)
+		return 0;
+	return ida->width * ida->m * ida->m;
+}
+
+int ida_encode_data(struct ida_encode *ida, void *input)
+{
+	if(!ida || !input)
+		return 0;
+	ida->input->values = input;
+	multiply_matrix(ida->key, ida->input, ida->output);
+	return ida->width * ida->m * ida->m;
 }
 
 static char *get_matrix_vector(struct gf2_matrix *matrix, int index, int *size)
@@ -118,76 +118,79 @@ static char *get_matrix_vector(struct gf2_matrix *matrix, int index, int *size)
 	return (char *)(matrix->values + index * length);
 }
 
-char *get_key_vector(struct ida_data *ida, int index, int *size)
+char *ida_encode_key_vector(struct ida_encode *ida, int index, int *size)
 {
 	return get_matrix_vector(ida->key, index, size);
 }
 
-char *get_split_vector(struct ida_data *ida, int index, int *size)
+char *ida_encode_output_vector(struct ida_encode *ida, int index, int *size)
 {
-	return get_matrix_vector(ida->split, index, size);
+	return get_matrix_vector(ida->output, index, size);
 }
 
-int set_combine_matrix(struct ida_data *ida, void *input)
+struct ida_decode *ida_decode_create(int width, int m)
 {
-	struct gf2_matrix matrix;
-	matrix.width = ida->width;
-	matrix.rows = ida->m;
-	matrix.cols = ida->m;
-	matrix.values = input;
-	if(ida->reverse)
-	{
-		free_matrix(ida->reverse);
-		ida->reverse = NULL;
-	}
-	ida->reverse = revert_matrix(&matrix);
-	if(!ida->reverse)
-		return -1;
-	return 0;
-}
-
-void encode_data(struct ida_data *ida, void *input)
-{
-	ida->encode->values = input;
-	multiply_matrix(ida->key, ida->encode, ida->split);
-}
-
-void decode_data(struct ida_data *ida, void *input, void *output)
-{
-	ida->encode->values = input;
-	ida->decode->values = output;
-	multiply_matrix(ida->reverse, ida->encode, ida->decode);
-}
-
-struct gf2_matrix *set_another_combine_matrix(struct ida_data *ida, void *input)
-{
-	struct gf2_matrix matrix, *ret;
-	matrix.width = ida->width;
-	matrix.rows = ida->m;
-	matrix.cols = ida->m;
-	matrix.values = input;
-	ret = revert_matrix(&matrix);
+	struct ida_decode *ret;
+	if((width != 1) && (width != 2))
+		return NULL;
+	ret = malloc(sizeof(struct ida_decode));
 	if(!ret)
 		return NULL;
+
+	memset(ret, 0, sizeof(struct ida_decode));
+	ret->input = alloc_empty_matrix(width, m, m);
+	if(!ret->input)
+	{
+		free(ret);
+		return NULL;
+	}
+	ret->output = alloc_empty_matrix(width, m, m);
+	if(!ret->output)
+	{
+		free_matrix2(ret->input);
+		free(ret);
+		return NULL;
+	}
+	ret->width = width;
+	ret->m = m;
+	ret->size = width * m * m;
 	return ret;
 }
 
-void another_decode_data(struct ida_data *ida, struct gf2_matrix *matrix, void *input, void *output)
+void ida_decode_free(struct ida_decode *ida)
 {
-	struct gf2_matrix matrix_in, matrix_out;
-	matrix_in.width = ida->width;
-	matrix_in.rows = ida->m;
-	matrix_in.cols = ida->m;
-	matrix_in.values = input;
-
-	matrix_out.width = ida->width;
-	matrix_out.rows = ida->m;
-	matrix_out.cols = ida->m;
-	matrix_out.values = output;
-	multiply_matrix(matrix, &matrix_in, &matrix_out);
+	if(!ida)
+		return;
+	if(ida->key)
+		free_matrix(ida->key);
+	free_matrix2(ida->output);
+	free_matrix2(ida->input);
+	free(ida);
 }
 
-void free_another_matrix(struct gf2_matrix *matrix)
+
+int ida_decode_set_key(struct ida_decode *ida, void *input)
 {
-	free_matrix(matrix);
+	struct gf2_matrix matrix;
+	if(!ida || !input)
+		return 0;
+	matrix.width = ida->width;
+	matrix.rows = ida->m;
+	matrix.cols = ida->m;
+	matrix.values = input;
+	ida->key = revert_matrix(&matrix);
+	if(!ida->key)
+		return 0;
+	return 1;
 }
+
+int ida_decode_data(struct ida_decode *ida, void *input, void *output)
+{
+	if(!ida || !input || !output)
+		return 0;
+	ida->input->values = input;
+	ida->output->values = output;
+	multiply_matrix(ida->key, ida->input, ida->output);
+	return ida->width * ida->m * ida->m;
+}
+

@@ -174,6 +174,11 @@ void free_matrix(struct gf2_matrix *matrix)
 	free(matrix);
 }
 
+void free_matrix2(struct gf2_matrix *matrix)
+{
+	free(matrix);
+}
+
 struct gf2_matrix *revert_matrix(struct gf2_matrix * matrix)	/* Gauss-Jordan method */
 {
 	int i, j, k;

@@ -1,8 +1,9 @@
 object = gf2.o matrix.o ida.o test.o
 CFLAGS = -Wall -O2
+CC = gcc
 
 idalib: $(object)
-	gcc -o idatest $(object)
+	$(CC) -o idatest $(object)
 
 gf2.o: gf2.h gf2.c
 matrix.o: matrix.h matrix.c
@@ -11,5 +12,5 @@ test.o: ida.h test.c
 
 .PHONY: clean
 clean:
-	rm idatest $(object)
+	rm -f idatest $(object)
 

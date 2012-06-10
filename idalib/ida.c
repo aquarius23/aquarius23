@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <memory.h>
 #include "matrix.h"
 #include "ida.h"
+#include "gf2.h"
 
 static struct gf2_matrix *alloc_matrix(int w, int n, int m)
 {
@@ -46,6 +47,7 @@ struct ida_encode *ida_encode_create(int width, int n, int m)
 		return NULL;
 	if((width != 1) && (width != 2))
 		return NULL;
+	galois_init_table(width*8);
 	ret = malloc(sizeof(struct ida_encode));
 	if(!ret)
 		return NULL;

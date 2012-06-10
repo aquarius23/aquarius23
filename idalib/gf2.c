@@ -136,21 +136,11 @@ int galois_field_create_tables(int index, struct gf2_table *table)
 
 unsigned char galois_multiply_w8(unsigned char x, unsigned char y)
 {
-	if(!gf2_flag_8)
-	{
-		galois_field_create_tables(GF2_INDEX_8, &gf2_table_8);
-		gf2_flag_8 = 1;
-	}
 	return gf2_table_8.mult[(x << GF2_INDEX_8) | y];
 }
 
 unsigned char galois_divide_w8(unsigned char x, unsigned char y)
 {
-	if(!gf2_flag_8)
-	{
-		galois_field_create_tables(GF2_INDEX_8, &gf2_table_8);
-		gf2_flag_8 = 1;
-	}
 	return gf2_table_8.div[(x << GF2_INDEX_8) | y];
 }
 
@@ -161,12 +151,6 @@ unsigned short galois_multiply_w16(unsigned short x, unsigned short y)
 
 	if(x == 0 || y == 0)
 		return 0;
-
-	if(!gf2_flag_16)
-	{
-		galois_field_create_tables(GF2_INDEX_16, &gf2_table_16);
-		gf2_flag_16 = 1;
-	}
 
 	logx = gf2_table_16.log[x];
 	logy = gf2_table_16.log[y];
@@ -187,12 +171,6 @@ unsigned short galois_divide_w16(unsigned short x, unsigned short y)
 		return 0xffff;
 	if(x == 0)
 		return 0; 
-
-	if(!gf2_flag_16)
-	{
-		galois_field_create_tables(GF2_INDEX_16, &gf2_table_16);
-		gf2_flag_16 = 1;
-	}
 
 	logx = gf2_table_16.log[x];
 	logy = gf2_table_16.log[y];
@@ -252,3 +230,4 @@ void galois_free_table(void)
 		gf2_flag_16 = 0;
 	}
 }
+

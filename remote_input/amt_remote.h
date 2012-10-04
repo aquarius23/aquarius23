@@ -15,5 +15,7 @@ void amt_log_register(amt_log_callback cb);
 void amt_log_control(int tag_on);
 
 int init_server_sock(void);
+int init_client_sock(void);
+int connect_server(char *ip, int port);
 #endif
 

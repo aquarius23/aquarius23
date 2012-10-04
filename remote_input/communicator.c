@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "log.h"
 #include "communicator.h"
 
 #define SOCKET_NORMAL	1
@@ -94,6 +95,10 @@ SOCKET connect_tcp_addr(char *host, int port)
     return sock;
 }
 
+SOCKET create_udp_sock(void)
+{
+	return socket(AF_INET, SOCK_DGRAM, 0); 
+}
 
 SOCKET listen_udp_port(int port)
 {
@@ -138,7 +143,7 @@ char *amt_get_ip(struct sockaddr *addr)
 	return inet_ntoa(addr_in->sin_addr);
 }
 
-void amt_set_sockaddr(struct sockaddr_in *addr, char *ip, unsigned short port)
+void amt_set_sockaddr(struct sockaddr *addr, char *ip, unsigned short port)
 {
 	struct sockaddr_in *addr_in = (struct sockaddr_in *)addr;
 	memset(addr_in, 0, sizeof(struct sockaddr));
@@ -177,12 +182,14 @@ static void amt_event_buffer_send_one(struct amt_event *event)
 	pthread_mutex_unlock(&event->write_mutex);
 	if(msg)
 	{
+		int ret;
 		if(event->tcp_udp_type == TYPE_TCP)
-			send(event->sock, msg->data, msg->size, 0);
+			ret = send(event->sock, msg->data, msg->size, 0);
 		else
-			sendto(event->sock, msg->data, msg->size, 0, &msg->addr, sizeof(struct sockaddr));
+			ret = sendto(event->sock, msg->data, msg->size, 0, &msg->addr, sizeof(struct sockaddr));
 		free(msg->data);
 		free(msg);
+		LOGD("%s send ret = %d", __func__, ret);
 	}
 }
 
@@ -197,6 +204,8 @@ static void *loop_thread(void *arg)
 		struct amt_event *event;
 		struct timeval timeout = {0, SELECT_TIMEOUT_MS*1000};
 
+		FD_ZERO(&rdfds);
+		FD_ZERO(&wrfds);
 		pthread_mutex_lock(&base->mutex);
 		list_for_each_entry(event, &base->head, list)
 		{
@@ -217,6 +226,7 @@ static void *loop_thread(void *arg)
 			pthread_mutex_lock(&base->mutex);
 			list_for_each_entry(event, &base->head, list)
 			{
+				pthread_mutex_unlock(&base->mutex);
 				if(FD_ISSET(event->sock, &rdfds))
 				{
 					if(event->read_cb)
@@ -228,6 +238,7 @@ static void *loop_thread(void *arg)
 					amt_event_buffer_send_one(event);
 					count++;
 				}
+				pthread_mutex_lock(&base->mutex);
 				if(count >= ret)
 					break;
 			}
@@ -248,8 +259,8 @@ int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct
 	struct send_msg *msg = malloc(sizeof(struct send_msg));
 	if(!msg)
 		return -1;
-	msg->data = malloc(size);
 	memset(msg, 0, sizeof(struct send_msg));
+	msg->data = malloc(size);
 	if(!msg->data)
 	{
 		free(msg);
@@ -257,7 +268,8 @@ int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct
 	}
 	memcpy(msg->data, data, size);
 	msg->size = size;
-	memcpy(&msg->addr, dst_addr, sizeof(struct sockaddr));
+	if(dst_addr)
+		memcpy(&msg->addr, dst_addr, sizeof(struct sockaddr));
 	pthread_mutex_lock(&event->write_mutex);
 	list_add_tail(&msg->list, &event->write_list);
 	pthread_mutex_unlock(&event->write_mutex);

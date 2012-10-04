@@ -5,7 +5,7 @@
 static struct amt_event_base *g_base;
 static SOCKET g_tcp, g_udp;
 
-void event_read_cb(void *arg)
+static void event_read_cb(void *arg)
 {
 	int size;
 	struct sockaddr addr;
@@ -15,7 +15,7 @@ void event_read_cb(void *arg)
 	LOGD("%s read test = %s\n", __func__, packet.packet.test);
 }
 
-void event_listen_cb(void *arg)
+static void event_listen_cb(void *arg)
 {
 	struct sockaddr addr;
 	SOCKET new_sock;

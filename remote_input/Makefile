@@ -3,8 +3,8 @@ server = server_test.o
 client = client_test.o
 
 CFLAGS = -Wall -O2
-CC = gcc
-#CC = i586-mingw32msvc-gcc
+#CC = gcc
+CC = i586-mingw32msvc-gcc
 
 linux: $(common) $(server) $(client)
 	$(CC) -o server_test $(common) $(server) -lpthread

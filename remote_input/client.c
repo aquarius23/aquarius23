@@ -18,6 +18,7 @@ static void event_read_cb(void *arg)
 
 int init_client_sock(void)
 {
+	communicator_init();
 	g_udp = create_udp_sock();
 	g_base = amt_event_base_init();
 	amt_event_base_loop(g_base);

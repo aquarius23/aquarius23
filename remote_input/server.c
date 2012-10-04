@@ -31,6 +31,7 @@ int init_server_sock(void)
 {
 	struct amt_event *event;
 	int port = SERVER_PORT;
+	communicator_init();
 	g_base = amt_event_base_init();
 	do
 	{

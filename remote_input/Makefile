@@ -2,17 +2,21 @@ common = log.o communicator.o server.o client.o
 server = server_test.o
 client = client_test.o
 
+CC = gcc
 CFLAGS = -Wall -O2
-#CC = gcc
+LINK_LIB = -lpthread
+
+ifeq ($(ARCH), win32)
+win32_lib = ./pthread-win32
 CC = i586-mingw32msvc-gcc
+CFLAGS += -I$(win32_lib) -L$(win32_lib)
+LINK_LIB = -lpthreadGC2 -lwsock32
+POSTFIX = .exe
+endif
 
-linux: $(common) $(server) $(client)
-	$(CC) -o server_test $(common) $(server) -lpthread
-	$(CC) -o client_test $(common) $(client) -lpthread
-
-win32: $(common) $(server) $(client)
-	$(CC) -o server_test.exe $(common) $(server) -lpthread -lwsock32
-	$(CC) -o client_test.exe $(common) $(client) -lpthread -lwsock32
+all: $(common) $(server) $(client)
+	$(CC) -o server_test$(POSTFIX) $(CFLAGS) $(common) $(server) $(LINK_LIB)
+	$(CC) -o client_test$(POSTFIX) $(CFLAGS) $(common) $(client) $(LINK_LIB)
 
 .PHONY: clean
 clean:

@@ -193,6 +193,8 @@ static void amt_event_buffer_send_one(struct amt_event *event)
 	}
 }
 
+static void amt_event_del_nolock(struct amt_event *event);
+
 static void *loop_thread(void *arg)
 {
 	struct amt_event_base *base = arg;
@@ -201,21 +203,31 @@ static void *loop_thread(void *arg)
 		int ret;
 		SOCKET max_sock = 0;
 		fd_set rdfds, wrfds;
-		struct amt_event *event;
+		struct amt_event *event, *event_next;
 		struct timeval timeout = {0, SELECT_TIMEOUT_MS*1000};
 
 		FD_ZERO(&rdfds);
 		FD_ZERO(&wrfds);
 		pthread_mutex_lock(&base->mutex);
-		list_for_each_entry(event, &base->head, list)
+		list_for_each_entry_safe(event, event_next, &base->head, list)
 		{
-			if(event->status == SOCKET_NORMAL)
+			switch(event->status)
 			{
-				FD_SET(event->sock, &rdfds);
-				if(!list_empty(&event->write_list))
-					FD_SET(event->sock, &wrfds);
-				if(event->sock > max_sock)
-					max_sock = event->sock;
+				case SOCKET_ERR:
+					LOGD("%s del event %d\n", __func__, event->sock);
+					amt_event_del_nolock(event);
+					break;
+				
+				case SOCKET_NORMAL:
+					FD_SET(event->sock, &rdfds);
+					if(!list_empty(&event->write_list))
+						FD_SET(event->sock, &wrfds);
+					if(event->sock > max_sock)
+						max_sock = event->sock;
+					break;
+
+				default:
+					break;
 			}
 		}
 		pthread_mutex_unlock(&base->mutex);
@@ -227,13 +239,13 @@ static void *loop_thread(void *arg)
 			list_for_each_entry(event, &base->head, list)
 			{
 				pthread_mutex_unlock(&base->mutex);
-				if(FD_ISSET(event->sock, &rdfds))
+				if((FD_ISSET(event->sock, &rdfds)) && (event->status == SOCKET_NORMAL))
 				{
 					if(event->read_cb)
 						event->read_cb(event->data);
 					count++;
 				}
-				if(FD_ISSET(event->sock, &wrfds))
+				if((FD_ISSET(event->sock, &wrfds)) && (event->status == SOCKET_NORMAL))
 				{
 					amt_event_buffer_send_one(event);
 					count++;
@@ -315,6 +327,22 @@ void amt_event_add(struct amt_event_base *base, struct amt_event *event, amt_eve
 	pthread_mutex_unlock(&base->mutex);
 }
 
+static void amt_event_del_nolock(struct amt_event *event)
+{
+	struct send_msg *msg, *msg_next;
+	list_del(&event->list);
+
+	pthread_mutex_lock(&event->write_mutex);
+	list_for_each_entry_safe(msg, msg_next, &event->write_list, list)
+	{
+		list_del(&msg->list);
+		free(msg->data);
+		free(msg);
+	}
+	pthread_mutex_unlock(&event->write_mutex);
+	free(event);
+}
+
 void amt_event_del(struct amt_event *event)
 {
 	struct send_msg *msg, *msg_next;
@@ -332,5 +360,10 @@ void amt_event_del(struct amt_event *event)
 	}
 	pthread_mutex_unlock(&event->write_mutex);
 	free(event);
+}
+
+void amt_event_del_safe(struct amt_event *event)
+{
+	event->status = SOCKET_ERR;
 }
 

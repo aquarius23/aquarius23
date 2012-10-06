@@ -64,5 +64,6 @@ int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct 
 struct amt_event *amt_event_set(struct amt_event_base *base, SOCKET sock, int sock_type);
 void amt_event_add(struct amt_event_base *base, struct amt_event *event, amt_event_read_callback cb, void *data);
 void amt_event_del(struct amt_event *event);
+void amt_event_del_safe(struct amt_event *event);
 #endif
 

@@ -13,7 +13,14 @@ static void event_read_cb(void *arg)
 	struct protocol_event packet;
 	struct amt_event *event = arg;
 	size = amt_event_buffer_read(event, &packet, sizeof(struct protocol_event), &addr);
-	LOGD("%s read test = %s\n", __func__, packet.packet.test);
+	if(size <= 0)
+	{
+		LOGE("%s socket error\n", __func__);
+		close_socket(event->sock);
+		amt_event_del_safe(event);
+	}
+	else
+		LOGD("%s read test = %s\n", __func__, packet.packet.test);
 }
 
 int init_client_sock(void)

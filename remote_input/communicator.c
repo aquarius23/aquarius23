@@ -16,9 +16,12 @@ struct send_msg
 	struct sockaddr addr;
 };
 
+static int ref_count = 0;
 int communicator_init(void)
 {
 	int ret = 0;
+	if(ref_count++ > 0)
+		return 0;
 #ifdef WIN32
 	WSADATA wsaData;
 	ret = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -28,6 +31,8 @@ int communicator_init(void)
 
 void communicator_deinit(void)
 {
+	if(--ref_count > 0)
+		return;
 #ifdef WIN32
 	WSACleanup();
 #endif

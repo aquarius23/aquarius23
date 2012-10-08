@@ -13,7 +13,7 @@ int main(void)
 {
 	amt_log_register(log_cb);
 	amt_log_control(CB_LOGA);
-	init_server_sock();
+	init_server_sock(NULL);
 	while(1)
 		usleep(100000);
 	return 0;

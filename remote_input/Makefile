@@ -1,4 +1,4 @@
-common = log.o communicator.o server.o client.o 
+common = log.o communicator.o server.o client.o protocol.o
 server = server_test.o
 client = client_test.o
 

@@ -1,12 +1,16 @@
 #ifndef _PROTOCOL_H
 #define _PROTOCOL_H
 
+#include "amt_remote.h"
+#include "log.h"
+
 #define PROTOCOL_CONTROL	1
 #define PROTOCOL_TOUCH		2
 #define PROTOCOL_KEY		3
 #define PROTOCOL_MOUSE		4
 #define PROTOCOL_LOCATION	5
 #define PROTOCOL_TEST		6
+#define PROTOCOL_SENSOR		7
 
 #define MAX_SENSOR_TYPE		13
 
@@ -53,5 +57,23 @@ struct protocol_event
 };
 #pragma pack()
 
+struct protocol_handle
+{
+	void *data;
+	struct amt_log_handle *log;
+	void (*update_udp_port)(void *arg, unsigned short port);
+	void (*update_test)(void *arg, char *test);
+
+	void (*sensor_control)(void *arg, int sensor, int on);
+	void (*sensor_delay)(void *arg, int sensor, int delay);
+	void (*sensor_data)(void *arg, int num, struct amt_sensor_data *data);
+};
+
+int recv_packet(struct protocol_handle *handle, struct protocol_event *event);
+void cmd_set_udp_port(struct protocol_handle *handle, struct protocol_event *event, unsigned short port);
+void cmd_set_sensor_control(struct protocol_handle *handle, struct protocol_event *event, int sensor, int on);
+void cmd_set_sensor_delay(struct protocol_handle *handle, struct protocol_event *event, int sensor, int delay);
+void data_set_test(struct protocol_handle *handle, struct protocol_event *event, char *test);
+void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event *event, int num, struct amt_sensor_data *data);
 #endif
 

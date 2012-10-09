@@ -9,8 +9,11 @@ struct amt_client
 {
 	struct amt_event_base *event_base;
 	SOCKET sock_tcp, sock_udp;
+	struct amt_event *event_tcp, *event_udp;
 	struct sockaddr sock_udp_addr;
 	struct amt_client_callback cb;
+	struct amt_log_handle log_handle;
+	struct protocol_handle protocol;
 };
 
 static void event_read_cb(void *arg)
@@ -19,15 +22,29 @@ static void event_read_cb(void *arg)
 	struct sockaddr addr;
 	struct protocol_event packet;
 	struct amt_event *event = arg;
+	struct amt_client *client = (struct amt_client*)event->base;
 	size = amt_event_buffer_read(event, &packet, sizeof(struct protocol_event), &addr);
 	if(size <= 0)
 	{
-		LOGE("%s socket error\n", __func__);
+		LOGE(&client->log_handle, "%s socket error\n", __func__);
 		close_socket(event->sock);
 		amt_event_del_safe(event);
 	}
 	else
-		LOGD("%s read test = %s\n", __func__, packet.packet.test);
+		recv_packet(&client->protocol, &packet);
+}
+
+static void update_udp_port(void *arg, unsigned short port)
+{
+	struct amt_client *client = arg;
+	LOGD(&client->log_handle, "%s: %d\n", __func__, port);
+}
+
+static void init_protocol(struct amt_client *client)
+{
+	client->protocol.data = client;
+	client->protocol.log = &client->log_handle;
+	client->protocol.update_udp_port = update_udp_port;
 }
 
 struct amt_handle *init_client_sock(struct amt_client_callback *cb)
@@ -51,26 +68,19 @@ struct amt_handle *init_client_sock(struct amt_client_callback *cb)
 	a_client->event_base = amt_event_base_init();
 
 	if(cb)
+	{
 		memcpy(&a_client->cb, cb, sizeof(struct amt_client_callback));
+		if(cb->log_cb)
+			amt_log_register(&a_client->log_handle, cb->log_cb);
+	}
+	init_protocol(a_client);
 	amt_event_base_loop(a_client->event_base);
 	a_handle->type = AMT_CLIENT;
 	a_handle->point = a_client;
 	return a_handle;
 }
 
-static void test_send(struct amt_event *event)
-{
-	struct protocol_event packet;
-	while(1)
-	{
-		static int iterator = 0;
-		sprintf(packet.packet.test, "%d 123456789asdfghh", iterator++);
-		amt_event_buffer_write(event, &packet, sizeof(struct protocol_event), NULL);
-		usleep(200000);
-	}
-}
-
-int connect_server(struct amt_handle *handle, char *ip, int port)
+int connect_client2server(struct amt_handle *handle, char *ip, int port)
 {
 	struct amt_event *event;
 	struct amt_client *client;
@@ -80,13 +90,34 @@ int connect_server(struct amt_handle *handle, char *ip, int port)
 	client->sock_tcp = connect_tcp_addr(ip, port);
 	if(client->sock_tcp < 0)
 	{
-		LOGE("%s error\n", __func__);
+		LOGE(&client->log_handle, "%s error\n", __func__);
 		return -1;
 	}
 	amt_set_sockaddr(&client->sock_udp_addr, ip, port);
-	event = amt_event_set(client->event_base, client->sock_tcp, TYPE_TCP);
+	event = amt_event_set(&client->event_base, client->sock_tcp, TYPE_TCP);
 	amt_event_add(client->event_base, event, event_read_cb, event);
-	test_send(event);
+	client->event_tcp = event;
 	return 0;
+}
+
+void control_client_log(struct amt_handle *handle, int tag_on)
+{
+	struct amt_client *client;
+	if(handle->type != AMT_CLIENT)
+		return;
+	client = handle->point;
+	if(client->cb.log_cb)
+		amt_log_control(&client->log_handle, tag_on);
+}
+
+void data_client_send_test(struct amt_handle *handle, char *test)
+{
+	struct protocol_event packet;
+	struct amt_client *client;
+	if(handle->type != AMT_CLIENT)
+		return;
+	client = handle->point;
+	data_set_test(&client->protocol, &packet, test);
+	amt_event_buffer_write(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
 }
 

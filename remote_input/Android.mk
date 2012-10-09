@@ -5,7 +5,10 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES += \
 	log.c \
-	communicator.c
+	communicator.c \
+	server.c \
+	client.c \
+	protocol.c
 
 LOCAL_CFLAGS += -O2 -Wall -DNDK -fPIC
 #LOCAL_LDLIBS += -llog -ldl

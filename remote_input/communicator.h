@@ -27,7 +27,7 @@ typedef void (*amt_event_read_callback)(void *arg);
 struct amt_event
 {
 	struct list_head list;
-	struct amt_event_base *base;
+	struct amt_event_base **base;
 	SOCKET sock;
 	int tcp_udp_type;
 	amt_event_read_callback read_cb;
@@ -60,10 +60,11 @@ void close_socket(SOCKET sock);
 struct amt_event_base *amt_event_base_init(void);
 int amt_event_base_loop(struct amt_event_base *base);
 int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr);
+int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size, struct sockaddr *dst_addr);
 int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct sockaddr *src_addr);
-struct amt_event *amt_event_set(struct amt_event_base *base, SOCKET sock, int sock_type);
+struct amt_event *amt_event_set(struct amt_event_base **base, SOCKET sock, int sock_type);
 void amt_event_add(struct amt_event_base *base, struct amt_event *event, amt_event_read_callback cb, void *data);
-void amt_event_del(struct amt_event *event);
+//void amt_event_del(struct amt_event *event);
 void amt_event_del_safe(struct amt_event *event);
 #endif
 

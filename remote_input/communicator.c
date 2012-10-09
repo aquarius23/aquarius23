@@ -194,7 +194,6 @@ static void amt_event_buffer_send_one(struct amt_event *event)
 			ret = sendto(event->sock, msg->data, msg->size, 0, &msg->addr, sizeof(struct sockaddr));
 		free(msg->data);
 		free(msg);
-		LOGD("%s send ret = %d", __func__, ret);
 	}
 }
 
@@ -219,7 +218,6 @@ static void *loop_thread(void *arg)
 			switch(event->status)
 			{
 				case SOCKET_ERR:
-					LOGD("%s del event %d\n", __func__, event->sock);
 					amt_event_del_nolock(event);
 					break;
 				
@@ -271,7 +269,7 @@ int amt_event_base_loop(struct amt_event_base *base)
 	return pthread_create(&base->loop_tid, NULL, loop_thread, base);
 }
 
-int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr)
+static int amt_event_buffer_write_nolock(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr)
 {
 	struct send_msg *msg = malloc(sizeof(struct send_msg));
 	if(!msg)
@@ -293,6 +291,24 @@ int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct
 	return size;
 }
 
+int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr)
+{
+	pthread_mutex_lock(&((*event->base)->mutex));
+	amt_event_buffer_write_nolock(event, data, size, dst_addr);
+	pthread_mutex_unlock(&((*event->base)->mutex));
+	return size;
+}
+
+int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size, struct sockaddr *dst_addr)
+{
+	struct amt_event *event;
+	pthread_mutex_lock(&base->mutex);
+	list_for_each_entry(event, &base->head,list)
+		amt_event_buffer_write_nolock(event, data, size, dst_addr);
+	pthread_mutex_unlock(&base->mutex);
+	return size;
+}
+
 int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct sockaddr *src_addr)
 {
 #ifdef WIN32
@@ -306,7 +322,7 @@ int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct 
 		return recvfrom(event->sock, data, size, 0, src_addr, &len);
 }
 
-struct amt_event *amt_event_set(struct amt_event_base *base, SOCKET sock, int sock_type)
+struct amt_event *amt_event_set(struct amt_event_base **base, SOCKET sock, int sock_type)
 {
 	struct amt_event *event = malloc(sizeof(struct amt_event));
 	if(!event)
@@ -351,7 +367,7 @@ static void amt_event_del_nolock(struct amt_event *event)
 void amt_event_del(struct amt_event *event)
 {
 	struct send_msg *msg, *msg_next;
-	struct amt_event_base *base = event->base;
+	struct amt_event_base *base = *event->base;
 	pthread_mutex_lock(&base->mutex);
 	list_del(&event->list);
 	pthread_mutex_unlock(&base->mutex);

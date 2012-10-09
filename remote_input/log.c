@@ -2,29 +2,27 @@
 #include <stdarg.h>
 #include "log.h"
 
-static int g_log_flag = 0;
-static amt_log_callback g_log_cb = NULL;
-
-void __amt_log(int tag, const char *fmt, ...)
+void __amt_log(int tag, struct amt_log_handle *handle, const char *fmt, ...)
 {
-	if(g_log_cb && (g_log_flag & tag))
+	if(handle->log_cb && (handle->log_flag & tag))
 	{
 		va_list ap;
 		char buf[1024];
 		va_start(ap, fmt);
 		vsnprintf(buf, 1024, fmt, ap);
 		va_end(ap);
-		g_log_cb(tag, buf);
+		handle->log_cb(tag, buf);
 	}
 }
 
-void amt_log_register(amt_log_callback cb)
+void amt_log_register(struct amt_log_handle *handle, amt_log_callback cb)
 {
-	g_log_cb = cb;
+	handle->log_flag = 0;
+	handle->log_cb = cb;
 }
 
-void amt_log_control(int tag_on)
+void amt_log_control(struct amt_log_handle *handle, int tag_on)
 {
-	g_log_flag = tag_on & CB_LOGA;
+	handle->log_flag = tag_on & CB_LOGA;
 }
 

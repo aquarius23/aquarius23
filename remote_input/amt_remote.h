@@ -15,11 +15,18 @@ typedef void (*amt_log_callback)(int tag, const char *log);
 struct amt_server_callback
 {
 	amt_log_callback log_cb;
+	void (*update_test)(char *test);
 };
 
 struct amt_client_callback
 {
 	amt_log_callback log_cb;
+};
+
+struct amt_sensor_data
+{
+	short sensor_type;
+	float data[3];
 };
 
 #define AMT_SERVER	1
@@ -31,11 +38,14 @@ struct amt_handle
 	void *point;
 };
 
-void amt_log_register(amt_log_callback cb);
-void amt_log_control(int tag_on);
-
+//server mode api
 struct amt_handle *init_server_sock(struct amt_server_callback *cb);
+void control_server_log(struct amt_handle *handle, int tag_on);
+
+//client mode api
 struct amt_handle *init_client_sock(struct amt_client_callback *cb);
-int connect_server(struct amt_handle *handle, char *ip, int port);
+int connect_client2server(struct amt_handle *handle, char *ip, int port);
+void control_client_log(struct amt_handle *handle, int tag_on);
+void data_client_send_test(struct amt_handle *handle, char *test);
 #endif
 

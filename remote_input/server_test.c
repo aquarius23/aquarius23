@@ -9,11 +9,19 @@ void log_cb(int tag, const char *log)
 	printf("%s", log);
 }
 
+void update_test(char *test)
+{
+	printf("%s\n", test);
+}
+
 int main(void)
 {
-	amt_log_register(log_cb);
-	amt_log_control(CB_LOGA);
-	init_server_sock(NULL);
+	struct amt_handle *handle;
+	struct amt_server_callback cb;
+	cb.log_cb = log_cb;
+	cb.update_test = update_test;
+	handle = init_server_sock(&cb);
+	control_server_log(handle, CB_LOGA);
 	while(1)
 		usleep(100000);
 	return 0;

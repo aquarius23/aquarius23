@@ -6,18 +6,22 @@
 
 void log_cb(int tag, const char *log)
 {
-	printf("%s\n", log);
+	printf("%s", log);
 }
 
 int main(void)
 {
 	struct amt_handle *handle;
-	amt_log_register(log_cb);
-	amt_log_control(CB_LOGA);
-	handle = init_client_sock(NULL);
-	connect_server(handle, "127.0.0.1", SERVER_PORT);
+	struct amt_client_callback cb;
+	cb.log_cb = log_cb;
+	handle = init_client_sock(&cb);
+	control_client_log(handle, CB_LOGA);
+	connect_client2server(handle, "127.0.0.1", SERVER_PORT);
 	while(1)
-		usleep(100000);
+	{
+		usleep(1000000);
+		data_client_send_test(handle, "123456789");
+	}
 	return 0;
 }
 

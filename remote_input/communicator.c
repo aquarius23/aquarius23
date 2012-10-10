@@ -301,12 +301,16 @@ int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct
 
 int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size, struct sockaddr *dst_addr)
 {
+	int count = 0;
 	struct amt_event *event;
 	pthread_mutex_lock(&base->mutex);
 	list_for_each_entry(event, &base->head,list)
+	{
 		amt_event_buffer_write_nolock(event, data, size, dst_addr);
+		count++;
+	}
 	pthread_mutex_unlock(&base->mutex);
-	return size;
+	return count;
 }
 
 int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct sockaddr *src_addr)

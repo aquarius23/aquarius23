@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
+#include <errno.h>
 #include "log.h"
 #include "communicator.h"
 #include "protocol.h"
@@ -13,6 +15,12 @@ struct amt_server
 	struct amt_server_callback cb;
 	struct amt_log_handle log_handle;
 	struct protocol_handle protocol;
+
+	pthread_mutex_t cmd_mutex;
+	pthread_cond_t cmd_cond;
+	unsigned short last_cmd;
+	int last_ret;
+	int cond_count;
 };
 
 static void event_read_cb(void *arg)
@@ -50,11 +58,36 @@ static void event_listen_cb(void *arg)
 	amt_event_buffer_write(new_event, &packet, sizeof(struct protocol_event), NULL);
 }
 
-static void update_test(void *arg, char *test)
+static int update_test(void *arg, char *test)
 {
 	struct amt_server *server = arg;
 	if(server->cb.update_test)
 		server->cb.update_test(test);
+	return RETURN_NORMAL;
+}
+
+static int __sensor_data(void *arg, int num, struct amt_sensor_data *data)
+{
+	struct amt_server *server = arg;
+	if(server->cb.sensor_data)
+		server->cb.sensor_data(num, data);
+	return RETURN_NORMAL;
+}
+
+static int cmd_response(void *arg, unsigned short cmd, int retval)
+{
+	struct amt_server *server = arg;
+	LOGD(&server->log_handle, "%s: cmd = %d, ret = %d\n", __func__, cmd, retval);
+	pthread_mutex_lock(&server->cmd_mutex);
+	if(cmd == server->last_cmd)
+	{
+		if(retval != RETURN_ERROR)
+			server->last_ret = retval;
+		server->cond_count++;
+		pthread_cond_signal(&server->cmd_cond);
+	}
+	pthread_mutex_unlock(&server->cmd_mutex);
+	return RETURN_NORMAL;
 }
 
 static void init_protocol(struct amt_server *server)
@@ -62,6 +95,8 @@ static void init_protocol(struct amt_server *server)
 	server->protocol.data = server;
 	server->protocol.log = &server->log_handle;
 	server->protocol.update_test = update_test;
+	server->protocol.cmd_response = cmd_response;
+	server->protocol.sensor_data = __sensor_data;
 }
 
 struct amt_handle *init_server_sock(struct amt_server_callback *cb)
@@ -125,6 +160,8 @@ struct amt_handle *init_server_sock(struct amt_server_callback *cb)
 	event = amt_event_set(&a_server->event_base, a_server->sock_udp, TYPE_UDP);
 	amt_event_add(a_server->event_base, event, event_listen_cb, event);
 
+	pthread_mutex_init(&a_server->cmd_mutex, NULL);
+	pthread_cond_init(&a_server->cmd_cond, NULL);
 	amt_event_base_loop(a_server->event_base);
 	a_handle->type = AMT_SERVER;
 	a_handle->point = a_server;
@@ -143,5 +180,56 @@ void control_server_log(struct amt_handle *handle, int tag_on)
 	server = handle->point;
 	if(server->cb.log_cb)
 		amt_log_control(&server->log_handle, tag_on);
+}
+
+static int send_command_common(struct amt_handle *handle, struct protocol_event *event)
+{
+	int count, ret;
+	struct amt_server *server;
+	struct timeval now;
+	struct timespec outtime;
+	if(handle->type != AMT_SERVER)
+		return RETURN_ERROR;
+	server = handle->point;
+
+	pthread_mutex_lock(&server->cmd_mutex);
+	server->last_ret = RETURN_ERROR;
+	server->cond_count = 0;
+	server->last_cmd = event->packet.control.cmd;
+	count = amt_event_buffer_write_all(server->event_base, event, sizeof(struct protocol_event), NULL);
+	gettimeofday(&now, NULL);
+	outtime.tv_sec = now.tv_sec + 3;
+	outtime.tv_nsec = now.tv_usec * 1000;
+	while(count > server->cond_count)
+	{
+		ret = pthread_cond_timedwait(&server->cmd_cond, &server->cmd_mutex, &outtime);
+		if(ret == ETIMEDOUT)
+			break;
+	}
+	ret = server->last_ret;
+	pthread_mutex_unlock(&server->cmd_mutex);
+	return ret;
+}
+
+int sensor_server_control(struct amt_handle *handle, int sensor, int on)
+{
+	struct protocol_event packet;
+	struct amt_server *server;
+	if(handle->type != AMT_SERVER)
+		return RETURN_ERROR;
+	server = handle->point;
+	cmd_set_sensor_control(&server->protocol, &packet, sensor, on);
+	return send_command_common(handle, &packet);
+}
+
+int sensor_server_delay(struct amt_handle *handle, int sensor, int delay)
+{
+	struct protocol_event packet;
+	struct amt_server *server;
+	if(handle->type != AMT_SERVER)
+		return RETURN_ERROR;
+	server = handle->point;
+	cmd_set_sensor_delay(&server->protocol, &packet, sensor, delay);
+	return send_command_common(handle, &packet);
 }
 

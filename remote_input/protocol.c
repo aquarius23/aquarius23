@@ -5,7 +5,7 @@ void cmd_set_udp_port(struct protocol_handle *handle, struct protocol_event *eve
 {
 	event->type = PROTOCOL_CONTROL;
 	event->packet.control.cmd = CONTROL_CMD_UDP_PORT;
-	event->packet.control.direct = DIRECT_FROM_SERVER;
+	event->packet.control.direct = DIRECT_REQUEST;
 	event->packet.control.argv.b16[0] = port;
 }
 
@@ -13,7 +13,7 @@ void cmd_set_sensor_control(struct protocol_handle *handle, struct protocol_even
 {
 	event->type = PROTOCOL_CONTROL;
 	event->packet.control.cmd = CONTROL_CMD_SENSOR;
-	event->packet.control.direct = DIRECT_FROM_SERVER;
+	event->packet.control.direct = DIRECT_REQUEST;
 	event->packet.control.argv.b32[0] = 1;
 	event->packet.control.argv.b32[1] = sensor;
 	event->packet.control.argv.b32[2] = on;
@@ -23,7 +23,7 @@ void cmd_set_sensor_delay(struct protocol_handle *handle, struct protocol_event 
 {
 	event->type = PROTOCOL_CONTROL;
 	event->packet.control.cmd = CONTROL_CMD_SENSOR;
-	event->packet.control.direct = DIRECT_FROM_SERVER;
+	event->packet.control.direct = DIRECT_REQUEST;
 	event->packet.control.argv.b32[0] = 2;
 	event->packet.control.argv.b32[1] = sensor;
 	event->packet.control.argv.b32[2] = delay;
@@ -52,33 +52,38 @@ void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event 
 static int recv_command(struct protocol_handle *handle, struct control_data *cmd)
 {
 	int ret = 0;
+	if(cmd->direct == DIRECT_RESPONSE)
+	{
+		if(handle->cmd_response)
+			handle->cmd_response(handle->data, cmd->cmd, cmd->ret);
+		return ret;
+	}
+
 	switch(cmd->cmd)
 	{
 		case CONTROL_CMD_UDP_PORT:
-			if(cmd->direct == DIRECT_FROM_SERVER)
 			{
 				int port = cmd->argv.b16[0];
 				if(handle->update_udp_port)
-					handle->update_udp_port(handle->data, port);
+					ret = handle->update_udp_port(handle->data, port);
 			}
 			break;
 
 		case CONTROL_CMD_SENSOR:
-			if(cmd->direct == DIRECT_FROM_SERVER)
 			{
 				if(cmd->argv.b32[0] == 1)
 				{
 					int sensor = cmd->argv.b32[1];
 					int on = cmd->argv.b32[2];
 					if(handle->sensor_control)
-						handle->sensor_control(handle->data, sensor, on);
+						ret = handle->sensor_control(handle->data, sensor, on);
 				}
 				else if(cmd->argv.b32[0] == 2)
 				{
 					int sensor = cmd->argv.b32[1];
 					int delay = cmd->argv.b32[2];
 					if(handle->sensor_delay)
-						handle->sensor_delay(handle->data, sensor, delay);
+						ret = handle->sensor_delay(handle->data, sensor, delay);
 				}
 			}
 			break;
@@ -96,10 +101,15 @@ static int recv_command(struct protocol_handle *handle, struct control_data *cmd
 			break;
 
 		default:
-			ret = -1;
+			ret = RETURN_ERROR;
 			break;
 	}
-	return ret;
+	cmd->direct = DIRECT_RESPONSE;
+	cmd->ret = ret;
+	if(cmd->cmd == CONTROL_CMD_UDP_PORT)
+		return 0;
+	else
+		return 2;
 }
 
 int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
@@ -136,6 +146,8 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 				{
 					data[num].sensor_type = event->packet.sensor[num].sensor_type;
 					data[num].data[0] = event->packet.sensor[num].data[0];
+					data[num].data[1] = event->packet.sensor[num].data[1];
+					data[num].data[2] = event->packet.sensor[num].data[2];
 					num++;
 				}
 				if(handle->sensor_data)

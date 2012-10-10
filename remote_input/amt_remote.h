@@ -12,25 +12,31 @@
 
 typedef void (*amt_log_callback)(int tag, const char *log);
 
-struct amt_server_callback
-{
-	amt_log_callback log_cb;
-	void (*update_test)(char *test);
-};
-
-struct amt_client_callback
-{
-	amt_log_callback log_cb;
-};
-
 struct amt_sensor_data
 {
 	short sensor_type;
 	float data[3];
 };
 
+struct amt_server_callback
+{
+	amt_log_callback log_cb;
+	void (*update_test)(char *test);
+	void (*sensor_data)(int num, struct amt_sensor_data *sensor);
+};
+
+struct amt_client_callback
+{
+	amt_log_callback log_cb;
+	int (*sensor_control)(int sensor, int on);
+	int (*sensor_delay)(int sensor, int delay);
+};
+
 #define AMT_SERVER	1
 #define AMT_CLIENT	2
+
+#define RETURN_NORMAL   0
+#define RETURN_ERROR    -1
 
 struct amt_handle
 {
@@ -41,11 +47,13 @@ struct amt_handle
 //server mode api
 struct amt_handle *init_server_sock(struct amt_server_callback *cb);
 void control_server_log(struct amt_handle *handle, int tag_on);
-
+int sensor_server_control(struct amt_handle *handle, int sensor, int on);
+int sensor_server_delay(struct amt_handle *handle, int sensor, int delay);
 //client mode api
 struct amt_handle *init_client_sock(struct amt_client_callback *cb);
 int connect_client2server(struct amt_handle *handle, char *ip, int port);
 void control_client_log(struct amt_handle *handle, int tag_on);
 void data_client_send_test(struct amt_handle *handle, char *test);
+void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
 #endif
 

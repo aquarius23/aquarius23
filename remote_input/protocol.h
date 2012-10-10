@@ -21,8 +21,8 @@
 #define CONTROL_CMD_MOUSE		5
 #define CONTROL_CMD_TOUCH		6
 
-#define DIRECT_FROM_CLIENT	1
-#define DIRECT_FROM_SERVER	2
+#define DIRECT_REQUEST	1
+#define DIRECT_RESPONSE	2
 
 #pragma pack(1)
 
@@ -36,7 +36,7 @@ struct control_data
 		short b16[16];
 		int b32[8];
 	} argv;
-	short ret;
+	int ret;
 };
 
 struct sensor_data
@@ -61,12 +61,13 @@ struct protocol_handle
 {
 	void *data;
 	struct amt_log_handle *log;
-	void (*update_udp_port)(void *arg, unsigned short port);
-	void (*update_test)(void *arg, char *test);
+	int (*cmd_response)(void *arg, unsigned short cmd, int retval);
+	int (*update_udp_port)(void *arg, unsigned short port);
+	int (*update_test)(void *arg, char *test);
 
-	void (*sensor_control)(void *arg, int sensor, int on);
-	void (*sensor_delay)(void *arg, int sensor, int delay);
-	void (*sensor_data)(void *arg, int num, struct amt_sensor_data *data);
+	int (*sensor_control)(void *arg, int sensor, int on);
+	int (*sensor_delay)(void *arg, int sensor, int delay);
+	int (*sensor_data)(void *arg, int num, struct amt_sensor_data *data);
 };
 
 int recv_packet(struct protocol_handle *handle, struct protocol_event *event);

@@ -31,20 +31,45 @@ static void event_read_cb(void *arg)
 		amt_event_del_safe(event);
 	}
 	else
-		recv_packet(&client->protocol, &packet);
+		size = recv_packet(&client->protocol, &packet);
+	if(size == 2)
+		amt_event_buffer_write(event, &packet, sizeof(struct protocol_event), NULL);
 }
 
-static void update_udp_port(void *arg, unsigned short port)
+static int __update_udp_port(void *arg, unsigned short port)
 {
 	struct amt_client *client = arg;
 	LOGD(&client->log_handle, "%s: %d\n", __func__, port);
+	return RETURN_NORMAL;
+}
+
+static int __sensor_control(void *arg, int sensor, int on)
+{
+	int ret = RETURN_ERROR;
+	struct amt_client *client = arg;
+	LOGD(&client->log_handle, "%s: sensor = %d, on = %d\n", __func__, sensor, on);
+	if(client->cb.sensor_control)
+		ret = client->cb.sensor_control(sensor, on);
+	return ret;
+}
+
+static int __sensor_delay(void *arg, int sensor, int delay)
+{
+	int ret = RETURN_NORMAL;
+	struct amt_client *client = arg;
+	LOGD(&client->log_handle, "%s: sensor = %d, delay = %d\n", __func__, sensor, delay);
+	if(client->cb.sensor_delay)
+		ret = client->cb.sensor_delay(sensor, delay);
+	return ret;
 }
 
 static void init_protocol(struct amt_client *client)
 {
 	client->protocol.data = client;
 	client->protocol.log = &client->log_handle;
-	client->protocol.update_udp_port = update_udp_port;
+	client->protocol.update_udp_port = __update_udp_port;
+	client->protocol.sensor_control = __sensor_control;
+	client->protocol.sensor_delay = __sensor_delay;
 }
 
 struct amt_handle *init_client_sock(struct amt_client_callback *cb)
@@ -118,6 +143,17 @@ void data_client_send_test(struct amt_handle *handle, char *test)
 		return;
 	client = handle->point;
 	data_set_test(&client->protocol, &packet, test);
+	amt_event_buffer_write(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
+}
+
+void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
+{
+	struct protocol_event packet;
+	struct amt_client *client;
+	if(handle->type != AMT_CLIENT)
+		return;
+	client = handle->point;
+	data_set_sensor_data(&client->protocol, &packet, num, sensor);
 	amt_event_buffer_write(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
 }
 

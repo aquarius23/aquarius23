@@ -182,6 +182,16 @@ void control_server_log(struct amt_handle *handle, int tag_on)
 		amt_log_control(&server->log_handle, tag_on);
 }
 
+static int write_filter(SOCKET sock, void *data)
+{
+	struct amt_server *server = data;
+	if(server->sock_tcp == sock)
+		return 1;
+	if(server->sock_udp == sock)
+		return 1;
+	return 0;
+}
+
 static int send_command_common(struct amt_handle *handle, struct protocol_event *event)
 {
 	int count, ret;
@@ -196,7 +206,7 @@ static int send_command_common(struct amt_handle *handle, struct protocol_event 
 	server->last_ret = RETURN_ERROR;
 	server->cond_count = 0;
 	server->last_cmd = event->packet.control.cmd;
-	count = amt_event_buffer_write_all(server->event_base, event, sizeof(struct protocol_event), NULL);
+	count = amt_event_buffer_write_all(server->event_base, event, sizeof(struct protocol_event), NULL, write_filter, server);
 	gettimeofday(&now, NULL);
 	outtime.tv_sec = now.tv_sec + 3;
 	outtime.tv_nsec = now.tv_usec * 1000;

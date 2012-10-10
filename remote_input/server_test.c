@@ -37,6 +37,7 @@ int main(void)
 		sensor_server_control(handle, 3, 1);
 		if(ret == RETURN_NORMAL)
 			break;
+		usleep(2000000);
 	}
 	while(1)
 		usleep(100000);

@@ -299,13 +299,15 @@ int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct
 	return size;
 }
 
-int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size, struct sockaddr *dst_addr)
+int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size, struct sockaddr *dst_addr, write_all_filter filter, void *arg)
 {
 	int count = 0;
 	struct amt_event *event;
 	pthread_mutex_lock(&base->mutex);
 	list_for_each_entry(event, &base->head,list)
 	{
+		if(filter && filter(event->sock, arg))
+			continue;
 		amt_event_buffer_write_nolock(event, data, size, dst_addr);
 		count++;
 	}

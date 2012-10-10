@@ -139,6 +139,8 @@ SOCKET amt_sock_accept(SOCKET sock, struct sockaddr *addr)
 #else
 	socklen_t len;
 #endif
+	len = sizeof(struct sockaddr);
+	memset(addr, 0, len);
 	return accept(sock, addr, &len);
 }
 
@@ -322,6 +324,9 @@ int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct 
 #else
 	socklen_t len;
 #endif
+	len = sizeof(struct sockaddr);
+	if(src_addr)
+		memset(src_addr, 0, len);
 	if(event->tcp_udp_type == TYPE_TCP)
 		return recv(event->sock, data, size, 0);
 	else

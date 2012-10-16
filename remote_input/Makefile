@@ -12,6 +12,7 @@ CC = i586-mingw32msvc-gcc
 CFLAGS += -I$(win32_lib) -L$(win32_lib)
 LINK_LIB = -lpthreadGC2 -lwsock32
 POSTFIX = .exe
+server += laser_point.o
 endif
 
 all: $(common) $(server) $(client)

@@ -20,7 +20,7 @@ int main(void)
 	connect_client2server(handle, "127.0.0.1", SERVER_PORT);
 	while(1)
 	{
-		usleep(1000000);
+		usleep(900000);
 		data_client_send_test(handle, "123456789");
 	}
 	return 0;

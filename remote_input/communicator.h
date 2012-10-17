@@ -61,6 +61,7 @@ void close_socket(SOCKET sock);
 struct amt_event_base *amt_event_base_init(void);
 int amt_event_base_loop(struct amt_event_base *base);
 int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr);
+int amt_event_buffer_write_sync(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr);
 int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size, struct sockaddr *dst_addr, write_all_filter filter, void *arg);
 int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct sockaddr *src_addr);
 struct amt_event *amt_event_set(struct amt_event_base **base, SOCKET sock, int sock_type);

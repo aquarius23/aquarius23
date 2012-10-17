@@ -301,6 +301,16 @@ int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct
 	return size;
 }
 
+int amt_event_buffer_write_sync(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr)
+{
+	int ret;
+	if(event->tcp_udp_type == TYPE_TCP)
+		ret = send(event->sock, data, size, 0);
+	else
+		ret = sendto(event->sock, data, size, 0, dst_addr, sizeof(struct sockaddr));
+	return ret;
+}
+
 int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size, struct sockaddr *dst_addr, write_all_filter filter, void *arg)
 {
 	int count = 0;

@@ -21,5 +21,5 @@ all: $(common) $(server) $(client)
 
 .PHONY: clean
 clean:
-	rm -f server_test server_test.exe client_test client_test.exe $(common) $(server) $(client)
+	rm -f server_test server_test.exe client_test client_test.exe *.o
 

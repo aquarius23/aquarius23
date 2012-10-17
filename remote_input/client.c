@@ -143,7 +143,7 @@ void data_client_send_test(struct amt_handle *handle, char *test)
 		return;
 	client = handle->point;
 	data_set_test(&client->protocol, &packet, test);
-	amt_event_buffer_write(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
+	amt_event_buffer_write_sync(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
 }
 
 void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
@@ -154,6 +154,6 @@ void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sens
 		return;
 	client = handle->point;
 	data_set_sensor_data(&client->protocol, &packet, num, sensor);
-	amt_event_buffer_write(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
+	amt_event_buffer_write_sync(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
 }
 

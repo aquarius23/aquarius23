@@ -64,10 +64,10 @@ int main(void)
 		sensor_server_control(handle, 3, 1);
 		if(ret == RETURN_NORMAL)
 			break;
-		usleep(2000000);
+		usleep(900000);
 	}
 	while(1)
-		usleep(100000);
+		usleep(900000);
 	return 0;
 }
 

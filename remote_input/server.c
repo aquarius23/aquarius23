@@ -50,9 +50,9 @@ static void event_listen_cb(void *arg)
 	struct amt_event *event = arg;
 	struct amt_server *server = (struct amt_server *)event->base;
 	new_sock = amt_sock_accept(event->sock, &addr);
-	LOGD(&server->log_handle, "%s accept ip: %s\n", __func__, amt_get_ip(&addr));
 	new_event = amt_event_set(event->base, new_sock, TYPE_TCP);
 	amt_event_add(*event->base, new_event, event_read_cb, new_event);
+	LOGD(&server->log_handle, "%s accept ip: %s\n", __func__, amt_get_ip(&addr));
 
 	cmd_set_udp_port(&server->protocol, &packet, server->udp_port);
 	amt_event_buffer_write(new_event, &packet, sizeof(struct protocol_event), NULL);

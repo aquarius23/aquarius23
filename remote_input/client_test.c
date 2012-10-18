@@ -21,7 +21,7 @@ int main(void)
 	while(1)
 	{
 		usleep(900000);
-		data_client_send_test(handle, "123456789");
+		data_client_send_test_udp(handle, "123456789");
 	}
 	return 0;
 }

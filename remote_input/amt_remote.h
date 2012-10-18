@@ -54,6 +54,8 @@ struct amt_handle *init_client_sock(struct amt_client_callback *cb);
 int connect_client2server(struct amt_handle *handle, char *ip, int port);
 void control_client_log(struct amt_handle *handle, int tag_on);
 void data_client_send_test(struct amt_handle *handle, char *test);
+void data_client_send_test_udp(struct amt_handle *handle, char *test);
 void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
+void sensor_client_send_data_udp(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
 #endif
 

@@ -14,6 +14,7 @@ struct amt_client
 	struct amt_client_callback cb;
 	struct amt_log_handle log_handle;
 	struct protocol_handle protocol;
+	char server_ip[32];
 };
 
 static void event_read_cb(void *arg)
@@ -38,7 +39,13 @@ static void event_read_cb(void *arg)
 
 static int __update_udp_port(void *arg, unsigned short port)
 {
+	struct amt_event *event;
 	struct amt_client *client = arg;
+	amt_set_sockaddr(&client->sock_udp_addr, client->server_ip, port);
+	event = amt_event_set(&client->event_base, client->sock_udp, TYPE_UDP);
+	amt_event_add(client->event_base, event, event_read_cb, event);
+	client->event_udp = event;
+
 	LOGD(&client->log_handle, "%s: %d\n", __func__, port);
 	return RETURN_NORMAL;
 }
@@ -118,7 +125,7 @@ int connect_client2server(struct amt_handle *handle, char *ip, int port)
 		LOGE(&client->log_handle, "%s error\n", __func__);
 		return -1;
 	}
-	amt_set_sockaddr(&client->sock_udp_addr, ip, port);
+	strncpy(client->server_ip, ip, 16);
 	event = amt_event_set(&client->event_base, client->sock_tcp, TYPE_TCP);
 	amt_event_add(client->event_base, event, event_read_cb, event);
 	client->event_tcp = event;
@@ -135,7 +142,7 @@ void control_client_log(struct amt_handle *handle, int tag_on)
 		amt_log_control(&client->log_handle, tag_on);
 }
 
-void data_client_send_test(struct amt_handle *handle, char *test)
+static void __data_client_send_test(struct amt_handle *handle, char *test, int type)
 {
 	struct protocol_event packet;
 	struct amt_client *client;
@@ -143,10 +150,23 @@ void data_client_send_test(struct amt_handle *handle, char *test)
 		return;
 	client = handle->point;
 	data_set_test(&client->protocol, &packet, test);
-	amt_event_buffer_write_sync(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
+	if(type == TYPE_TCP)
+		amt_event_buffer_write_sync(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
+	else
+		amt_event_buffer_write_sync(client->event_udp, &packet, sizeof(struct protocol_event), &client->sock_udp_addr);
 }
 
-void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
+void data_client_send_test(struct amt_handle *handle, char *test)
+{
+	__data_client_send_test(handle, test, TYPE_TCP);
+}
+
+void data_client_send_test_udp(struct amt_handle *handle, char *test)
+{
+	__data_client_send_test(handle, test, TYPE_UDP);
+}
+
+static void __sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor, int type)
 {
 	struct protocol_event packet;
 	struct amt_client *client;
@@ -154,6 +174,19 @@ void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sens
 		return;
 	client = handle->point;
 	data_set_sensor_data(&client->protocol, &packet, num, sensor);
-	amt_event_buffer_write_sync(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
+	if(type == TYPE_TCP)
+		amt_event_buffer_write_sync(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
+	else
+		amt_event_buffer_write_sync(client->event_udp, &packet, sizeof(struct protocol_event), &client->sock_udp_addr);
+}
+
+void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
+{
+	__sensor_client_send_data(handle, num, sensor, TYPE_TCP);
+}
+
+void sensor_client_send_data_udp(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
+{
+	__sensor_client_send_data(handle, num, sensor, TYPE_UDP);
 }
 

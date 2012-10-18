@@ -158,7 +158,7 @@ struct amt_handle *init_server_sock(struct amt_server_callback *cb)
 	}
 	a_server->udp_port = port;
 	event = amt_event_set(&a_server->event_base, a_server->sock_udp, TYPE_UDP);
-	amt_event_add(a_server->event_base, event, event_listen_cb, event);
+	amt_event_add(a_server->event_base, event, event_read_cb, event);
 
 	pthread_mutex_init(&a_server->cmd_mutex, NULL);
 	pthread_cond_init(&a_server->cmd_cond, NULL);

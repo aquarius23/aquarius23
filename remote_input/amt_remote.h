@@ -23,6 +23,9 @@ struct amt_server_callback
 	amt_log_callback log_cb;
 	void (*update_test)(char *test);
 	void (*sensor_data)(int num, struct amt_sensor_data *sensor);
+	void (*mouse_data)(int x, int y, int button, int press);
+	void (*touch_data)(int num, int *x, int *y, int *press);
+	void (*key_data)(int code, int press);
 };
 
 struct amt_client_callback
@@ -57,5 +60,8 @@ void data_client_send_test(struct amt_handle *handle, char *test);
 void data_client_send_test_udp(struct amt_handle *handle, char *test);
 void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
 void sensor_client_send_data_udp(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
+void mouse_client_send_data(struct amt_handle *handle, int x, int y, int button, int press);
+void touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press);
+void key_client_send_data(struct amt_handle *handle, int code, int press);
 #endif
 

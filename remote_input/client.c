@@ -142,6 +142,14 @@ void control_client_log(struct amt_handle *handle, int tag_on)
 		amt_log_control(&client->log_handle, tag_on);
 }
 
+static void __data_buffer_send_common_sync(struct amt_client *client, void *data, int size, int type)
+{
+	if(type == TYPE_TCP)
+		amt_event_buffer_write_sync(client->event_tcp, data, size, NULL);
+	else
+		amt_event_buffer_write_sync(client->event_udp, data, size, &client->sock_udp_addr);
+}
+
 static void __data_client_send_test(struct amt_handle *handle, char *test, int type)
 {
 	struct protocol_event packet;
@@ -150,10 +158,7 @@ static void __data_client_send_test(struct amt_handle *handle, char *test, int t
 		return;
 	client = handle->point;
 	data_set_test(&client->protocol, &packet, test);
-	if(type == TYPE_TCP)
-		amt_event_buffer_write_sync(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
-	else
-		amt_event_buffer_write_sync(client->event_udp, &packet, sizeof(struct protocol_event), &client->sock_udp_addr);
+	__data_buffer_send_common_sync(client, &packet, sizeof(struct protocol_event), type);
 }
 
 void data_client_send_test(struct amt_handle *handle, char *test)
@@ -174,10 +179,7 @@ static void __sensor_client_send_data(struct amt_handle *handle, int num, struct
 		return;
 	client = handle->point;
 	data_set_sensor_data(&client->protocol, &packet, num, sensor);
-	if(type == TYPE_TCP)
-		amt_event_buffer_write_sync(client->event_tcp, &packet, sizeof(struct protocol_event), NULL);
-	else
-		amt_event_buffer_write_sync(client->event_udp, &packet, sizeof(struct protocol_event), &client->sock_udp_addr);
+	__data_buffer_send_common_sync(client, &packet, sizeof(struct protocol_event), type);
 }
 
 void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
@@ -188,5 +190,54 @@ void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sens
 void sensor_client_send_data_udp(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
 {
 	__sensor_client_send_data(handle, num, sensor, TYPE_UDP);
+}
+
+static void __mouse_client_send_data(struct amt_handle *handle, int x, int y, int button, int press, int type)
+{
+	struct protocol_event packet;
+	struct amt_client *client;
+	if(handle->type != AMT_CLIENT)
+		return;
+	client = handle->point;
+	data_set_mouse_data(&client->protocol, &packet, x, y, button, press);
+	__data_buffer_send_common_sync(client, &packet, sizeof(struct protocol_event), type);
+}
+
+void mouse_client_send_data(struct amt_handle *handle, int x, int y, int button, int press)
+{
+	__mouse_client_send_data(handle, x, y, button, press, TYPE_TCP);
+}
+
+static void __touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press, int type)
+{
+	struct protocol_event packet;
+	struct amt_client *client;
+	if(handle->type != AMT_CLIENT)
+		return;
+	client = handle->point;
+	data_set_touch_data(&client->protocol, &packet, num, x, y, press);
+	__data_buffer_send_common_sync(client, &packet, sizeof(struct protocol_event), type);
+}
+
+void touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press)
+{
+	__touch_client_send_data(handle, num, x, y, press, TYPE_TCP);
+}
+
+static void __key_client_send_data(struct amt_handle *handle, int code, int press, int type)
+{
+	struct protocol_event packet;
+	struct amt_client *client;
+	if(handle->type != AMT_CLIENT)
+		return;
+	client = handle->point;
+	data_set_key_data(&client->protocol, &packet, code, press);
+	__data_buffer_send_common_sync(client, &packet, sizeof(struct protocol_event), type);
+}
+
+
+void key_client_send_data(struct amt_handle *handle, int code, int press)
+{
+	__key_client_send_data(handle, code, press, TYPE_TCP);
 }
 

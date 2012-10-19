@@ -74,6 +74,30 @@ static int __sensor_data(void *arg, int num, struct amt_sensor_data *data)
 	return RETURN_NORMAL;
 }
 
+static int __mouse_data(void *arg, int x, int y, int button, int press)
+{
+	struct amt_server *server = arg;
+	if(server->cb.mouse_data)
+		server->cb.mouse_data(x, y, button, press);
+	return RETURN_NORMAL;
+}
+
+static int __touch_data(void *arg, int num, int *x, int *y, int *press)
+{
+	struct amt_server *server = arg;
+	if(server->cb.touch_data)
+		server->cb.touch_data(num, x, y, press);
+	return RETURN_NORMAL;
+}
+
+static int __key_data(void *arg, int code, int press)
+{
+	struct amt_server *server = arg;
+	if(server->cb.key_data)
+		server->cb.key_data(code, press);
+	return RETURN_NORMAL;
+}
+
 static int cmd_response(void *arg, unsigned short cmd, int retval)
 {
 	struct amt_server *server = arg;
@@ -97,6 +121,9 @@ static void init_protocol(struct amt_server *server)
 	server->protocol.update_test = update_test;
 	server->protocol.cmd_response = cmd_response;
 	server->protocol.sensor_data = __sensor_data;
+	server->protocol.mouse_data = __mouse_data;
+	server->protocol.touch_data = __touch_data;
+	server->protocol.key_data = __key_data;
 }
 
 struct amt_handle *init_server_sock(struct amt_server_callback *cb)

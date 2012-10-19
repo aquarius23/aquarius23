@@ -49,6 +49,35 @@ void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event 
 	}
 }
 
+void data_set_mouse_data(struct protocol_handle *handle, struct protocol_event *event, int x, int y, int button, int press)
+{
+	event->type = PROTOCOL_MOUSE;
+	event->packet.mouse.x = x;
+	event->packet.mouse.y = y;
+	event->packet.mouse.button = button;
+	event->packet.mouse.press = press;
+}
+
+void data_set_touch_data(struct protocol_handle *handle, struct protocol_event *event, int num, int *x, int *y, int *press)
+{
+	int i;
+	event->type = PROTOCOL_TOUCH;
+	event->packet.touch.num = num;
+	for(i = 0; i < num; i++)
+	{
+		event->packet.touch.x[i] = x[i];
+		event->packet.touch.y[i] = y[i];
+		event->packet.touch.press[i] = press[i];
+	}
+}
+
+void data_set_key_data(struct protocol_handle *handle, struct protocol_event *event, int code, int press)
+{
+	event->type =  PROTOCOL_KEY;
+	event->packet.key.keycode = code;
+	event->packet.key.keypress = press;
+}
+
 static int recv_command(struct protocol_handle *handle, struct control_data *cmd)
 {
 	int ret = 0;
@@ -122,12 +151,30 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 			break;
 
 		case PROTOCOL_TOUCH:
+			if(handle->touch_data)
+			{
+				int i;
+				int tempx[MAX_MULTI_TOUCH];
+				int tempy[MAX_MULTI_TOUCH];
+				int temppress[MAX_MULTI_TOUCH];
+				for(i = 0; i < event->packet.touch.num; i++)
+				{
+					tempx[i] = event->packet.touch.x[i];
+					tempy[i] = event->packet.touch.y[i];
+					temppress[i] = event->packet.touch.press[i];
+				}
+				ret = handle->touch_data(handle->data, event->packet.touch.num, tempx, tempy, temppress);
+			}
 			break;
 
 		case PROTOCOL_KEY:
+			if(handle->key_data)
+				ret = handle->key_data(handle->data, event->packet.key.keycode, event->packet.key.keypress);
 			break;
 
 		case PROTOCOL_MOUSE:
+				ret = handle->mouse_data(handle->data, event->packet.mouse.x, event->packet.mouse.y,
+						event->packet.mouse.button, event->packet.mouse.press);
 			break;
 
 		case PROTOCOL_LOCATION:
@@ -135,7 +182,7 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 
 		case PROTOCOL_TEST:
 			if(handle->update_test)
-				handle->update_test(handle->data, event->packet.test);
+				ret = handle->update_test(handle->data, event->packet.test);
 			break;
 
 		case PROTOCOL_SENSOR:
@@ -151,7 +198,7 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 					num++;
 				}
 				if(handle->sensor_data)
-					handle->sensor_data(handle->data, num, data);
+					ret = handle->sensor_data(handle->data, num, data);
 			}
 			break;
 

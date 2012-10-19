@@ -12,6 +12,7 @@
 #define PROTOCOL_TEST		6
 #define PROTOCOL_SENSOR		7
 
+#define MAX_MULTI_TOUCH		8
 #define MAX_SENSOR_TYPE		13
 
 #define CONTROL_CMD_UDP_PORT	1
@@ -45,6 +46,28 @@ struct sensor_data
 	float data[3];
 };
 
+struct mouse_data
+{
+	short button;
+	short press;
+	int x;
+	int y;
+};
+
+struct touch_data
+{
+	int num;
+	int x[MAX_MULTI_TOUCH];
+	int y[MAX_MULTI_TOUCH];
+	int press[MAX_MULTI_TOUCH];
+};
+
+struct key_data
+{
+	int keycode;
+	int keypress;
+};
+
 struct protocol_event
 {
 	short type;
@@ -52,6 +75,9 @@ struct protocol_event
 	{
 		struct control_data control;
 		struct sensor_data sensor[MAX_SENSOR_TYPE];
+		struct mouse_data mouse;
+		struct touch_data touch;
+		struct key_data key;
 		char test[32];
 	} packet;
 };
@@ -68,6 +94,10 @@ struct protocol_handle
 	int (*sensor_control)(void *arg, int sensor, int on);
 	int (*sensor_delay)(void *arg, int sensor, int delay);
 	int (*sensor_data)(void *arg, int num, struct amt_sensor_data *data);
+
+	int (*mouse_data)(void *arg, int x, int y, int button, int press);
+	int (*touch_data)(void *arg, int num, int *x, int *y, int *press);
+	int (*key_data)(void *arg, int code, int press);
 };
 
 int recv_packet(struct protocol_handle *handle, struct protocol_event *event);
@@ -76,5 +106,8 @@ void cmd_set_sensor_control(struct protocol_handle *handle, struct protocol_even
 void cmd_set_sensor_delay(struct protocol_handle *handle, struct protocol_event *event, int sensor, int delay);
 void data_set_test(struct protocol_handle *handle, struct protocol_event *event, char *test);
 void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event *event, int num, struct amt_sensor_data *data);
+void data_set_mouse_data(struct protocol_handle *handle, struct protocol_event *event, int x, int y, int button, int press);
+void data_set_touch_data(struct protocol_handle *handle, struct protocol_event *event, int num, int *x, int *y, int *press);
+void data_set_key_data(struct protocol_handle *handle, struct protocol_event *event, int code, int press);
 #endif
 

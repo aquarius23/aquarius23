@@ -14,6 +14,21 @@ void update_test(char *test)
 	printf("%s\n", test);
 }
 
+void mouse_data(int x, int y, int button, int press)
+{
+	printf("%s x = %d y = %d button = %d press = %d\n", __func__, x, y, button, press);
+}
+
+void touch_data(int num, int *x, int *y, int *press)
+{
+	printf("%s num = %d x = %d y = %d press = %d\n", __func__, num, *x, *y, *press);
+}
+
+void key_data(int code, int press)
+{
+	printf("%s code = %d press = %d\n", __func__, code, press);
+}
+
 #ifdef WIN32
 void update_sensor(float g_sensor_y, float o_sensor_x, float cal);
 void win32_sensor(int num, struct amt_sensor_data *sensor)
@@ -56,6 +71,9 @@ int main(void)
 	cb.log_cb = log_cb;
 	cb.update_test = update_test;
 	cb.sensor_data = sensor_data;
+	cb.mouse_data = mouse_data;
+	cb.touch_data = touch_data;
+	cb.key_data = key_data;
 	handle = init_server_sock(&cb);
 	control_server_log(handle, CB_LOGA);
 	while(1)

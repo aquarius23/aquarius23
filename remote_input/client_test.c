@@ -20,8 +20,15 @@ int main(void)
 	connect_client2server(handle, "127.0.0.1", SERVER_PORT);
 	while(1)
 	{
+		int x, y, z;
 		usleep(900000);
+		x = 111;
+		y = 222;
+		z = 333;
 		data_client_send_test_udp(handle, "123456789");
+		mouse_client_send_data(handle, x, y, z, 1);
+		touch_client_send_data(handle, 1, &x, &y, &z);
+		key_client_send_data(handle, y, 0);
 	}
 	return 0;
 }

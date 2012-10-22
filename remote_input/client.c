@@ -28,7 +28,6 @@ static void event_read_cb(void *arg)
 	if(size <= 0)
 	{
 		client->event_tcp = NULL;
-		close_socket(event->sock);
 		amt_event_del_safe(event);
 		LOGH(&client->log_handle, "socket error\n");
 	}
@@ -111,6 +110,18 @@ struct amt_handle *init_client_sock(struct amt_client_callback *cb)
 	a_handle->type = AMT_CLIENT;
 	a_handle->point = a_client;
 	return a_handle;
+}
+
+void deinit_client_sock(struct amt_handle *handle)
+{
+	struct amt_client *client;
+	if(handle->type != AMT_CLIENT)
+		return;
+	client = handle->point;
+	amt_event_base_deinit(client->event_base);
+	free(handle->point);
+	free(handle);
+	communicator_deinit();
 }
 
 int connect_client2server(struct amt_handle *handle, char *ip, int port)

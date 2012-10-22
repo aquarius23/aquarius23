@@ -50,11 +50,13 @@ struct amt_handle
 
 //server mode api
 struct amt_handle *init_server_sock(struct amt_server_callback *cb);
+void deinit_server_sock(struct amt_handle *handle);
 void control_server_log(struct amt_handle *handle, int tag_on);
 int sensor_server_control(struct amt_handle *handle, int sensor, int on);
 int sensor_server_delay(struct amt_handle *handle, int sensor, int delay);
 //client mode api
 struct amt_handle *init_client_sock(struct amt_client_callback *cb);
+void deinit_client_sock(struct amt_handle *handle);
 int connect_client2server(struct amt_handle *handle, char *ip, int port);
 void control_client_log(struct amt_handle *handle, int tag_on);
 void data_client_send_test(struct amt_handle *handle, char *test);

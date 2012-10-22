@@ -57,7 +57,7 @@ SOCKET listen_udp_port(int port);
 SOCKET amt_sock_accept(SOCKET sock, struct sockaddr *addr);
 char *amt_get_ip(struct sockaddr *addr);
 void amt_set_sockaddr(struct sockaddr *addr, char *ip, unsigned short port);
-void close_socket(SOCKET sock);
+void close_socket(struct amt_event *event);
 struct amt_event_base *amt_event_base_init(void);
 int amt_event_base_loop(struct amt_event_base *base);
 int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr);
@@ -68,5 +68,6 @@ struct amt_event *amt_event_set(struct amt_event_base **base, SOCKET sock, int s
 void amt_event_add(struct amt_event_base *base, struct amt_event *event, amt_event_read_callback cb, void *data);
 //void amt_event_del(struct amt_event *event);
 void amt_event_del_safe(struct amt_event *event);
+void amt_event_base_deinit(struct amt_event_base *base);
 #endif
 

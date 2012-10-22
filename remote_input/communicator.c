@@ -159,9 +159,11 @@ void amt_set_sockaddr(struct sockaddr *addr, char *ip, unsigned short port)
 	addr_in->sin_addr.s_addr = inet_addr(ip);
 }
 
-void close_socket(SOCKET sock)
+void close_socket(struct amt_event *event)
 {
-	closesocket(sock);
+	if(event->sock > 0)
+		closesocket(event->sock);
+	event->sock = 0;
 }
 
 struct amt_event_base *amt_event_base_init(void)
@@ -389,6 +391,7 @@ static void amt_event_del_nolock(struct amt_event *event)
 		free(msg);
 	}
 	pthread_mutex_unlock(&event->write_mutex);
+	close_socket(event);
 	free(event);
 }
 
@@ -408,11 +411,24 @@ void amt_event_del(struct amt_event *event)
 		free(msg);
 	}
 	pthread_mutex_unlock(&event->write_mutex);
+	close_socket(event);
 	free(event);
 }
 
 void amt_event_del_safe(struct amt_event *event)
 {
 	event->status = SOCKET_ERR;
+}
+
+void amt_event_base_deinit(struct amt_event_base *base)
+{
+	struct amt_event *event, *event_next;
+	base->exit_flag = 1;
+	pthread_join(base->loop_tid, NULL);
+	pthread_mutex_lock(&base->mutex);
+	list_for_each_entry_safe(event, event_next, &base->head, list)
+		amt_event_del_nolock(event);
+	pthread_mutex_unlock(&base->mutex);
+	free(base);
 }
 

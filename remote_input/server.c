@@ -34,7 +34,6 @@ static void event_read_cb(void *arg)
 	if(size <= 0)
 	{
 		LOGH(&server->log_handle, "socket error\n");
-		close_socket(event->sock);
 		amt_event_del_safe(event);
 	}
 	else
@@ -197,6 +196,18 @@ struct amt_handle *init_server_sock(struct amt_server_callback *cb)
 		amt_log_control(&a_server->log_handle, CB_LOGA); //disable init log
 
 	return a_handle;
+}
+
+void deinit_server_sock(struct amt_handle *handle)
+{
+	struct amt_server *server;
+	if(handle->type != AMT_SERVER)
+		return;
+	server = handle->point;
+	amt_event_base_deinit(server->event_base);
+	free(handle->point);
+	free(handle);
+	communicator_deinit();
 }
 
 void control_server_log(struct amt_handle *handle, int tag_on)

@@ -30,8 +30,9 @@ void key_data(int code, int press)
 }
 
 #ifdef WIN32
+void move_pointer(int x, int y);
 void update_sensor(float g_sensor_y, float o_sensor_x, float cal);
-void win32_sensor(int num, struct amt_sensor_data *sensor)
+void win32_ori(int num, struct amt_sensor_data *sensor)
 {
 	int i;
 	static float last_x = 0, last_y = 0;
@@ -50,14 +51,34 @@ void win32_sensor(int num, struct amt_sensor_data *sensor)
 		}
 	}
 	if(vx || vy)
-		update_sensor(last_x, last_y, 16);
+		update_sensor(last_x, last_y, 46);
+}
+
+void win32_gyro(int num, struct amt_sensor_data *sensor)
+{
+	int i;
+	for(i = 0; i < num; i++)
+	{
+		if(sensor[i].sensor_type == 4)
+		{
+			float x, y, z;
+			x = sensor[i].data[0];
+			y = sensor[i].data[1];
+			z = sensor[i].data[2];
+			y = -x * 10;
+			x = -z * 10;
+			move_pointer(x, y);
+			printf("%s x = %f, y = %f\n", __func__, x, y);
+		}
+	}
 }
 #endif
 
 void sensor_data(int num, struct amt_sensor_data *sensor)
 {
 #ifdef WIN32
-	win32_sensor(num, sensor);
+//	win32_ori(num, sensor);
+	win32_gyro(num, sensor);
 #endif
 //	while(num--)
 //		printf("sensor type = %d, x = %f, y = %f, z = %f\n", sensor[num].sensor_type, sensor[num].data[0], sensor[num].data[1], sensor[num].data[2]);
@@ -80,6 +101,7 @@ int main(void)
 	{
 		int ret = sensor_server_control(handle, 1, 1);
 		sensor_server_control(handle, 3, 1);
+		sensor_server_control(handle, 4, 1);
 		if(ret == RETURN_NORMAL)
 			break;
 		usleep(900000);

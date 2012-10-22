@@ -26,6 +26,11 @@ void set_pointer(int x, int y)
 	SetCursorPos(x, y);
 }
 
+void move_pointer(int x, int y)
+{
+	mouse_event(MOUSEEVENTF_MOVE, x, y, 0, 0);
+}
+
 void __translate_pointer(float *x_p, float *y_p, int width, int height, float cal)
 {
 	float x = *x_p;

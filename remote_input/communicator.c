@@ -296,7 +296,10 @@ static int amt_event_buffer_write_nolock(struct amt_event *event, void *data, in
 int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr)
 {
 	pthread_mutex_lock(&((*event->base)->mutex));
-	amt_event_buffer_write_nolock(event, data, size, dst_addr);
+	if(event->status == SOCKET_NORMAL)
+		size = amt_event_buffer_write_nolock(event, data, size, dst_addr);
+	else
+		size = 0;
 	pthread_mutex_unlock(&((*event->base)->mutex));
 	return size;
 }
@@ -304,6 +307,8 @@ int amt_event_buffer_write(struct amt_event *event, void *data, int size, struct
 int amt_event_buffer_write_sync(struct amt_event *event, void *data, int size, struct sockaddr *dst_addr)
 {
 	int ret;
+	if(event->status != SOCKET_NORMAL)
+		return 0;
 	if(event->tcp_udp_type == TYPE_TCP)
 		ret = send(event->sock, data, size, 0);
 	else
@@ -318,6 +323,8 @@ int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size
 	pthread_mutex_lock(&base->mutex);
 	list_for_each_entry(event, &base->head,list)
 	{
+		if(event->status != SOCKET_NORMAL)
+			continue;
 		if(filter && filter(event->sock, arg))
 			continue;
 		amt_event_buffer_write_nolock(event, data, size, dst_addr);

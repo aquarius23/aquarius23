@@ -27,9 +27,10 @@ static void event_read_cb(void *arg)
 	size = amt_event_buffer_read(event, &packet, sizeof(struct protocol_event), &addr);
 	if(size <= 0)
 	{
-		LOGE(&client->log_handle, "%s socket error\n", __func__);
+		client->event_tcp = NULL;
 		close_socket(event->sock);
 		amt_event_del_safe(event);
+		LOGH(&client->log_handle, "socket error\n");
 	}
 	else
 		size = recv_packet(&client->protocol, &packet);
@@ -120,7 +121,7 @@ int connect_client2server(struct amt_handle *handle, char *ip, int port)
 		return -1;
 	client = handle->point;
 	client->sock_tcp = connect_tcp_addr(ip, port);
-	if(client->sock_tcp < 0)
+	if(client->sock_tcp <= 0)
 	{
 		LOGE(&client->log_handle, "%s error\n", __func__);
 		return -1;
@@ -144,6 +145,8 @@ void control_client_log(struct amt_handle *handle, int tag_on)
 
 static void __data_buffer_send_common_sync(struct amt_client *client, void *data, int size, int type)
 {
+	if(!client->event_tcp)
+		return;
 	if(type == TYPE_TCP)
 		amt_event_buffer_write_sync(client->event_tcp, data, size, NULL);
 	else

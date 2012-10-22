@@ -8,7 +8,8 @@
 #define CB_LOGE	(1 << 2)
 #define CB_LOGW	(1 << 3)
 #define CB_LOGI	(1 << 4)
-#define CB_LOGA	(CB_LOGV | CB_LOGD | CB_LOGE | CB_LOGW | CB_LOGI)
+#define CB_LOGH	(1 << 5)
+#define CB_LOGA	(CB_LOGV | CB_LOGD | CB_LOGE | CB_LOGW | CB_LOGI |CB_LOGH)
 
 typedef void (*amt_log_callback)(int tag, const char *log);
 

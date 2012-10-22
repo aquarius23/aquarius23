@@ -33,7 +33,7 @@ static void event_read_cb(void *arg)
 	size = amt_event_buffer_read(event, &packet, sizeof(struct protocol_event), &addr);
 	if(size <= 0)
 	{
-		LOGE(&server->log_handle, "%s socket error\n", __func__);
+		LOGH(&server->log_handle, "socket error\n");
 		close_socket(event->sock);
 		amt_event_del_safe(event);
 	}
@@ -52,7 +52,7 @@ static void event_listen_cb(void *arg)
 	new_sock = amt_sock_accept(event->sock, &addr);
 	new_event = amt_event_set(event->base, new_sock, TYPE_TCP);
 	amt_event_add(*event->base, new_event, event_read_cb, new_event);
-	LOGD(&server->log_handle, "%s accept ip: %s\n", __func__, amt_get_ip(&addr));
+	LOGH(&server->log_handle, "%s accept ip: %s\n", __func__, amt_get_ip(&addr));
 
 	cmd_set_udp_port(&server->protocol, &packet, server->udp_port);
 	amt_event_buffer_write(new_event, &packet, sizeof(struct protocol_event), NULL);

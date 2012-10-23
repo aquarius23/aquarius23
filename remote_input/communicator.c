@@ -497,3 +497,49 @@ struct in_addr *get_local_ip(int *count)
 #endif
 }
 
+SOCKET multicast_create_sock_server(char *ip, char *group_ip, unsigned short port, int ttl)
+{
+	SOCKET sock;
+	int ret, one = 1;
+	struct in_addr addr;
+	struct ip_mreq multicast_addr;
+	unsigned char c_ttl = ttl;
+
+	sock = listen_udp_port(port);
+	if(sock < 0)
+		return sock;
+
+	memset((void *)&multicast_addr, 0, sizeof(struct ip_mreq));
+	multicast_addr.imr_interface.s_addr = inet_addr(ip);
+	multicast_addr.imr_multiaddr.s_addr = inet_addr(group_ip);
+	ret = setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&multicast_addr, sizeof(struct ip_mreq));
+	if(ret < 0)
+	{
+		closesocket(sock);
+		return -1;
+	}
+
+	memset((void *)&addr, 0, sizeof(struct in_addr));
+	addr.s_addr = inet_addr(ip);
+	ret = setsockopt(sock, IPPROTO_IP, IP_MULTICAST_IF, (char *)&addr, sizeof(struct in_addr));
+	if(ret < 0)
+		return ret;
+
+	ret = setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, (char *)&c_ttl, sizeof(char));
+	ret = setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char *)&one, sizeof(int));
+	if(ret < 0)
+		return ret;
+	return sock;
+}
+
+SOCKET multicast_create_sock_client(int ttl)
+{
+	SOCKET sock;
+	char c_ttl = ttl;
+	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if(sock < 0)
+		return sock;
+	setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &c_ttl, sizeof(char));
+	return sock;
+}
+

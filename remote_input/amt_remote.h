@@ -36,8 +36,15 @@ struct amt_client_callback
 	int (*sensor_delay)(int sensor, int delay);
 };
 
+struct amt_multicast_callback
+{
+	amt_log_callback log_cb;
+	int (*recv_multicast)(char *buf, int size, char *ip);
+};
+
 #define AMT_SERVER	1
 #define AMT_CLIENT	2
+#define AMT_MULTICAST	3
 
 #define RETURN_NORMAL   0
 #define RETURN_ERROR    -1
@@ -66,5 +73,11 @@ void sensor_client_send_data_udp(struct amt_handle *handle, int num, struct amt_
 void mouse_client_send_data(struct amt_handle *handle, int x, int y, int button, int press);
 void touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press);
 void key_client_send_data(struct amt_handle *handle, int code, int press);
+//multicast mode api
+struct amt_handle *init_multicast_sock(struct amt_multicast_callback *cb);
+void deinit_multicast_sock(struct amt_handle *handle);
+void add_multicast_interface(struct amt_handle *handle, char *ip);
+void control_multicast_log(struct amt_handle *handle, int tag_on);
+void send_multicast(struct amt_handle *handle, char *buf, int size);
 #endif
 

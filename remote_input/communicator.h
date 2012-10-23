@@ -3,6 +3,7 @@
 
 #ifdef WIN32
 	#include <winsock2.h>
+	#include <ws2tcpip.h>
 	#include "pthread.h"
 #else
 	#include <sys/types.h>
@@ -72,5 +73,7 @@ void amt_event_add(struct amt_event_base *base, struct amt_event *event, amt_eve
 void amt_event_del_safe(struct amt_event *event);
 void amt_event_base_deinit(struct amt_event_base *base);
 struct in_addr *get_local_ip(int *count);
+SOCKET multicast_create_sock_server(char *ip, char *group_ip, unsigned short port, int ttl);
+SOCKET multicast_create_sock_client(int ttl);
 #endif
 

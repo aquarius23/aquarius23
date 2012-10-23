@@ -7,8 +7,10 @@
 #else
 	#include <sys/types.h>
 	#include <sys/socket.h>
+	#include <sys/ioctl.h>
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
+	#include <net/if.h>
 	#include <netdb.h>
 	#include <pthread.h>
 	#define closesocket close
@@ -69,5 +71,6 @@ void amt_event_add(struct amt_event_base *base, struct amt_event *event, amt_eve
 //void amt_event_del(struct amt_event *event);
 void amt_event_del_safe(struct amt_event *event);
 void amt_event_base_deinit(struct amt_event_base *base);
+struct in_addr *get_local_ip(int *count);
 #endif
 

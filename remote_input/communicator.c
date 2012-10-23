@@ -432,3 +432,68 @@ void amt_event_base_deinit(struct amt_event_base *base)
 	free(base);
 }
 
+static struct in_addr local_in_addr[32];
+#ifdef WIN32
+static struct in_addr *__get_local_ip_win32(int *count)
+{
+	int ret = 0;
+	struct hostent *hp;
+	char name[512];
+	char **list;
+	gethostname(name, 512);
+	if(!(hp = gethostbyname(name)))
+		return NULL;
+	list = hp->h_addr_list;
+	while(*list)
+	{
+		memcpy(&local_in_addr[ret], *list, sizeof(struct in_addr));
+		list++;
+		ret++;
+	}
+	if(count)
+		*count = ret;
+	return local_in_addr;
+}
+#else
+static struct in_addr *__get_local_ip_linux(int *count)
+{
+	int socket_fd;
+	struct ifreq *ifr;
+	struct ifconf conf;
+	char buff[2048];
+	int num;
+	int i, ret;
+
+	socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
+	conf.ifc_len = 2048;
+	conf.ifc_buf = buff;
+	ioctl(socket_fd, SIOCGIFCONF, &conf);
+	num = conf.ifc_len / sizeof(struct ifreq);
+	ifr = conf.ifc_req;
+	for(i = 0, ret = 0; i<num; i++)
+	{
+		struct sockaddr_in *sin = (struct sockaddr_in *)(&ifr->ifr_addr);
+		ioctl(socket_fd, SIOCGIFFLAGS, ifr);
+		if(((ifr->ifr_flags & IFF_LOOPBACK) == 0) && (ifr->ifr_flags & IFF_UP))
+		{
+			memcpy(&local_in_addr[ret], &sin->sin_addr, sizeof(struct in_addr));
+			ret++;
+		}
+		ifr++;
+	}
+	close(socket_fd);
+	if(count)
+		*count = ret;
+	return local_in_addr;
+}
+#endif
+
+struct in_addr *get_local_ip(int *count)
+{
+#ifdef WIN32
+	return __get_local_ip_win32(count);
+#else
+	return __get_local_ip_linux(count);
+#endif
+}
+

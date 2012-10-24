@@ -71,7 +71,9 @@ void data_client_send_test_udp(struct amt_handle *handle, char *test);
 void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
 void sensor_client_send_data_udp(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
 void mouse_client_send_data(struct amt_handle *handle, int x, int y, int button, int press);
+void mouse_client_send_data_udp(struct amt_handle *handle, int x, int y, int button, int press);
 void touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press);
+void touch_client_send_data_udp(struct amt_handle *handle, int num, int *x, int *y, int *press);
 void key_client_send_data(struct amt_handle *handle, int code, int press);
 //multicast mode api
 struct amt_handle *init_multicast_sock(struct amt_multicast_callback *cb);

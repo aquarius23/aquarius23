@@ -222,6 +222,11 @@ void mouse_client_send_data(struct amt_handle *handle, int x, int y, int button,
 	__mouse_client_send_data(handle, x, y, button, press, TYPE_TCP);
 }
 
+void mouse_client_send_data_udp(struct amt_handle *handle, int x, int y, int button, int press)
+{
+	__mouse_client_send_data(handle, x, y, button, press, TYPE_UDP);
+}
+
 static void __touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press, int type)
 {
 	struct protocol_event packet;
@@ -236,6 +241,11 @@ static void __touch_client_send_data(struct amt_handle *handle, int num, int *x,
 void touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press)
 {
 	__touch_client_send_data(handle, num, x, y, press, TYPE_TCP);
+}
+
+void touch_client_send_data_udp(struct amt_handle *handle, int num, int *x, int *y, int *press)
+{
+	__touch_client_send_data(handle, num, x, y, press, TYPE_UDP);
 }
 
 static void __key_client_send_data(struct amt_handle *handle, int code, int press, int type)

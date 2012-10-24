@@ -14,4 +14,4 @@ LOCAL_CFLAGS += -O2 -Wall -DNDK -fPIC
 #LOCAL_LDLIBS += -llog -ldl
 LOCAL_MODULE:= libamt_remote
 LOCAL_MODULE_TAGS := optional
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)

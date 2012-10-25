@@ -90,6 +90,7 @@ struct protocol_handle
 	int (*cmd_response)(void *arg, unsigned short cmd, int retval);
 	int (*update_udp_port)(void *arg, unsigned short port);
 	int (*update_test)(void *arg, char *test);
+	int (*cmd_ack)(void *arg, struct protocol_event *event);
 
 	int (*sensor_control)(void *arg, int sensor, int on);
 	int (*sensor_delay)(void *arg, int sensor, int delay);

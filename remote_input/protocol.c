@@ -78,7 +78,7 @@ void data_set_key_data(struct protocol_handle *handle, struct protocol_event *ev
 	event->packet.key.keypress = press;
 }
 
-static int recv_command(struct protocol_handle *handle, struct control_data *cmd)
+static int recv_command(struct protocol_handle *handle, struct control_data *cmd, struct protocol_event *event)
 {
 	int ret = 0;
 	if(cmd->direct == DIRECT_RESPONSE)
@@ -135,10 +135,12 @@ static int recv_command(struct protocol_handle *handle, struct control_data *cmd
 	}
 	cmd->direct = DIRECT_RESPONSE;
 	cmd->ret = ret;
-	if(cmd->cmd == CONTROL_CMD_UDP_PORT)
-		return 0;
-	else
-		return 2;
+	if(cmd->cmd != CONTROL_CMD_UDP_PORT)
+	{
+		if(handle->cmd_ack)
+			handle->cmd_ack(handle->data, event);
+	}
+	return 0;
 }
 
 int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
@@ -147,7 +149,7 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 	switch(event->type)
 	{
 		case PROTOCOL_CONTROL:
-			ret = recv_command(handle, &event->packet.control);
+			ret = recv_command(handle, &event->packet.control, event);
 			break;
 
 		case PROTOCOL_TOUCH:

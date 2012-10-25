@@ -32,9 +32,14 @@ static void event_read_cb(void *arg)
 		LOGH(&client->log_handle, "socket error\n");
 	}
 	else
-		size = recv_packet(&client->protocol, &packet);
-	if(size == 2)
-		amt_event_buffer_write(event, &packet, sizeof(struct protocol_event), NULL);
+		recv_packet(&client->protocol, &packet);
+}
+
+static int __cmd_ack(void *arg, struct protocol_event *event)
+{
+	struct amt_client *client = arg;
+	amt_event_buffer_write_sync(client->event_tcp, event, sizeof(struct protocol_event), NULL);
+	return RETURN_NORMAL;
 }
 
 static int __update_udp_port(void *arg, unsigned short port)
@@ -77,6 +82,7 @@ static void init_protocol(struct amt_client *client)
 	client->protocol.update_udp_port = __update_udp_port;
 	client->protocol.sensor_control = __sensor_control;
 	client->protocol.sensor_delay = __sensor_delay;
+	client->protocol.cmd_ack = __cmd_ack;
 }
 
 struct amt_handle *init_client_sock(struct amt_client_callback *cb)

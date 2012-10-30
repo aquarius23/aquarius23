@@ -4,6 +4,10 @@
 #include <string.h>
 #include "amt_remote.h"
 
+#ifdef WIN32
+void move_pointer(int x, int y);
+void update_sensor(float g_sensor_y, float o_sensor_x, float cal);
+#endif
 void log_cb(int tag, const char *log)
 {
 	printf("%s", log);
@@ -16,6 +20,9 @@ void update_test(char *test)
 
 void mouse_data(int x, int y, int button, int press)
 {
+#ifdef WIN32
+	move_pointer(x, y);
+#endif
 	printf("%s x = %d y = %d button = %d press = %d\n", __func__, x, y, button, press);
 }
 
@@ -30,8 +37,6 @@ void key_data(int code, int press)
 }
 
 #ifdef WIN32
-void move_pointer(int x, int y);
-void update_sensor(float g_sensor_y, float o_sensor_x, float cal);
 void win32_ori(int num, struct amt_sensor_data *sensor)
 {
 	int i;
@@ -78,7 +83,7 @@ void sensor_data(int num, struct amt_sensor_data *sensor)
 {
 #ifdef WIN32
 //	win32_ori(num, sensor);
-	win32_gyro(num, sensor);
+//	win32_gyro(num, sensor);
 #endif
 //	while(num--)
 //		printf("sensor type = %d, x = %f, y = %f, z = %f\n", sensor[num].sensor_type, sensor[num].data[0], sensor[num].data[1], sensor[num].data[2]);

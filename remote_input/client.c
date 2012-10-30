@@ -29,6 +29,8 @@ static void event_read_cb(void *arg)
 	{
 		client->event_tcp = NULL;
 		amt_event_del_safe(event);
+		amt_event_del_safe(client->event_udp);
+		client->event_udp = NULL;
 		LOGH(&client->log_handle, "socket error\n");
 	}
 	else
@@ -46,6 +48,7 @@ static int __update_udp_port(void *arg, unsigned short port)
 {
 	struct amt_event *event;
 	struct amt_client *client = arg;
+	client->sock_udp = create_udp_sock();
 	amt_set_sockaddr(&client->sock_udp_addr, client->server_ip, port);
 	event = amt_event_set(&client->event_base, client->sock_udp, TYPE_UDP);
 	amt_event_add(client->event_base, event, event_read_cb, event);
@@ -102,7 +105,6 @@ struct amt_handle *init_client_sock(struct amt_client_callback *cb)
 	}
 
 	communicator_init();
-	a_client->sock_udp = create_udp_sock();
 	a_client->event_base = amt_event_base_init();
 
 	if(cb)

@@ -166,7 +166,7 @@ static void __data_buffer_send_common_sync(struct amt_client *client, void *data
 {
 	if(!client->event_tcp)
 		return;
-	if(type == TYPE_TCP)
+	if((type == TYPE_TCP) || (!client->event_udp))
 		amt_event_buffer_write_sync(client->event_tcp, data, size, NULL);
 	else
 		amt_event_buffer_write_sync(client->event_udp, data, size, &client->sock_udp_addr);

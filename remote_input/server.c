@@ -36,7 +36,7 @@ static void event_read_cb(void *arg)
 		LOGH(&server->log_handle, "socket error\n");
 		amt_event_del_safe(event);
 	}
-	else
+	else if(size == sizeof(struct protocol_event))
 		recv_packet(&server->protocol, &packet);
 }
 

@@ -33,7 +33,7 @@ static void event_read_cb(void *arg)
 		client->event_udp = NULL;
 		LOGH(&client->log_handle, "socket error\n");
 	}
-	else
+	else if(size == sizeof(struct protocol_event))
 		recv_packet(&client->protocol, &packet);
 }
 

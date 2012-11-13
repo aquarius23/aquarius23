@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "log.h"
 #include "communicator.h"
 
@@ -336,7 +337,7 @@ int amt_event_buffer_write_all(struct amt_event_base *base, void *data, int size
 	return count;
 }
 
-int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct sockaddr *src_addr)
+static int __amt_event_buffer_read(struct amt_event *event, void *data, int size, struct sockaddr *src_addr)
 {
 #ifdef WIN32
 	int len;
@@ -350,6 +351,33 @@ int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct 
 		return recv(event->sock, data, size, 0);
 	else
 		return recvfrom(event->sock, data, size, 0, src_addr, &len);
+}
+
+int amt_event_buffer_read(struct amt_event *event, void *data, int size, struct sockaddr *src_addr)
+{
+	int nread;
+	int nleft = size;
+	void *p = data;
+	if(event->tcp_udp_type == TYPE_UDP)
+		return __amt_event_buffer_read(event, data, size, src_addr);
+	else
+	{
+		while(nleft > 0)
+		{
+			if((nread = __amt_event_buffer_read(event, p, nleft, NULL)) < 0)
+			{
+				if(errno == EINTR)
+					nread = 0;
+				else
+					return -1;
+			} else if (nread == 0)
+				break;
+
+			nleft -= nread;
+			p += nread;
+		}
+	}
+	return (size - nleft);
 }
 
 struct amt_event *amt_event_set(struct amt_event_base **base, SOCKET sock, int sock_type)

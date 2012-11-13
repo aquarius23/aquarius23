@@ -11,6 +11,7 @@
 #define PROTOCOL_LOCATION	5
 #define PROTOCOL_TEST		6
 #define PROTOCOL_SENSOR		7
+#define PROTOCOL_MAGIC		0x2311
 
 #define MAX_MULTI_TOUCH		8
 #define MAX_SENSOR_TYPE		13
@@ -71,6 +72,7 @@ struct key_data
 struct protocol_event
 {
 	short type;
+	short magic;
 	union
 	{
 		struct control_data control;

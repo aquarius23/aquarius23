@@ -4,6 +4,7 @@
 void cmd_set_udp_port(struct protocol_handle *handle, struct protocol_event *event, unsigned short port)
 {
 	event->type = PROTOCOL_CONTROL;
+	event->magic = PROTOCOL_MAGIC;
 	event->packet.control.cmd = CONTROL_CMD_UDP_PORT;
 	event->packet.control.direct = DIRECT_REQUEST;
 	event->packet.control.argv.b16[0] = port;
@@ -12,6 +13,7 @@ void cmd_set_udp_port(struct protocol_handle *handle, struct protocol_event *eve
 void cmd_set_sensor_control(struct protocol_handle *handle, struct protocol_event *event, int sensor, int on)
 {
 	event->type = PROTOCOL_CONTROL;
+	event->magic = PROTOCOL_MAGIC;
 	event->packet.control.cmd = CONTROL_CMD_SENSOR;
 	event->packet.control.direct = DIRECT_REQUEST;
 	event->packet.control.argv.b32[0] = 1;
@@ -22,6 +24,7 @@ void cmd_set_sensor_control(struct protocol_handle *handle, struct protocol_even
 void cmd_set_sensor_delay(struct protocol_handle *handle, struct protocol_event *event, int sensor, int delay)
 {
 	event->type = PROTOCOL_CONTROL;
+	event->magic = PROTOCOL_MAGIC;
 	event->packet.control.cmd = CONTROL_CMD_SENSOR;
 	event->packet.control.direct = DIRECT_REQUEST;
 	event->packet.control.argv.b32[0] = 2;
@@ -32,6 +35,7 @@ void cmd_set_sensor_delay(struct protocol_handle *handle, struct protocol_event 
 void data_set_test(struct protocol_handle *handle, struct protocol_event *event, char *test)
 {
 	event->type = PROTOCOL_TEST;
+	event->magic = PROTOCOL_MAGIC;
 	strncpy(event->packet.test, test, 30);
 }
 
@@ -40,6 +44,7 @@ void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event 
 	int i;
 	memset(event, 0, sizeof(struct protocol_event));
 	event->type = PROTOCOL_SENSOR;
+	event->magic = PROTOCOL_MAGIC;
 	for(i = 0; i < num; i++)
 	{
 		event->packet.sensor[i].sensor_type = data[i].sensor_type;
@@ -52,6 +57,7 @@ void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event 
 void data_set_mouse_data(struct protocol_handle *handle, struct protocol_event *event, int x, int y, int button, int press)
 {
 	event->type = PROTOCOL_MOUSE;
+	event->magic = PROTOCOL_MAGIC;
 	event->packet.mouse.x = x;
 	event->packet.mouse.y = y;
 	event->packet.mouse.button = button;
@@ -62,6 +68,9 @@ void data_set_touch_data(struct protocol_handle *handle, struct protocol_event *
 {
 	int i;
 	event->type = PROTOCOL_TOUCH;
+	event->magic = PROTOCOL_MAGIC;
+	if(num > MAX_MULTI_TOUCH)
+		num = MAX_MULTI_TOUCH;
 	event->packet.touch.num = num;
 	for(i = 0; i < num; i++)
 	{
@@ -73,7 +82,8 @@ void data_set_touch_data(struct protocol_handle *handle, struct protocol_event *
 
 void data_set_key_data(struct protocol_handle *handle, struct protocol_event *event, int code, int press)
 {
-	event->type =  PROTOCOL_KEY;
+	event->type = PROTOCOL_KEY;
+	event->magic = PROTOCOL_MAGIC;
 	event->packet.key.keycode = code;
 	event->packet.key.keypress = press;
 }
@@ -146,6 +156,11 @@ static int recv_command(struct protocol_handle *handle, struct control_data *cmd
 int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 {
 	int ret = 0;
+	if(event->magic != PROTOCOL_MAGIC)
+	{
+		LOGE(handle->log, "%s bad magic number\n", __func__);
+		return -1;
+	}
 	switch(event->type)
 	{
 		case PROTOCOL_CONTROL:
@@ -153,7 +168,9 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 			break;
 
 		case PROTOCOL_TOUCH:
-			if(handle->touch_data)
+			if(event->packet.touch.num > MAX_MULTI_TOUCH)
+				LOGE(handle->log, "%s bad touch number: %d\n", __func__, event->packet.touch.num);
+			else if(handle->touch_data)
 			{
 				int i;
 				int tempx[MAX_MULTI_TOUCH];

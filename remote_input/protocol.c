@@ -39,12 +39,14 @@ void data_set_test(struct protocol_handle *handle, struct protocol_event *event,
 	strncpy(event->packet.test, test, 30);
 }
 
-void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event *event, int num, struct amt_sensor_data *data)
+void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event *event, unsigned int num, struct amt_sensor_data *data)
 {
 	int i;
 	memset(event, 0, sizeof(struct protocol_event));
 	event->type = PROTOCOL_SENSOR;
 	event->magic = PROTOCOL_MAGIC;
+	if(num > MAX_SENSOR_TYPE)
+		num = MAX_SENSOR_TYPE;
 	for(i = 0; i < num; i++)
 	{
 		event->packet.sensor[i].sensor_type = data[i].sensor_type;
@@ -64,7 +66,7 @@ void data_set_mouse_data(struct protocol_handle *handle, struct protocol_event *
 	event->packet.mouse.press = press;
 }
 
-void data_set_touch_data(struct protocol_handle *handle, struct protocol_event *event, int num, int *x, int *y, int *press)
+void data_set_touch_data(struct protocol_handle *handle, struct protocol_event *event, unsigned int num, int *x, int *y, int *press)
 {
 	int i;
 	event->type = PROTOCOL_TOUCH;
@@ -172,7 +174,7 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 				LOGE(handle->log, "%s bad touch number: %d\n", __func__, event->packet.touch.num);
 			else if(handle->touch_data)
 			{
-				int i;
+				unsigned int i;
 				int tempx[MAX_MULTI_TOUCH];
 				int tempy[MAX_MULTI_TOUCH];
 				int temppress[MAX_MULTI_TOUCH];
@@ -206,7 +208,7 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 
 		case PROTOCOL_SENSOR:
 			{
-				int num = 0;
+				unsigned int num = 0;
 				struct amt_sensor_data data[MAX_SENSOR_TYPE];
 				while(event->packet.sensor[num].sensor_type)
 				{
@@ -215,6 +217,8 @@ int recv_packet(struct protocol_handle *handle, struct protocol_event *event)
 					data[num].data[1] = event->packet.sensor[num].data[1];
 					data[num].data[2] = event->packet.sensor[num].data[2];
 					num++;
+					if(num >= MAX_SENSOR_TYPE)
+						break;
 				}
 				if(handle->sensor_data)
 					ret = handle->sensor_data(handle->data, num, data);

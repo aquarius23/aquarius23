@@ -57,7 +57,7 @@ struct mouse_data
 
 struct touch_data
 {
-	int num;
+	unsigned int num;
 	int x[MAX_MULTI_TOUCH];
 	int y[MAX_MULTI_TOUCH];
 	int press[MAX_MULTI_TOUCH];
@@ -96,10 +96,10 @@ struct protocol_handle
 
 	int (*sensor_control)(void *arg, int sensor, int on);
 	int (*sensor_delay)(void *arg, int sensor, int delay);
-	int (*sensor_data)(void *arg, int num, struct amt_sensor_data *data);
+	int (*sensor_data)(void *arg, unsigned int num, struct amt_sensor_data *data);
 
 	int (*mouse_data)(void *arg, int x, int y, int button, int press);
-	int (*touch_data)(void *arg, int num, int *x, int *y, int *press);
+	int (*touch_data)(void *arg, unsigned int num, int *x, int *y, int *press);
 	int (*key_data)(void *arg, int code, int press);
 };
 
@@ -108,9 +108,9 @@ void cmd_set_udp_port(struct protocol_handle *handle, struct protocol_event *eve
 void cmd_set_sensor_control(struct protocol_handle *handle, struct protocol_event *event, int sensor, int on);
 void cmd_set_sensor_delay(struct protocol_handle *handle, struct protocol_event *event, int sensor, int delay);
 void data_set_test(struct protocol_handle *handle, struct protocol_event *event, char *test);
-void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event *event, int num, struct amt_sensor_data *data);
+void data_set_sensor_data(struct protocol_handle *handle, struct protocol_event *event, unsigned int num, struct amt_sensor_data *data);
 void data_set_mouse_data(struct protocol_handle *handle, struct protocol_event *event, int x, int y, int button, int press);
-void data_set_touch_data(struct protocol_handle *handle, struct protocol_event *event, int num, int *x, int *y, int *press);
+void data_set_touch_data(struct protocol_handle *handle, struct protocol_event *event, unsigned int num, int *x, int *y, int *press);
 void data_set_key_data(struct protocol_handle *handle, struct protocol_event *event, int code, int press);
 #endif
 

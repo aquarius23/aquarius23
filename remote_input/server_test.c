@@ -26,7 +26,7 @@ void mouse_data(int x, int y, int button, int press)
 	printf("%s x = %d y = %d button = %d press = %d\n", __func__, x, y, button, press);
 }
 
-void touch_data(int num, int *x, int *y, int *press)
+void touch_data(unsigned int num, int *x, int *y, int *press)
 {
 	printf("%s num = %d x = %d y = %d press = %d\n", __func__, num, *x, *y, *press);
 }
@@ -79,7 +79,7 @@ void win32_gyro(int num, struct amt_sensor_data *sensor)
 }
 #endif
 
-void sensor_data(int num, struct amt_sensor_data *sensor)
+void sensor_data(unsigned int num, struct amt_sensor_data *sensor)
 {
 #ifdef WIN32
 //	win32_ori(num, sensor);

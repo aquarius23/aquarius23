@@ -23,9 +23,9 @@ struct amt_server_callback
 {
 	amt_log_callback log_cb;
 	void (*update_test)(char *test);
-	void (*sensor_data)(int num, struct amt_sensor_data *sensor);
+	void (*sensor_data)(unsigned int num, struct amt_sensor_data *sensor);
 	void (*mouse_data)(int x, int y, int button, int press);
-	void (*touch_data)(int num, int *x, int *y, int *press);
+	void (*touch_data)(unsigned int num, int *x, int *y, int *press);
 	void (*key_data)(int code, int press);
 };
 
@@ -68,12 +68,12 @@ int connect_client2server(struct amt_handle *handle, char *ip, int port);
 void control_client_log(struct amt_handle *handle, int tag_on);
 void data_client_send_test(struct amt_handle *handle, char *test);
 void data_client_send_test_udp(struct amt_handle *handle, char *test);
-void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
-void sensor_client_send_data_udp(struct amt_handle *handle, int num, struct amt_sensor_data *sensor);
+void sensor_client_send_data(struct amt_handle *handle, unsigned int num, struct amt_sensor_data *sensor);
+void sensor_client_send_data_udp(struct amt_handle *handle, unsigned int num, struct amt_sensor_data *sensor);
 void mouse_client_send_data(struct amt_handle *handle, int x, int y, int button, int press);
 void mouse_client_send_data_udp(struct amt_handle *handle, int x, int y, int button, int press);
-void touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press);
-void touch_client_send_data_udp(struct amt_handle *handle, int num, int *x, int *y, int *press);
+void touch_client_send_data(struct amt_handle *handle, unsigned int num, int *x, int *y, int *press);
+void touch_client_send_data_udp(struct amt_handle *handle, unsigned int num, int *x, int *y, int *press);
 void key_client_send_data(struct amt_handle *handle, int code, int press);
 //multicast mode api
 struct amt_handle *init_multicast_sock(struct amt_multicast_callback *cb);

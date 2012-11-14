@@ -193,7 +193,7 @@ void data_client_send_test_udp(struct amt_handle *handle, char *test)
 	__data_client_send_test(handle, test, TYPE_UDP);
 }
 
-static void __sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor, int type)
+static void __sensor_client_send_data(struct amt_handle *handle, unsigned int num, struct amt_sensor_data *sensor, int type)
 {
 	struct protocol_event packet;
 	struct amt_client *client;
@@ -204,12 +204,12 @@ static void __sensor_client_send_data(struct amt_handle *handle, int num, struct
 	__data_buffer_send_common_sync(client, &packet, sizeof(struct protocol_event), type);
 }
 
-void sensor_client_send_data(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
+void sensor_client_send_data(struct amt_handle *handle, unsigned int num, struct amt_sensor_data *sensor)
 {
 	__sensor_client_send_data(handle, num, sensor, TYPE_TCP);
 }
 
-void sensor_client_send_data_udp(struct amt_handle *handle, int num, struct amt_sensor_data *sensor)
+void sensor_client_send_data_udp(struct amt_handle *handle, unsigned int num, struct amt_sensor_data *sensor)
 {
 	__sensor_client_send_data(handle, num, sensor, TYPE_UDP);
 }
@@ -235,7 +235,7 @@ void mouse_client_send_data_udp(struct amt_handle *handle, int x, int y, int but
 	__mouse_client_send_data(handle, x, y, button, press, TYPE_UDP);
 }
 
-static void __touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press, int type)
+static void __touch_client_send_data(struct amt_handle *handle, unsigned int num, int *x, int *y, int *press, int type)
 {
 	struct protocol_event packet;
 	struct amt_client *client;
@@ -246,12 +246,12 @@ static void __touch_client_send_data(struct amt_handle *handle, int num, int *x,
 	__data_buffer_send_common_sync(client, &packet, sizeof(struct protocol_event), type);
 }
 
-void touch_client_send_data(struct amt_handle *handle, int num, int *x, int *y, int *press)
+void touch_client_send_data(struct amt_handle *handle, unsigned int num, int *x, int *y, int *press)
 {
 	__touch_client_send_data(handle, num, x, y, press, TYPE_TCP);
 }
 
-void touch_client_send_data_udp(struct amt_handle *handle, int num, int *x, int *y, int *press)
+void touch_client_send_data_udp(struct amt_handle *handle, unsigned int num, int *x, int *y, int *press)
 {
 	__touch_client_send_data(handle, num, x, y, press, TYPE_UDP);
 }

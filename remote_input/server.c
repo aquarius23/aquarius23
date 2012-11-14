@@ -65,7 +65,7 @@ static int update_test(void *arg, char *test)
 	return RETURN_NORMAL;
 }
 
-static int __sensor_data(void *arg, int num, struct amt_sensor_data *data)
+static int __sensor_data(void *arg, unsigned int num, struct amt_sensor_data *data)
 {
 	struct amt_server *server = arg;
 	if(server->cb.sensor_data)
@@ -81,7 +81,7 @@ static int __mouse_data(void *arg, int x, int y, int button, int press)
 	return RETURN_NORMAL;
 }
 
-static int __touch_data(void *arg, int num, int *x, int *y, int *press)
+static int __touch_data(void *arg, unsigned int num, int *x, int *y, int *press)
 {
 	struct amt_server *server = arg;
 	if(server->cb.touch_data)

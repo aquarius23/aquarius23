@@ -17,7 +17,9 @@
 #include <time.h>
 
 #include "common.h"
-
+#ifdef WIN32
+#include <windows.h>
+#endif
 #define NUM_OBJECTS	100
 
 static CommonState *state;
@@ -273,4 +275,10 @@ main(int argc, char *argv[])
     return 0;
 }
 
+#ifdef WIN32
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+    return main(0, NULL);
+}
+#endif
 /* vi: set ts=4 sw=4 expandtab: */

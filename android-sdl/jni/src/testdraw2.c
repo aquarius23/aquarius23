@@ -278,7 +278,8 @@ main(int argc, char *argv[])
 #ifdef WIN32
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    return main(0, NULL);
+    char *argv = "sdl";
+    return main(1, &argv);
 }
 #endif
 /* vi: set ts=4 sw=4 expandtab: */

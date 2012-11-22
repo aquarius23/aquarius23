@@ -1,4 +1,4 @@
-common = common.o testdraw2.o
+common = common.o log.o testdraw2.o
 CFLAGS = -Wall -O2 -I../SDL/include
 LINK_LIB = -lSDL2
 

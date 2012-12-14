@@ -29,9 +29,9 @@
 # If the platform is *not* MinGW (e.g. it is Cygwin or UWIN),
 # the DLL name should be changed from "zlib1.dll".
 
-BINARY_PATH = /usr/local/cross-tools/i586-mingw32msvc/bin
-INCLUDE_PATH = /usr/local/cross-tools/i586-mingw32msvc/include
-LIBRARY_PATH = /usr/local/cross-tools/i586-mingw32msvc/lib
+BINARY_PATH = /usr/i586-mingw32msvc/bin
+INCLUDE_PATH = /usr/i586-mingw32msvc/include
+LIBRARY_PATH = /usr/i586-mingw32msvc/lib
 STATICLIB = libz.a
 SHAREDLIB = zlib1.dll
 IMPLIB    = libz.dll.a

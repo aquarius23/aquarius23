@@ -3,6 +3,10 @@
 import urllib
 import HTMLParser
 import re
+import time
+
+def get_date():
+	return time.strftime('%Y-%m-%d',time.localtime(time.time()))
 
 def get_web_html(url):
 	err = 1
@@ -68,19 +72,6 @@ class Stocklist(HTMLParser.HTMLParser):
 					#print name
 					self.mkey[number] = name
 
-def get_stock_list():
-	list = Stocklist()
-	stocklist_html = get_web_html('http://quote.eastmoney.com/stocklist.html')
-	stocklist_html = stocklist_html.decode('GBK')
-	list.feed(stocklist_html)
-	return list.mlist
-
-def get_stock_key():
-	list = Stocklist()
-	stocklist_html = get_web_html('http://quote.eastmoney.com/stocklist.html')
-	stocklist_html = stocklist_html.decode('GBK')
-	list.feed(stocklist_html)
-	return list.mkey
 
 class Indexlist(HTMLParser.HTMLParser):
 	temp = []
@@ -124,12 +115,39 @@ class Indexlist(HTMLParser.HTMLParser):
 				self.index.append(self.temp)
 				self.temp = []
 
-def get_index_list(index, year, jidu, real_stock):
-	index_html = stock_url(index, year, jidu, real_stock)
-	index_html = get_web_html(index_html)
-	index_html = index_html.decode('GBK')
-	index = Indexlist()
-	index.feed(index_html)
-	#print index.index
-	return index.index
+
+
+class stock_parser():
+	last_time = ''
+	stock_kv = {}
+	stock_list = []
+
+	def __parser_stock_list(self):
+		list = Stocklist()
+		stocklist_html = get_web_html('http://quote.eastmoney.com/stocklist.html')
+		stocklist_html = stocklist_html.decode('GBK')
+		list.feed(stocklist_html)
+		self.stock_kv = list.mkey
+		self.stock_list = list.mlist
+
+	def get_stock_list(self):
+		if get_date() != self.last_time:
+			self.last_time = get_date()
+			self.__parser_stock_list()
+		return self.stock_list
+
+	def get_stock_kv(self):
+		if get_date() != self.last_time:
+			self.last_time = get_date()
+			self.__parser_stock_list()
+		return self.stock_kv
+
+	def get_index_list(self, index, year, jidu, real_stock):
+		index_html = stock_url(index, year, jidu, real_stock)
+		index_html = get_web_html(index_html)
+		index_html = index_html.decode('GBK')
+		index = Indexlist()
+		index.feed(index_html)
+		#print index.index
+		return index.index
 

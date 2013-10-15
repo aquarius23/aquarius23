@@ -135,8 +135,6 @@ class Indexlist(HTMLParser.HTMLParser):
 				self.index.append(self.temp)
 				self.temp = []
 
-
-
 class stock_parser():
 	last_time = ''
 	stock_kv = {}
@@ -170,4 +168,32 @@ class stock_parser():
 		index.feed(index_html)
 		#print index.index
 		return index.index
+
+	def get_detailed_exchange(self, index, year, month, day):
+		exchanges = []
+		exchange_html = detail_url(index, year, month, day)
+		exchange_html = get_web_html(exchange_html)
+		exchange_html = exchange_html.decode('GBK')
+		if len(exchange_html) < 200:
+			return []
+		lines = exchange_html.split('\n')
+		first = 1
+		for line in lines:
+			if first == 1:
+				first = 0
+			else:
+				result = []
+				item = line.split('\t')
+				if len(item) == 6:
+					result.append(item[0])
+					result.append(item[1])
+					result.append(item[3])
+					if item[5] == u'买盘':
+						result.append('1')
+					elif item[5] == u'卖盘':
+						result.append('-1')
+					else:
+						result.append('0')
+					exchanges.append(result)
+		return exchanges
 

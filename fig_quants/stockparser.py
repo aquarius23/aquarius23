@@ -35,6 +35,26 @@ def stock_url(index, year, jidu, real_stock):
 	url = url + r'year=' + str(year) + r'&jidu=' + str(jidu)
 	return url
 
+def detail_url(index, year, month, day):
+	if len(index) != 6:
+		print 'bad stock code'
+		return ''
+
+	url = str(year) + r'-'
+	if month < 10:
+		url = url + '0'
+	url = url + str(month) + r'-'
+	if day < 10:
+		url = url + '0'
+	url = url + str(day) + r'&symbol='
+	url = r'http://market.finance.sina.com.cn/downxls.php?date=' + url
+	if index[0] == '6':
+		url = url + 'sh'
+	else:
+		url = url + 'sz'
+	url = url + index
+	return url
+
 class Stocklist(HTMLParser.HTMLParser):
 	mkey = {}
 	mlist = []

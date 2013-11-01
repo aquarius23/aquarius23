@@ -16,12 +16,13 @@ def __validate_path(path):
 				if os.path.exists(file):
 					print file + 'already exist'
 
-def store_file(path, file, buf):
+def write_file(path, file, buf):
 	__validate_path(path)
 	file = stockconfig.FIG_DB_PATH + '/' + path + '/' + file
 	value = zlib.compress(buf)
 	f = open(file, 'wb')
 	f.write(value)
+	f.flush()
 	f.close()
 
 def is_file_exist(path, file):
@@ -29,7 +30,7 @@ def is_file_exist(path, file):
 	return os.path.exists(file)
 
 def read_file(path, file):
-	if __is_file_exist(path, file) == False:
+	if is_file_exist(path, file) == False:
 		return ''
 	file = stockconfig.FIG_DB_PATH + '/' + path + '/' + file
 	f = open(file, 'rb')

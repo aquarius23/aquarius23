@@ -2,6 +2,7 @@
 #!coding=utf-8
 import time
 import string
+import threading
 import stockdb
 import stockparser
 import stockconfig
@@ -11,6 +12,17 @@ def get_date():
 
 def get_time():
 	return time.strftime('%T',time.localtime(time.time()))
+
+class task(threading.Thread):
+	def __init__(self, num, interval):
+		threading.Thread.__init__(self)
+
+	def run(self):
+		while not self.thread_stop:
+			time.sleep(self.interval)
+
+	def stop(self):
+		self.thread_stop = True
 
 class stockroot():
 	parser = stockparser.stock_parser()
@@ -56,11 +68,15 @@ class stockroot():
 			return last
 		return ''
 
-	def get_next_day(self, today):
-		day = today.split('-')
+	def __get_year_jidu(self, day_string):
+		day = day_string.split('-')
 		year = string.atoi(day[0])
 		month = string.atoi(day[1])
 		jidu = (month + 2) / 3
+		return year, jidu
+
+	def get_next_day(self, today):
+		year, jidu = self.__get_year_jidu(today)
 		next = self.__get_next_day_by_sh(year, jidu, today)
 		if next == '':
 			year, next_jidu = self.__next_jidu(year, jidu)

@@ -28,16 +28,16 @@ class stockroot():
 	parser = stockparser.stock_parser()
 	db = stockdb.stockdb()
 	thread_num = stockconfig.FIG_THREAD_NUM
-	started = 0
+	started = False
 
 	def set_thread_num(self, num):
 		self.thread_num = num
 
 	def start(self):
-		self.started = 1
+		self.started = True
 
 	def stop(self):
-		self.started = 0
+		self.started = False
 
 	def __splite_task(self, list):
 		task = []
@@ -79,9 +79,9 @@ class stockroot():
 		year1, jidu1 = self.__get_year_jidu(day1)
 		year2, jidu2 = self.__get_year_jidu(day2)
 		if year1 == year2 and jidu1 == jidu2:
-			return 1
+			return True
 		else:
-			return 0
+			return False
 
 	def __get_next_day(self, today):
 		year, jidu = self.__get_year_jidu(today)
@@ -91,20 +91,28 @@ class stockroot():
 			next = self.__get_next_day_by_sh(year, next_jidu, today)
 		return next
 
-	def __real_update(self, list, day, update_jidu, validate_list):
-		print 'x'
+	def __real_update(self, list, day, update_jidu):
+		print day + '-' + str(update_jidu)
 
 	def looper(self):
-		last_year = 0
-		last_jidu = 0
-		while self.started == 1:
+		last_jidu_update_day = '0000-00-00'
+		task_list = []
+		while self.started == True:
 			today = get_date()
 			last = self.db.get_last_update_day()
-			print self.__is_same_jidu('2012-12-12', '2012-09-01')
 			if cmp(today, last):
 				next = self.__get_next_day(last)
 				if next != '':
-					list = self.parser.get_index_list()
+					update_jidu = False
+					current_jidu = self.__is_same_jidu(next, today)
+					same_jidu = self.__is_same_jidu(next, last_jidu_update_day)
+					if current_jidu == True or same_jidu == False:
+						list = self.parser.get_stock_list()
+						task_list = self.__splite_task(list)
+						last_jidu_update_day = next
+						update_jidu = True
+					self.__real_update(task_list, next, update_jidu)
+					self.db.update_last_update_day(next)
 				else:
 					time.sleep(1800)
 			else:

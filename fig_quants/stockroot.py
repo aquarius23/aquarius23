@@ -75,7 +75,15 @@ class stockroot():
 		jidu = (month + 2) / 3
 		return year, jidu
 
-	def get_next_day(self, today):
+	def __is_same_jidu(self, day1, day2):
+		year1, jidu1 = self.__get_year_jidu(day1)
+		year2, jidu2 = self.__get_year_jidu(day2)
+		if year1 == year2 and jidu1 == jidu2:
+			return 1
+		else:
+			return 0
+
+	def __get_next_day(self, today):
 		year, jidu = self.__get_year_jidu(today)
 		next = self.__get_next_day_by_sh(year, jidu, today)
 		if next == '':
@@ -83,15 +91,25 @@ class stockroot():
 			next = self.__get_next_day_by_sh(year, next_jidu, today)
 		return next
 
+	def __real_update(self, list, day, update_jidu, validate_list):
+		print 'x'
+
 	def looper(self):
+		last_year = 0
+		last_jidu = 0
 		while self.started == 1:
 			today = get_date()
 			last = self.db.get_last_update_day()
+			print self.__is_same_jidu('2012-12-12', '2012-09-01')
 			if cmp(today, last):
-				print 'true'
-			time.sleep(1800)
+				next = self.__get_next_day(last)
+				if next != '':
+					list = self.parser.get_index_list()
+				else:
+					time.sleep(1800)
+			else:
+				time.sleep(1800)
 
 x = stockroot()
 x.start()
-print x.get_next_day('2012-12-31')
 x.looper()

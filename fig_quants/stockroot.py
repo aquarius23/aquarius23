@@ -13,13 +13,17 @@ def get_date():
 def get_time():
 	return time.strftime('%T',time.localtime(time.time()))
 
-class task(threading.Thread):
-	def __init__(self, num, interval):
+class taskthread(threading.Thread):
+	def __init__(self, list, day, update_jidu, thread_id):
 		threading.Thread.__init__(self)
+		self.list = list
+		self.day = day
+		self.update_jidu = update_jidu
+		self.thread_id = thread_id
 
 	def run(self):
-		while not self.thread_stop:
-			time.sleep(self.interval)
+		for item in self.list:
+			print 'id' + str(self.thread_id) + 'stock' + item
 
 	def stop(self):
 		self.thread_stop = True
@@ -93,6 +97,16 @@ class stockroot():
 
 	def __real_update(self, list, day, update_jidu):
 		print day + '-' + str(update_jidu)
+		threadx = []
+		id = 1
+		for item in list:
+			task = taskthread(item, day, update_jidu, id)
+			task.start()
+			threadx.append(task)
+			id = id + 1
+		for item in threadx:
+			item.join()
+		print 'update--------------ok'
 
 	def looper(self):
 		last_jidu_update_day = '0000-00-00'

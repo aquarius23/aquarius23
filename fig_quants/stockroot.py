@@ -14,16 +14,36 @@ def get_time():
 	return time.strftime('%T',time.localtime(time.time()))
 
 class taskthread(threading.Thread):
-	def __init__(self, list, day, update_jidu, thread_id):
+	def __init__(self, list, day, update_jidu, thread_id, stock_parser, stock_db):
 		threading.Thread.__init__(self)
 		self.list = list
 		self.day = day
 		self.update_jidu = update_jidu
 		self.thread_id = thread_id
+		self.stock_parser = stock_parser
+		self.stock_db = stock_db
 
 	def run(self):
+		split = self.day.split('-')
+		year = string.atoi(split[0])
+		month = string.atoi(split[1])
+		day = string.atoi(split[2])
+		jidu = (month + 2) / 3
 		for item in self.list:
-			print 'id' + str(self.thread_id) + 'stock' + item
+			if self.update_jidu:
+				index = self.stock_parser.get_index_list(item, year, jidu, 1)
+				if len(index) > 0:
+					print 'update index day:' + self.day + '  id:' + str(self.thread_id) + '  stock:' + item
+					self.stock_db.write_data_jidu(item, index, year, jidu)
+				else:
+					self.list.remove(item)
+					continue
+			if self.stock_db.has_data_day(item, year, month, day) == False:
+				detail = self.stock_parser.get_detailed_exchange(item, year, month, day)
+				print 'update detail day:' + self.day + '  id:' + str(self.thread_id) + '  stock:' + item
+				if len(detail) > 0:
+					self.stock_db.write_data_day(item, detail, year, month, day)
+		print '---------exit thread:' + str(self.thread_id)
 
 	def stop(self):
 		self.thread_stop = True
@@ -100,12 +120,17 @@ class stockroot():
 		threadx = []
 		id = 1
 		for item in list:
-			task = taskthread(item, day, update_jidu, id)
+			task = taskthread(item, day, update_jidu, id, self.parser, self.db)
 			task.start()
 			threadx.append(task)
 			id = id + 1
 		for item in threadx:
 			item.join()
+		year, jidu = self.__get_year_jidu(day)
+		sh = self.parser.get_index_list('000001', year, jidu, 0)
+		self.db.write_data_jidu('sh000001', sh, year, jidu)
+		sz = self.parser.get_index_list('399001', year, jidu, 0)
+		self.db.write_data_jidu('sz399001', sh, year, jidu)
 		print 'update--------------ok'
 
 	def looper(self):

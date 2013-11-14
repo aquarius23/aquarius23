@@ -1,5 +1,6 @@
 #!/usr/bin/python
 #!coding=utf-8
+import socket
 import urllib
 import HTMLParser
 import re
@@ -10,13 +11,20 @@ def get_date():
 
 def get_web_html(url):
 	err = 1
+	socket.setdefaulttimeout(20)
 	while err:
 		try:
 			u = urllib.urlopen(url)
-			buffer = u.read()
-			u.close()
-			err = 0
-		except:
+			if u:
+				buffer = u.read()
+				u.close()
+				err = 0
+			else:
+				err = 1
+				print 'urlopen error'
+				time.sleep(2)
+		except Exception as err:
+			print err
 			err = 1
 			time.sleep(2)
 	return buffer

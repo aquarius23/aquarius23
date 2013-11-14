@@ -15,10 +15,10 @@ class stockdb():
 		return '\n'.join(str)
 
 	def __get_path_day(self, year, month, day):
-		return str(year) + '/' + str(month) + '/' + str(day)
+		return 'detail/' + str(year) + '/' + str(month) + '/' + str(day)
 
 	def __get_path_jidu(self, year, jidu):
-		return str(year) + '/' + str(jidu)
+		return 'index/' + str(year) + '/' + str(jidu)
 
 	def write_data_day(self, name, list, year, month, day):
 		path = self.__get_path_day(year, month, day)

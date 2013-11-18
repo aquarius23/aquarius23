@@ -1,5 +1,6 @@
 #!/usr/bin/python
 #!coding=utf-8
+import time
 import string
 import rawdb
 import stockconfig
@@ -9,6 +10,7 @@ class stockdb():
 		return ','.join(list)
 
 	def __stocklist2str(self, lists):
+		lists.reverse()
 		str = []
 		for list in lists:
 			str.append(self.__list2str(list))
@@ -31,7 +33,7 @@ class stockdb():
 			value = rawdb.read_file(path, name)
 			if value != '':
 				return value
-			sleep(1)
+			time.sleep(1)
 		return ''
 
 	def has_data_day(self, name, year, month, day):
@@ -49,7 +51,7 @@ class stockdb():
 			value = rawdb.read_file(path, name)
 			if value != '':
 				return value
-			sleep(1)
+			time.sleep(1)
 		return ''
 
 	def get_last_update_day(self):

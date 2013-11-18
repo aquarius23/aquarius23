@@ -43,6 +43,13 @@ class taskthread(threading.Thread):
 				print 'update detail day:' + self.day + '  id:' + str(self.thread_id) + '  stock:' + item
 				if len(detail) > 0:
 					self.stock_db.write_data_day(item, detail, year, month, day)
+			else:
+				validate = self.stock_db.read_data_day(item, year, month, day)
+				if validate == '':
+					detail = self.stock_parser.get_detailed_exchange(item, year, month, day)
+					print 'reupdate detail day:' + self.day + '  id:' + str(self.thread_id) + '  stock:' + item
+					if len(detail) > 0:
+						self.stock_db.write_data_day(item, detail, year, month, day)
 		print '---------exit thread:' + str(self.thread_id)
 
 	def stop(self):

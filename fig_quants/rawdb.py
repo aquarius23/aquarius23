@@ -30,15 +30,20 @@ def is_file_exist(path, file):
 	return os.path.exists(file)
 
 def read_file(path, file):
+	buf = ''
 	if is_file_exist(path, file) == False:
 		return ''
 	file = stockconfig.FIG_DB_PATH + '/' + path + '/' + file
 	f = open(file, 'rb')
-	f.seek(0, 2)
-	size = f.tell()
-	f.seek(0)
-	value = f.read(size)
-	buf = zlib.decompress(value)
-	f.close()
+	if f:
+		f.seek(0, 2)
+		size = f.tell()
+		f.seek(0)
+		value = f.read(size)
+		try:
+			buf = zlib.decompress(value)
+		except Exception as err:
+			print err
+		f.close()
 	return buf
 

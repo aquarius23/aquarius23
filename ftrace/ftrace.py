@@ -4,6 +4,7 @@ import os
 import sys
 import string
 import parser_common
+import parser_task
 
 def open_file(file):
 	f = open(file, 'rb')
@@ -26,4 +27,10 @@ else:
 	if(argc == 4):
 		time = sys.argv[3]
 	parser = parser_common.ftrace_parser()
-	parser.parser_ftrace(open_file(file), cmd, time)
+	parser.parser_ftrace(open_file(file))
+	cpu = parser.get_cpu()
+	result = parser.get_result()
+
+	task = parser_task.ftrace_task()
+	task.parser_task(result)
+	task = task.get_task()

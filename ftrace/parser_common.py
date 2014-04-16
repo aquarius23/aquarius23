@@ -81,8 +81,20 @@ def parser_line(tag):
 		return []
 	return result
 
-def parser_task(line):
-	if(line[0] == 0):
+
+class ftrace_parser():
+	cpu = 0;
+	cpu_trace_full = {}
+	cpu_trace_task = {}
+
+	def __store_log(self, line):
+		cpu = line[0]
+		if self.cpu_trace_full.has_key(cpu):
+			self.cpu_trace_full[cpu].append(line)
+		else:
+			self.cpu_trace_full[cpu] = line
+
+	def __parser_task(self, line):
 		if line[2] == 'sched_wakeup':
 			return
 		if line[2] == 'sched_migrate_task':
@@ -91,9 +103,13 @@ def parser_task(line):
 			return
 		if line[2] == 'softirq_raise':
 			return
-		print line
 
-class ftrace_parser():
+		cpu = line[0]
+		if self.cpu_trace_task.has_key(cpu):
+			self.cpu_trace_task[cpu].append(line)
+		else:
+			self.cpu_trace_task[cpu] = line
+
 	def parser_ftrace(self, buffer, cmd, time):
 		lines = buffer.split('\n')
 		for line in lines:
@@ -101,5 +117,7 @@ class ftrace_parser():
 			if len(tag) != 0 and tag[0] != '#':
 				result = parser_line(tag)
 				if result:
-					parser_task(result)
+					self.__store_log(result)
+					self.__parser_task(result)
+		self.cpu = len(self.cpu_trace_full)
 

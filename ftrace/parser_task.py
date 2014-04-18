@@ -125,6 +125,34 @@ class ftrace_task():
 				task_time[count].extend(list)
 		return time_range, task_time
 
+	def find_kernel_block(self, num):
+		result = []
+		for cpu_id in range(0, self.cpu_number):
+			last_sched = []
+			list = []
+			for line in self.cpu_trace_task[cpu_id]:
+				if line[3] != 'task':
+					continue
+				if last_sched == []:
+					last_sched = line;
+					continue
+				diff = line[1] - last_sched[1] - line[0]
+				last_sched = line
+				if line[4].find('swapper') < 0:
+					temp = line
+					temp.append(diff)
+					list.append(temp)
+			list.sort(cmp = lambda x,y: cmp(x[6],y[6]), reverse = True)
+
+			count = num
+			result_list = []
+			for item in list:
+				if count > 0:
+					result_list.append(item)
+				count = count - 1;
+			result.append(result_list)
+		return result
+
 	def get_task(self):
 		return self.cpu_trace_task
 

@@ -5,6 +5,8 @@ import sys
 import string
 
 class ftrace_task():
+	time_slice = 0
+	cpu_number = 0
 	cpu_trace_task = {}
 	def __stack_push(self, stack, item):
 		stack.append(item)
@@ -59,6 +61,7 @@ class ftrace_task():
 		list = []
 		list.append(time)#cost time
 		list.append(line[1])#current time
+		list.append(cpu)
 		if type == 'sched_switch':
 			list.append('task')
 			list.append(line[3])#name
@@ -83,11 +86,57 @@ class ftrace_task():
 			return False
 		return True
 
+	def select_time_slice(self, ms):
+		self.time_slice = ms
+
+	def __split_task(self):
+		task_time = []
+		time_range = []
+		ms = self.time_slice
+		if ms <= 0:
+			ms = 1000*60*60
+		start_time = self.cpu_trace_task[0][0][1]
+		for cpu_id in range(0, self.cpu_number):
+			start = start_time
+			end = start + ms
+			list = []
+			count = 0
+			for line in self.cpu_trace_task[cpu_id]:
+				if line[1] <= end:
+					list.append(line)
+				else:
+					slice_range = 'start: ' + str(start) + '   --->   end: ' + str(end)
+					if cpu_id == 0:
+						time_range.append(slice_range)
+						task_time.append(list)
+					else:
+						task_time[count].extend(list)
+					start = end
+					end = start + ms
+					list = []
+					list.append(line)
+					count = count + 1
+
+			slice_range = 'start: ' + str(start) + '   --->   end: ' + str(end)
+			if cpu_id == 0:
+				time_range.append(slice_range)
+				task_time.append(list)
+			else:
+				task_time[count].extend(list)
+		return time_range, task_time
+
 	def get_task(self):
 		return self.cpu_trace_task
 
+	#def task_percent(self, name):
+
+	#def irq_percent(self, irq):
+
+	#def softirq_percent(self, vec):
+
 	def parser_task(self, full):
 		cpu = len(full)
+		self.cpu_number = cpu
 		for cpu_id in range(0, cpu):
 			stack = []
 			begain = 0

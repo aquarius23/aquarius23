@@ -15,7 +15,7 @@ def get_pid(tag):
 
 def parser_line(tag):
 	cpu = string.atoi(tag[1][3])
-	time = string.atof(tag[2].split(':')[0])
+	time = string.atof(tag[2].split(':')[0]) * 1000
 	result = []
 	result.append(cpu)
 	result.append(time)

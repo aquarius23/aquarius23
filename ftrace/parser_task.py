@@ -147,6 +147,43 @@ class ftrace_task():
 			list.append(percent)
 		return time, list
 
+	def __top(self):
+		time, cost = self.__split_task()
+		list = []
+		for slice in cost:
+			dic = {}
+			temp = []
+			for line in slice:
+				line_cost = line[0]
+				line_id = line[4]
+				line_type = line[3]
+				key = line_type + ':' + line_id
+				if key in dic:
+					dic[key] = dic[key] + line_cost
+				else:
+					dic[key] = line_cost
+			for key in dic.keys():
+				item = []
+				item.append(key)
+				item.append(dic[key])
+				temp.append(item)
+			temp.sort(cmp = lambda x,y: cmp(x[1],y[1]), reverse = True)
+			list.append(temp)
+		return time, list
+
+	def top(self, num):
+		time, cost = self.__top()
+		list = []
+		for slice in cost:
+			count = num
+			temp = []
+			for item in slice:
+				if count > 0:
+					temp.append(item)
+				count = count - 1;
+			list.append(temp)
+		return time, list
+
 	def task_percent(self, name):
 		type = 'task'
 		return self.item_percent(name, type)

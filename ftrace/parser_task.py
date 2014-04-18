@@ -128,11 +128,36 @@ class ftrace_task():
 	def get_task(self):
 		return self.cpu_trace_task
 
-	#def task_percent(self, name):
+	def item_percent(self, id, type):
+		time, cost = self.__split_task()
+		list = []
+		for slice in cost:
+			sum = 0
+			count = 0
+			for line in slice:
+				line_cost = line[0]
+				line_type = line[3]
+				line_id = line[4]
+				sum = sum + line_cost
+				if type == line_type:
+					if id == line_id:
+						count = count + line_cost
+			percent = count * 100 / sum
+			percent = 'all: ' + str(sum) + '  cost: ' + str(count) + '  percent:' + str(percent) + '%'
+			list.append(percent)
+		return time, list
 
-	#def irq_percent(self, irq):
+	def task_percent(self, name):
+		type = 'task'
+		return self.item_percent(name, type)
 
-	#def softirq_percent(self, vec):
+	def irq_percent(self, irq):
+		type = 'irq'
+		return self.item_percent(irq, type)
+
+	def softirq_percent(self, vec):
+		type = 'softirq'
+		return self.item_percent(vec, type)
 
 	def parser_task(self, full):
 		cpu = len(full)

@@ -15,7 +15,7 @@ def get_pid(tag):
 
 def parser_line(tag):
 	cpu = string.atoi(tag[1][3])
-	time = string.atof(tag[2].split(':')[0]) * 1000
+	time = string.atof(tag[2].split(':')[0]) * 1000000
 	result = []
 	result.append(cpu)
 	result.append(time)
@@ -37,9 +37,11 @@ def parser_line(tag):
 		next = get_value(tag[9])
 		prev_state = get_value(tag[7])
 		next_pid = get_value(tag[10])
+		prev_pid = get_value(tag[5])
 		result.append(prev)
-		result.append(next)
+		result.append(prev_pid)
 		result.append(prev_state)
+		result.append(next)
 		result.append(next_pid)
 	elif tag[3] == 'irq_handler_exit:':
 		irq = get_value(tag[4])

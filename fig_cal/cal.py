@@ -5,11 +5,8 @@ import sys
 import string
 
 def cal_ratio(count, ratio):
-	sum = 1
 	ratio = 1.0 + float(ratio)
-	for i in range(0, count):
-		sum = sum * ratio
-	return sum
+	return pow(ratio, count)
 
 def cal_month_money(money, month, ratio):
 	ratio = float(ratio) / 1200
@@ -17,17 +14,11 @@ def cal_month_money(money, month, ratio):
 	month_money = (money * ratio * factor) / (factor - 1)
 	return month_money
 
-def cal_money_fund_oneday(money, ratio):
-	ratio = float(ratio) / 36500
-	return money * ratio
-
-def cal_money_fund_day(money, ratio):
-	return money + cal_money_fund_oneday(money, ratio)
+def cal_money_fund_ratio(ratio, day):
+	return cal_ratio(day, float(ratio) / 36500)
 
 def cal_money_fund_month(money, ratio):
-	for i in range(0, 30):
-		money = cal_money_fund_day(money, ratio)
-	return money
+	return money * cal_money_fund_ratio(ratio, 30)
 
 def cal_pinan_money(money, month, ratio, fund_ratio):
 	receive = cal_month_money(money, month, ratio)

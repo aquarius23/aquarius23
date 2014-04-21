@@ -15,22 +15,71 @@ def open_file(file):
 	f.close()
 	return buffer
 
-argc = len(sys.argv)
-if argc < 2 + 1:
+def help():
 	print '     Help:'
-	print '     ftrace file cmd [ms]'
-	print '     cmd: sum'
-else:
-	file = sys.argv[1]
-	cmd = sys.argv[2]
-	time = 0;
-	if(argc == 4):
-		time = sys.argv[3]
+	print '     ftrace file cmdline [ms]'
+	print '     cmdline:'
+	print '            sum name=id'
+	print '            top [num]'
+
+def get_task(ms):
 	parser = parser_common.ftrace_parser()
 	parser.parser_ftrace(open_file(file))
-	cpu = parser.get_cpu()
 	result = parser.get_result()
 
 	task = parser_task.ftrace_task()
+	if ms > 0:
+		task.select_time_slice(ms)
 	task.parser_task(result)
-	task = task.get_task()
+	return task
+
+argc = len(sys.argv) - 1
+if argc < 2:
+	help()
+else:
+	file = sys.argv[1]
+	cmd = sys.argv[2]
+
+	time = []
+	result = []
+	if cmd == 'sum':
+		if argc < 3:
+			help()
+		else:
+			name = sys.argv[3].split('=')
+			id = name[1]
+			name = name[0]
+			ms = 0
+			if argc == 4:
+				ms = string.atoi(sys.argv[4])
+			task = get_task(ms)
+			result = []
+			if name == 'task':
+				time, result = task.task_percent(id)
+			elif name == 'irq':
+				time, result = task.irq_percent(id)
+			elif name == 'softirq':
+				time, result = task.softirq_percent(id)
+
+			count = 0
+			for slice in time:
+				print slice
+				item = result[count]
+				print item
+				count = count + 1
+	elif cmd == 'top':
+		ms = 0
+		num = 0
+		if argc >= 3:
+			num = string.atoi(sys.argv[3])
+			if argc >= 4:
+				ms = string.atoi(sys.argv[4])
+		task = get_task(ms)
+		time, result = task.top(num)
+		count = 0
+		for slice in time:
+			print slice
+			for item in result[count]:
+				print item
+			count = count + 1
+			print '--------------------------'

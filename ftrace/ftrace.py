@@ -21,6 +21,7 @@ def help():
 	print '     cmdline:'
 	print '            sum name=id'
 	print '            top [num]'
+	print '            block num'
 
 def get_task(ms):
 	parser = parser_common.ftrace_parser()
@@ -83,3 +84,14 @@ else:
 				print item
 			count = count + 1
 			print '--------------------------'
+	elif cmd == 'block':
+		if argc < 3:
+			help()
+		else:
+			task = get_task(0)
+			num = string.atoi(sys.argv[3])
+			result = task.find_kernel_block(num)
+			for cpu in result:
+				print '-------------------------------------'
+				for item in cpu:
+					print item

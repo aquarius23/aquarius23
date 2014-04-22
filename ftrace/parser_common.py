@@ -104,7 +104,7 @@ class ftrace_parser():
 		lines = buffer.split('\n')
 		for line in lines:
 			tag = line.split()
-			if len(tag) != 0 and tag[0] != '#':
+			if len(tag) != 0 and tag[0][0] != '#':
 				result = parser_line(tag)
 				if result:
 					self.__store_log(result)

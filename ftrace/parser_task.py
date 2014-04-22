@@ -140,6 +140,7 @@ class ftrace_task():
 				last_sched = line
 				if line[4].find('swapper') < 0:
 					temp = line
+					temp[1] = temp[1] / 1000
 					temp.append(diff)
 					list.append(temp)
 			list.sort(cmp = lambda x,y: cmp(x[6],y[6]), reverse = True)

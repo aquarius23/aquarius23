@@ -64,8 +64,10 @@ class ftrace_task():
 		list.append(cpu)
 		if type == 'sched_switch':
 			list.append('task')
-			list.append(line[3])#name
-			list.append(line[4])#pid
+			list.append(line[3])#prev name
+			list.append(line[4])#prev pid
+			list.append(line[6])#next name
+			list.append(line[7])#next pid
 		elif type == 'irq_handler_exit':
 			list.append('irq')
 			list.append(line[3])#irq
@@ -139,7 +141,7 @@ class ftrace_task():
 				diff = line[1] - last_sched[1] - line[0]
 				last_sched = line
 				if line[4].find('swapper') < 0:
-					temp = line
+					temp = line[:]
 					temp[1] = temp[1] / 1000
 					temp.append(diff)
 					list.append(temp)
@@ -153,6 +155,84 @@ class ftrace_task():
 				count = count - 1;
 			result.append(result_list)
 		return result
+
+	def __found_in_list(self, list, id):
+		for item in list:
+			if item == id:
+				return True
+		return False
+
+	def __filter_process(self, name):
+		result = []
+		tid = []
+		for cpu_id in range(0, self.cpu_number):
+			for line in self.cpu_trace_task[cpu_id]:
+				if line[3] != 'task':
+					continue
+				if line[4].find(name) >= 0:
+					result.append(line)
+					found =self.__found_in_list(tid, line[5])
+					if found == False:
+						tid.append(line[5])
+				elif line[6].find(name) >= 0:
+					result.append(line)
+					found =self.__found_in_list(tid, line[7])
+					if found == False:
+						tid.append(line[7])
+		result.sort(cmp = lambda x,y: cmp(x[1],y[1]))
+		tid.sort(cmp = lambda x,y: cmp(x,y))
+		return tid, result
+
+	def __task_sleep_time(self, list, tid):
+		result = []
+		state = ''
+		last_sleep = []
+		for line in list:
+			prev_tid = line[5]
+			next_tid = line[7]
+			if next_tid == tid:
+				new_state = 'run'
+				if last_sleep == []:
+					continue
+				diff = line[1] - last_sleep[1]
+				temp = line[:]
+				temp[0] = diff
+				temp[1] = temp[1] / 1000
+				result.append(temp)
+			else:
+				last_sleep = line
+				new_state = 'sleep'
+		result.sort(cmp = lambda x,y: cmp(x[0],y[0]), reverse = True)
+		return result
+
+	def find_process_block(self, name, num):
+		result = []
+		result_return = []
+		tids, list = self.__filter_process(name)
+		for tid in tids:
+			result.append([])
+		for line in list:
+			prev_name = line[4]
+			prev_tid = line[5]
+			next_name = line[6]
+			next_tid = line[7]
+			if prev_name.find(name) >= 0:
+				index = tids.index(prev_tid)
+				result[index].append(line)
+			if next_name.find(name) >= 0: #adb-->adb
+				index = tids.index(next_tid)
+				result[index].append(line)
+		for tid in tids:
+			index = tids.index(tid)
+			sleep_time = self.__task_sleep_time(result[index], tid)
+			count = num
+			result_list = []
+			for item in sleep_time:
+				if count > 0:
+					result_list.append(item)
+				count = count - 1;
+			result_return.append(result_list)
+		return tids, result_return
 
 	def get_task(self):
 		return self.cpu_trace_task

@@ -22,6 +22,7 @@ def help():
 	print '            sum name=id'
 	print '            top [num]'
 	print '            block num'
+	print '            sleep name num'
 
 def get_task(ms):
 	parser = parser_common.ftrace_parser()
@@ -95,3 +96,20 @@ else:
 				print '-------------------------------------'
 				for item in cpu:
 					print item
+	elif cmd == 'sleep':
+		if argc < 4:
+			help()
+		else:
+			task = get_task(0)
+			if argc < 4:
+				help()
+			name = sys.argv[3]
+			num = string.atoi(sys.argv[4])
+			tids, result = task.find_process_block(name, num)
+			count = 0
+			for tid  in tids:
+				print '-------------------------------------'
+				print 'tid = ' + tid
+				for item in result[count]:
+					print item
+				count = count + 1

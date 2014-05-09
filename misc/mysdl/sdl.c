@@ -101,7 +101,7 @@ int main(int argc,char **argv)
 	Init();
 	screen = createScreen(width , height, bpp , SDL_SWSURFACE);
 	bmp = create_surface(width, height);
-
+	SDL_Delay(10);
 	test_preview(bmp);
 	showDisplay(screen, bmp);
 	SDL_Delay(2000);

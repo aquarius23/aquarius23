@@ -1,7 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "SDL/SDL.h"
 
-#define WIDTH 1024
-#define HEIGHT 768
+#define WIDTH 640
+#define HEIGHT 480
+#define MAX_FILE 16000000
 int Init()
 {
 	if(SDL_Init(SDL_INIT_VIDEO) == -1)
@@ -29,6 +32,23 @@ SDL_Surface *createScreen(int width , int height , int bpp , Uint32 flags)
 	return screen;
 }
 
+static unsigned char g_file_buffer[MAX_FILE];
+unsigned char *read_file(char *file)
+{
+	FILE *p = fopen(file, "rb+");
+	if(p > 0)
+	{
+		int size;
+		fseek(p, 0, SEEK_END);
+		size = ftell(p);
+		fseek(p, 0, SEEK_SET);
+		fread(g_file_buffer, size, 1, p);
+		fclose(p);
+		return g_file_buffer;
+	}
+	return NULL;
+}
+
 void test_draw(SDL_Surface *surface)
 {
 	int i, j;
@@ -38,6 +58,24 @@ void test_draw(SDL_Surface *surface)
 		{
 			*(pixel + 1) = 0x80;
 			pixel += 4;
+		}
+}
+
+void test_preview(SDL_Surface *surface)
+{
+	unsigned char *yuv = read_file("x.yuv");
+	int i, j;
+	int width = 640;
+	int height = 480;
+	unsigned char *pixel = surface->pixels;
+	for(i = 0; i < height; i++)
+		for(j = 0; j < width; j++)
+		{
+			*pixel = *yuv;
+			*(pixel+1) = *yuv;
+			*(pixel+2) = *yuv;
+			pixel += 4;
+			yuv++;
 		}
 }
 
@@ -64,7 +102,7 @@ int main(int argc,char **argv)
 	screen = createScreen(width , height, bpp , SDL_SWSURFACE);
 	bmp = create_surface(width, height);
 
-	test_draw(bmp);
+	test_preview(bmp);
 	showDisplay(screen, bmp);
 	SDL_Delay(2000);
 	Destory(bmp);

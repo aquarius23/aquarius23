@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "SDL/SDL.h"
 
-#define WIDTH 640
+#define WIDTH 864
 #define HEIGHT 480
 #define MAX_FILE 16000000
 int Init()
@@ -61,12 +61,12 @@ void test_draw(SDL_Surface *surface)
 		}
 }
 
-void test_preview(SDL_Surface *surface)
+void test_preview(SDL_Surface *surface, char *file)
 {
-	unsigned char *yuv = read_file("x.yuv");
+	unsigned char *yuv = read_file(file);
 	int i, j;
-	int width = 640;
-	int height = 480;
+	int width = WIDTH;
+	int height = HEIGHT;
 	unsigned char *pixel = surface->pixels;
 	for(i = 0; i < height; i++)
 		for(j = 0; j < width; j++)
@@ -76,6 +76,24 @@ void test_preview(SDL_Surface *surface)
 			*(pixel+2) = *yuv;
 			pixel += 4;
 			yuv++;
+		}
+}
+
+void test_rgb(SDL_Surface *surface)
+{
+	unsigned char *rgb = read_file("9.rgb");
+	int i, j;
+	int width = WIDTH;
+	int height = HEIGHT;
+	unsigned char *pixel = surface->pixels;
+	for(i = 0; i < height; i++)
+		for(j = 0; j < width; j++)
+		{
+			*pixel = *(rgb + 0);
+			*(pixel+1) = *(rgb+1);
+			*(pixel+2) = *(rgb+2);
+			rgb += 3;
+			pixel += 4;
 		}
 }
 
@@ -91,6 +109,20 @@ int Destory(SDL_Surface *file)
 	return 0;
 }
 
+int test_previews(SDL_Surface *screen, SDL_Surface *src)
+{
+	char name[100];
+	int i, last = 160;
+	for(i = 1; i < last; i++)
+	{
+		sprintf(name, "%d.yuv", i);
+		printf("show %s\n", name);
+		test_preview(src, name);
+		showDisplay(screen, src);
+		SDL_Delay(1000);
+	}
+}
+
 int main(int argc,char **argv)
 {
 	SDL_Surface *screen;
@@ -102,9 +134,7 @@ int main(int argc,char **argv)
 	screen = createScreen(width , height, bpp , SDL_SWSURFACE);
 	bmp = create_surface(width, height);
 	SDL_Delay(10);
-	test_preview(bmp);
-	showDisplay(screen, bmp);
-	SDL_Delay(2000);
+	test_previews(screen, bmp);
 	Destory(bmp);
 	Destory(screen);
 	SDL_Quit();

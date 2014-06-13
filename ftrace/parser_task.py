@@ -145,7 +145,7 @@ class ftrace_task():
 					temp[1] = temp[1] / 1000
 					temp.append(diff)
 					list.append(temp)
-			list.sort(cmp = lambda x,y: cmp(x[6],y[6]), reverse = True)
+			list.sort(cmp = lambda x,y: cmp(x[8],y[8]), reverse = True)
 
 			count = num
 			result_list = []

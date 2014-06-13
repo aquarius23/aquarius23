@@ -138,7 +138,7 @@ class ftrace_task():
 				if last_sched == []:
 					last_sched = line;
 					continue
-				diff = line[1] - last_sched[1] - line[0]
+				diff = line[1] - last_sched[1]# - line[0]
 				last_sched = line
 				if line[4].find('swapper') < 0:
 					temp = line[:]

@@ -164,6 +164,12 @@ class stockroot():
 			else:
 				time.sleep(1800)
 
+	def get_last_update_day(self):
+		return self.db.get_last_update_day()
+
+	def set_last_update_day(self, day):
+		self.db.update_last_update_day(day)
+
 x = stockroot()
 x.start()
 x.looper()

@@ -36,7 +36,6 @@ class taskthread(threading.Thread):
 					print 'update index day:' + self.day + '  id:' + str(self.thread_id) + '  stock:' + item
 					self.stock_db.write_data_jidu(item, index, year, jidu)
 				else:
-					self.list.remove(item)
 					continue
 			if self.stock_db.has_data_day(item, year, month, day) == False:
 				detail = self.stock_parser.get_detailed_exchange(item, year, month, day)

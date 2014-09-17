@@ -22,6 +22,9 @@ class stockdb():
 	def __get_path_jidu(self, year, jidu):
 		return 'index/' + str(year) + '/' + str(jidu)
 
+	def __get_path_cal_index(self, name, index):
+		return 'index2/' + name + '/' + index
+
 	def write_data_day(self, name, list, year, month, day):
 		path = self.__get_path_day(year, month, day)
 		value = self.__stocklist2str(list)

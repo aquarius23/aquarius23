@@ -1,17 +1,11 @@
 #!/usr/bin/python
 #!coding=utf-8
-import time
 import string
 import threading
+import stockutils
 import stockdb
 import stockparser
 import stockconfig
-
-def get_date():
-	return time.strftime('%Y-%m-%d',time.localtime(time.time()))
-
-def get_time():
-	return time.strftime('%T',time.localtime(time.time()))
 
 class taskthread(threading.Thread):
 	def __init__(self, list, day, update_jidu, thread_id, stock_parser, stock_db):
@@ -79,12 +73,6 @@ class stockroot():
 			seed = seed + 1
 		return task
 
-	def __next_jidu(self, year, jidu):
-		if jidu >= 4:
-			year = year + 1
-			jidu = 0
-		return year, jidu + 1
-
 	def __get_next_day_by_sh(self, year, jidu, day_string):
 		list = self.parser.get_index_list('000001', year, jidu, 0) #sh000001 index
 		if len(list) == 0:
@@ -117,7 +105,7 @@ class stockroot():
 		year, jidu = self.__get_year_jidu(today)
 		next = self.__get_next_day_by_sh(year, jidu, today)
 		if next == '':
-			year, next_jidu = self.__next_jidu(year, jidu)
+			year, next_jidu = stockutils.next_jidu(year, jidu)
 			next = self.__get_next_day_by_sh(year, next_jidu, today)
 		return next
 
@@ -143,7 +131,7 @@ class stockroot():
 		last_jidu_update_day = '0000-00-00'
 		task_list = []
 		while self.started == True:
-			today = get_date()
+			today = stockutils.get_date()
 			last = self.db.get_last_update_day()
 			if cmp(today, last):
 				next = self.__get_next_day(last)

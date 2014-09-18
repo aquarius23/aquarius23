@@ -54,7 +54,7 @@ class stockdb():
 			value = rawdb.read_file(path, name)
 			if value != '':
 				return value
-			time.sleep(1)
+			#time.sleep(1)
 		return ''
 
 	def get_last_update_day(self):

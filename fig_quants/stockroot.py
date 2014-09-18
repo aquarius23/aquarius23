@@ -2,6 +2,7 @@
 #!coding=utf-8
 import string
 import threading
+import time
 import stockutils
 import stockdb
 import stockparser
@@ -31,6 +32,8 @@ class taskthread(threading.Thread):
 					self.stock_db.write_data_jidu(item, index, year, jidu)
 				else:
 					continue
+			if(cmp(stockconfig.FIG_SKIP_DETAIL_EXCHANGE, 'True') == 0)
+				continue
 			if self.stock_db.has_data_day(item, year, month, day) == False:
 				detail = self.stock_parser.get_detailed_exchange(item, year, month, day)
 				print 'update detail day:' + self.day + '  id:' + str(self.thread_id) + '  stock:' + item

@@ -15,7 +15,12 @@ class stockmanager():
 
 	def __get_stock_index_jidu(self, name, year, jidu):
 		data = self.db.read_data_jidu(name, year, jidu)
-		print data
+		list = data.split('\n')
+		ret = []
+		for line in list:
+			day_exchange = line.split(',')
+			ret.append(day_exchange)
+		return ret
 
 	def get_stock_index(self, name):
 		today = stockutils.get_date().split('-')
@@ -24,11 +29,14 @@ class stockmanager():
 		start_jidu = (string.atoi(start[1]) + 2) / 3
 		end_year = string.atoi(today[0])
 		end_jidu = (string.atoi(today[1]) + 2) / 3
+		index = []
 		while True:
-			self.__get_stock_index_jidu(name, start_year, start_jidu)
+			data = self.__get_stock_index_jidu(name, start_year, start_jidu)
+			index.extend(data)
 			if(start_year == end_year) and (start_jidu == end_jidu):
 				break;
 			start_year, start_jidu = stockutils.next_jidu(start_year, start_jidu)
+		return index
 
 x = stockmanager()
-x.get_stock_index('600030')
+x.get_stock_index('600015')

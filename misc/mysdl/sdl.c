@@ -5,6 +5,29 @@
 #define WIDTH 864
 #define HEIGHT 480
 #define MAX_FILE 16000000
+
+void rgb_scale(char *dst, char *src, unsigned int dst_width, unsigned
+		int dst_height, unsigned int src_width, unsigned int src_height)
+{
+    unsigned int x, y;
+    unsigned int x_float_16 = (src_width << 16) / dst_width + 1;
+    unsigned int y_float_16 = (src_height << 16) / dst_height + 1;
+    unsigned int srcy_16 = 0;
+    unsigned int src_width_adjust = src_width << 2;
+    for(y = 0; y < dst_height; y++)
+    {
+        char *psrc_line = src + src_width_adjust * (srcy_16 >> 16);
+        unsigned int srcx_16 = 0;
+        for(x = 0; x < dst_width; x++)
+        {
+            int index = y * dst_width + x;
+            ((int *)dst)[index] = ((int *)psrc_line)[srcx_16 >> 16];
+            srcx_16 += x_float_16;
+        }
+        srcy_16 += y_float_16;
+    }
+}
+
 int Init()
 {
 	if(SDL_Init(SDL_INIT_VIDEO) == -1)

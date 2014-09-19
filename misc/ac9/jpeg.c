@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <jpeglib.h>
+#include <libexif/exif-data.h>
 
 unsigned char rgb[3264*2448*3];
 void save_buffer(const char *file, void *buf, int size)
@@ -12,6 +13,30 @@ void save_buffer(const char *file, void *buf, int size)
 		fwrite(buf, size, 1, p);
 		fclose(p);
 	}
+}
+
+void read_exif_entry(ExifEntry *ee, void* ifd)
+{
+	char v[1024];
+	printf("%s: %s\n"
+		,exif_tag_get_title_in_ifd(ee->tag, *((ExifIfd*)ifd))
+		,exif_entry_get_value(ee, v, sizeof(v)));
+}
+
+void read_exif_content(ExifContent *ec, void *user_data)
+{
+	ExifIfd ifd = exif_content_get_ifd(ec);
+	exif_content_foreach_entry(ec, read_exif_entry, &ifd);
+}
+
+int read_exif(char *file_name)
+{
+	ExifData* ed = exif_data_new_from_file(file_name);
+	if(!ed)
+		return -1;
+	exif_data_foreach_content(ed, read_exif_content, NULL);
+	exif_data_unref(ed);
+	return 0;
 }
 
 int decompress_jpeg(const char *jpeg_file, unsigned char *rgb, int *size)
@@ -85,6 +110,7 @@ int main(void)
 	decompress_jpeg("1.jpeg", rgb, &size);
 	printf("rgb size = %d\n", size);
 	compress_jpeg_rgb888(rgb, 3264, 2448, "2.jpeg");
+	read_exif("1.jpeg");
 	save_buffer("1.rgb", rgb, size);
 	return 0;
 }

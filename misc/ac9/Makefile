@@ -3,7 +3,7 @@ CFLAGS = -Wall -O2
 CC = gcc
 
 mysdl: $(object)
-	$(CC) -o jpeg $(object) -ljpeg
+	$(CC) -o jpeg $(object) -ljpeg -lexif
 
 jpeg.o: jpeg.c
 

@@ -4,8 +4,10 @@
 
 #define WIDTH 864
 #define HEIGHT 480
-#define MAX_FILE 16000000
+#define MAX_FILE 32000000
 
+unsigned char rgb8888[3264*2448*4];
+unsigned char rgb_s[864*480*4];
 void rgb_scale(char *dst, char *src, unsigned int dst_width, unsigned
 		int dst_height, unsigned int src_width, unsigned int src_height)
 {
@@ -102,20 +104,37 @@ void test_preview(SDL_Surface *surface, char *file)
 		}
 }
 
+void rgb888_to_rgb8888(char *src, char *dst, int width, int height)
+{
+	int pixel = width*height;
+	memset(dst, 0, pixel*4);
+	while(pixel--)
+	{
+		dst[0]=src[0];
+		dst[1]=src[1];
+		dst[2]=src[2];
+		src+=3;
+		dst+=4;
+	}
+}
+
 void test_rgb(SDL_Surface *surface)
 {
-	unsigned char *rgb = read_file("9.rgb");
+	unsigned char *rgb = read_file("1.rgb");
+	rgb888_to_rgb8888(rgb, rgb8888, 3264, 2448);
 	int i, j;
+	rgb_scale(rgb_s, rgb8888, WIDTH, HEIGHT,3264, 2448);
 	int width = WIDTH;
 	int height = HEIGHT;
 	unsigned char *pixel = surface->pixels;
+	rgb = rgb_s;
 	for(i = 0; i < height; i++)
 		for(j = 0; j < width; j++)
 		{
 			*pixel = *(rgb + 0);
 			*(pixel+1) = *(rgb+1);
 			*(pixel+2) = *(rgb+2);
-			rgb += 3;
+			rgb += 4;
 			pixel += 4;
 		}
 }
@@ -149,16 +168,16 @@ int test_previews(SDL_Surface *screen, SDL_Surface *src)
 int main(int argc,char **argv)
 {
 	SDL_Surface *screen;
-	SDL_Surface *bmp;
 	int width = WIDTH;
 	int height = HEIGHT;
 	int bpp = 32;
 	Init();
 	screen = createScreen(width , height, bpp , SDL_SWSURFACE);
-	bmp = create_surface(width, height);
 	SDL_Delay(10);
-	test_previews(screen, bmp);
-	Destory(bmp);
+
+	test_rgb(screen);
+	SDL_Flip(screen);
+	SDL_Delay(5000);
 	Destory(screen);
 	SDL_Quit();
 	return 0;

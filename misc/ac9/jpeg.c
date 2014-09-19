@@ -4,6 +4,12 @@
 #include <jpeglib.h>
 #include <libexif/exif-data.h>
 
+struct exif_iso_shutter
+{
+	char iso[32];
+	char shutter[32];
+	void *ifd;
+};
 unsigned char rgb[3264*2448*3];
 void save_buffer(const char *file, void *buf, int size)
 {
@@ -15,26 +21,30 @@ void save_buffer(const char *file, void *buf, int size)
 	}
 }
 
-void read_exif_entry(ExifEntry *ee, void* ifd)
+void read_exif_entry(ExifEntry *ee, void *user_data)
 {
 	char v[1024];
+	struct exif_iso_shutter *exif = (struct exif_iso_shutter*)user_data;
 	printf("%s: %s\n"
-		,exif_tag_get_title_in_ifd(ee->tag, *((ExifIfd*)ifd))
+		,exif_tag_get_title_in_ifd(ee->tag, *((ExifIfd*)exif->ifd))
 		,exif_entry_get_value(ee, v, sizeof(v)));
 }
 
 void read_exif_content(ExifContent *ec, void *user_data)
 {
 	ExifIfd ifd = exif_content_get_ifd(ec);
-	exif_content_foreach_entry(ec, read_exif_entry, &ifd);
+	struct exif_iso_shutter *exif = (struct exif_iso_shutter *)user_data;
+	exif->ifd = (void *)&ifd;
+	exif_content_foreach_entry(ec, read_exif_entry, exif);
 }
 
 int read_exif(char *file_name)
 {
+	struct exif_iso_shutter exif;
 	ExifData* ed = exif_data_new_from_file(file_name);
 	if(!ed)
 		return -1;
-	exif_data_foreach_content(ed, read_exif_content, NULL);
+	exif_data_foreach_content(ed, read_exif_content, &exif);
 	exif_data_unref(ed);
 	return 0;
 }

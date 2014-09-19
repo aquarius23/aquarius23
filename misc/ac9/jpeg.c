@@ -47,11 +47,44 @@ int decompress_jpeg(const char *jpeg_file, unsigned char *rgb, int *size)
 	return 0;
 }
 
+int compress_jpeg_rgb888(const unsigned char *rgb, int width, int height, const char *jpeg_file)
+{
+	FILE *out_file;
+	struct jpeg_compress_struct cinfo;
+	struct jpeg_error_mgr jerr;
+	JSAMPROW row_pointer[1];
+	int row_width;
+
+	cinfo.err = jpeg_std_error(&jerr);
+	jpeg_create_compress(&cinfo);
+	if((out_file = fopen(jpeg_file, "wb+")) == NULL)
+		return -1;
+	jpeg_stdio_dest(&cinfo, out_file);
+	cinfo.image_width = width;
+	cinfo.image_height = height;
+	cinfo.input_components = 3;
+	cinfo.in_color_space = JCS_EXT_RGB;
+	jpeg_set_defaults(&cinfo);
+	jpeg_set_quality(&cinfo, 95, TRUE);
+	jpeg_start_compress(&cinfo, TRUE);
+
+	row_width = cinfo.image_width * cinfo.input_components;
+	while (cinfo.next_scanline < cinfo.image_height) {
+		row_pointer[0] = (JSAMPROW)&rgb[cinfo.next_scanline * row_width];
+		jpeg_write_scanlines(&cinfo, row_pointer, 1);
+	}
+	jpeg_finish_compress(&cinfo);
+	jpeg_destroy_compress(&cinfo);
+	fclose(out_file);
+	return 0;
+}
+
 int main(void)
 {
 	int size;
 	decompress_jpeg("1.jpeg", rgb, &size);
 	printf("rgb size = %d\n", size);
+	compress_jpeg_rgb888(rgb, 3264, 2448, "2.jpeg");
 	save_buffer("1.rgb", rgb, size);
 	return 0;
 }

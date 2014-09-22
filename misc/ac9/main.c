@@ -4,7 +4,6 @@
 #include "jpeg.h"
 #include "merge.h"
 
-unsigned char rgb[3264*2448*3];
 void save_buffer(const char *file, void *buf, int size)
 {
 	FILE *p = fopen(file, "wb+");

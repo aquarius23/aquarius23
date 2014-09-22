@@ -112,45 +112,32 @@ EXIT:
   return res;
 }*/
 
-/*int shlaHDR()
+int shlaHDR(unsigned char **inData, unsigned char *outData, int *width, int *height)
 {
+	int i;
 	int res 								= 0;
-	int w 									= 1280;
-	int h 									= 720;
+	int w 									= *width;
+	int h 									= *height;
 	int size 								= w*h*3;
 	int index 							= 3;
 	BMPINFO **src 					= 0;
 	BMPINFO **srcAllign 		= 0;
-	char* outFilePath 			= NULL;
 	BMPINFO dst 						= {0};
-	unsigned char* outData 	= NULL;
-	unsigned char** inData;
-
-	cout << "------------------ HDR Effect is start ------------------" << endl;
-	inData = (unsigned char **)SHLA_MemAlloc(sizeof(unsigned char*)*index*size);
-  for( int i=0; i<index; i++)
-  {
-  	inData[i] = (unsigned char *)SHLA_MemAlloc(size);
-  }
-	readFile("/home/cwx/shla/testbed_linux/data/src_hdr/1280X720_0.RGB24", size, (char*)inData[0]);
-	readFile("/home/cwx/shla/testbed_linux/data/src_hdr/1280X720_1.RGB24", size, (char*)inData[1]);
-  readFile("/home/cwx/shla/testbed_linux/data/src_hdr/1280X720_2.RGB24", size, (char*)inData[2]);
   
-  srcAllign = (BMPINFO **)SHLA_MemAlloc(sizeof(BMPINFO*)*index);
-  src = (BMPINFO **)SHLA_MemAlloc(sizeof(BMPINFO*)*index);
-  for( int i=0; i<index; i++)
-  {
-  	srcAllign[i] = (BMPINFO *)SHLA_MemAlloc(sizeof(BMPINFO));
-  	srcAllign[i]->pPlane[0] = NULL;
-    src[i] = (BMPINFO*)SHLA_MemAlloc(sizeof(BMPINFO));
+	srcAllign = (BMPINFO **)SHLA_MemAlloc(sizeof(BMPINFO*)*index);
+	src = (BMPINFO **)SHLA_MemAlloc(sizeof(BMPINFO*)*index);
+	for( int i=0; i<index; i++)
+	{
+		srcAllign[i] = (BMPINFO *)SHLA_MemAlloc(sizeof(BMPINFO));
+		srcAllign[i]->pPlane[0] = NULL;
+		src[i] = (BMPINFO*)SHLA_MemAlloc(sizeof(BMPINFO));
 		src[i]->dwPixelFormat = BMPFORMAT_RGB24_R8G8B8;
 		src[i]->lWidth = w;
 		src[i]->lHeight = h;
 		src[i]->lPitch[0] = w*3;
 		src[i]->pPlane[0] = inData[i];
-  }
-  CHECK(shla_align(src, srcAllign, index));
-	outData = (unsigned char*)SHLA_MemAlloc(srcAllign[0]->lPitch[0] * srcAllign[0]->lHeight);
+	}
+	CHECK(shla_align(src, srcAllign, index));
 	size = srcAllign[0]->lWidth * srcAllign[0]->lHeight * 3;
 
 	dst.dwPixelFormat = srcAllign[0]->dwPixelFormat;
@@ -159,34 +146,26 @@ EXIT:
 	dst.lPitch[0] = srcAllign[0]->lPitch[0];
 	dst.pPlane[0] = outData;
 	printf("dst picture size width: %d, height: %d \n", dst.lWidth, dst.lHeight);
-
+	*width = dst.lWidth;
+	*height = dst.lHeight;
 	CHECK(SHLA_HDR(srcAllign, 0, index, &dst));
 
-	outFilePath = getOutPath(dst.lWidth, dst.lHeight, "_HDR", ".RGB24");
-  cout << "outFilePath is: "<< outFilePath << endl;
-  saveFile(outFilePath, size, (const char*)outData);
-
 EXIT:
-	if(NULL != outData)
-		SHLA_MemFree(outData);
-	for( int i=0; i<index; i++)
+	for(i=0; i<index; i++)
 	{
-		SHLA_MemFree(inData[i]);
 		SHLA_MemFree(src[i]);
 		if(NULL != srcAllign[i]->pPlane[0])
 			SHLA_MemFree(srcAllign[i]->pPlane[0]);
 		SHLA_MemFree(srcAllign[i]);
 	}
-	SHLA_MemFree(inData);
 	SHLA_MemFree(src);
 	SHLA_MemFree(srcAllign);
 	if(res == 0)
-		cout << "HDR effect is success" << endl;
+		printf("HDR effect is success\n");
 	else
-		cout << "HDR effect is error res = "<< res << endl;
-	cout << "------------------ HDR Effect is end   ------------------" << endl;
-  return res;
-}*/
+		printf("HDR effect is error res = %d\n", res);
+	return res;
+}
 
 int shlaLowLight(unsigned char **inData, unsigned char *outData, int *width, int *height)
 {
@@ -235,8 +214,8 @@ EXIT:
 	}
 	SHLA_MemFree(src);
 	SHLA_MemFree(srcAllign);
-		if(res == 0)
-			printf("LOWLIGHT effect is success\n");
+	if(res == 0)
+		printf("LOWLIGHT effect is success\n");
 	else
 		printf("LOWLIGHT effect is error res = %d\n ", res);
   return res;

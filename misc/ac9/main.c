@@ -54,6 +54,27 @@ int main(int argc,char *argv[])
 			shlaLowLight(in, out, &width, &height);
 			compress_jpeg_rgb888(out, width, height, "lowlight.jpeg");
 		}
+		else if(strcmp("hdr", cmd) == 0)
+		{
+			unsigned char *in[3];
+			unsigned char *out;
+			char *file;
+			file = get_iterator_name(name, 0);
+			read_exif(file, &shutter, &iso, &width, &height);
+			printf("iso:shutter = %d:%d width:height = %d:%d\n", iso, shutter, width, height);
+			for(i = 0; i < 3; i++)
+			{
+				in[i] = (unsigned char *)malloc(width * height * 3);
+			}
+			out = (unsigned char *)malloc(width * height);
+			for(i = 0; i < 4; i++)
+			{
+				file = get_iterator_name(name, i);
+				decompress_jpeg(file, in[i], &size, &width, &height);
+			}
+			shlaHDR(in, out, &width, &height);
+			compress_jpeg_rgb888(out, width, height, "hdr.jpeg");
+		}
 	}
 	else
 	{

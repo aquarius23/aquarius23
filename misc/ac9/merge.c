@@ -188,12 +188,12 @@ EXIT:
   return res;
 }*/
 
-int shlaLowLight(unsigned char **inData, unsigned char *outData, int width, int height)
+int shlaLowLight(unsigned char **inData, unsigned char *outData, int *width, int *height)
 {
 	int i;
 	int res 							= 0;
-	int w 								= width;
-	int h 								= height;
+	int w 								= *width;
+	int h 								= *height;
 	int size 							= w*h*3;
 	int index 						= 4;
 	BMPINFO **src 				= 0;
@@ -221,7 +221,8 @@ int shlaLowLight(unsigned char **inData, unsigned char *outData, int width, int 
 	dst.lPitch[0] = srcAllign[0]->lPitch[0];
 	dst.pPlane[0] = outData;
 	printf("dst picture size width: %d, height: %d \n", dst.lWidth, dst.lHeight);
-
+	*width = dst.lWidth;
+	*height = dst.lHeight;
 	CHECK(SHLA_Lowlight(srcAllign, 0, index, &dst));
 
 EXIT:

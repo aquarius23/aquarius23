@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "jpeg.h"
 #include "merge.h"
 
@@ -14,8 +15,16 @@ void save_buffer(const char *file, void *buf, int size)
 	}
 }
 
+static char iterator_name[128];
+char *get_iterator_name(char *prefix, int index)
+{
+	sprintf(iterator_name, "%s-%d.jpg", prefix, index);
+	return iterator_name;
+}
+
 int main(int argc,char *argv[])
 {
+	int i;
 	char *cmd, *name;
 	int size, shutter, iso, width, height;
 	cmd = NULL;
@@ -24,19 +33,32 @@ int main(int argc,char *argv[])
 		cmd = argv[1];
 		name = argv[2];
 		printf("cmd: %s\n", cmd);
-		shlaLowLight(NULL, NULL, width, height);
-		//shlaLowLight(unsigned char **inData, unsigned char *outData, int width, int height)
+		if(strcmp("lowlight", cmd) == 0)
+		{
+			unsigned char *in[4];
+			unsigned char *out;
+			char *file;
+			file = get_iterator_name(name, 0);
+			read_exif(file, &shutter, &iso, &width, &height);
+			printf("iso:shutter = %d:%d width:height = %d:%d\n", iso, shutter, width, height);
+			for(i = 0; i < 4; i++)
+			{
+				in[i] = (unsigned char *)malloc(width * height * 3);
+			}
+			out = (unsigned char *)malloc(width * height);
+			for(i = 0; i < 4; i++)
+			{
+				file = get_iterator_name(name, i);
+				decompress_jpeg(file, in[i], &size, &width, &height);
+			}
+			shlaLowLight(in, out, &width, &height);
+			compress_jpeg_rgb888(out, width, height, "lowlight.jpeg");
+		}
 	}
 	else
 	{
 		printf("cmd file-prefix\ncmd:\n     lowlight\n     hdr\n");
 	}
-	decompress_jpeg("1.jpeg", rgb, &size, &width, &height);
-	printf("rgb size = %d width:height = %d:%d\n", size, width, height);
-	compress_jpeg_rgb888(rgb, 3264, 2448, "2.jpeg");
-	read_exif("1.jpeg", &shutter, &iso, &width, &height);
-	save_buffer("1.rgb", rgb, size);
-	printf("shutter:iso = 1/%d sec:%d\n", shutter, iso);
 	return 0;
 }
 

@@ -39,7 +39,7 @@ static void read_exif_content(ExifContent *ec, void *user_data)
 	exif_content_foreach_entry(ec, read_exif_entry, exif);
 }
 
-int read_exif(char *file_name, int *shutter, int *iso, int *width, int *height)
+int read_exif(const char *file_name, int *shutter, int *iso, int *width, int *height)
 {
 	struct exif_iso_shutter exif;
 	ExifData* ed = exif_data_new_from_file(file_name);

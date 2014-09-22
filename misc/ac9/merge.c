@@ -16,7 +16,7 @@ static void SHLA_MemFree(void* pMem);
 static int shla_align(BMPINFO **src, BMPINFO **srcAllign, int itemsCount);
 //static int shlaAutoFix();
 //static int shlaHDR();
-static int shlaLowLight();
+//static int shlaLowLight();
 
 void* SHLA_MemAlloc(long size)
 {

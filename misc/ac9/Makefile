@@ -1,9 +1,9 @@
 object = jpeg.o main.o merge.o
 CFLAGS = -Wall -O2
-CC = gcc
+CC = g++
 
 main: $(object)
-	$(CC) -o jpeg $(object) -ljpeg -lexif
+	$(CC) -o jpeg $(object) -ljpeg -lexif -lshla -L.
 
 jpeg.o: jpeg.c
 merge.o: merge.c

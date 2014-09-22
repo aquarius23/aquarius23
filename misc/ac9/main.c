@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "jpeg.h"
+#include "merge.h"
 
 unsigned char rgb[3264*2448*3];
 void save_buffer(const char *file, void *buf, int size)
@@ -23,6 +24,8 @@ int main(int argc,char *argv[])
 		cmd = argv[1];
 		name = argv[2];
 		printf("cmd: %s\n", cmd);
+		shlaLowLight(NULL, NULL, width, height);
+		//shlaLowLight(unsigned char **inData, unsigned char *outData, int width, int height)
 	}
 	else
 	{

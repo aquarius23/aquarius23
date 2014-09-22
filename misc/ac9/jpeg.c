@@ -8,6 +8,8 @@ struct exif_iso_shutter
 {
 	int iso;
 	int shutter;
+	int width;
+	int height;
 	void *ifd;
 };
 
@@ -22,6 +24,10 @@ static void read_exif_entry(ExifEntry *ee, void *user_data)
 		sscanf(value, "%d/%d", &one, &exif->shutter);
 	else if(strcmp("ISO Speed Ratings", title) == 0)
 		sscanf(value, "%d", &exif->iso);
+	else if(strcmp("Pixel X Dimension", title) == 0)
+		sscanf(value, "%d", &exif->width);
+	else if(strcmp("Pixel Y Dimension", title) == 0)
+		sscanf(value, "%d", &exif->height);
 	//printf("%s: %s\n", title, value);
 }
 
@@ -33,7 +39,7 @@ static void read_exif_content(ExifContent *ec, void *user_data)
 	exif_content_foreach_entry(ec, read_exif_entry, exif);
 }
 
-int read_exif(char *file_name, int *shutter, int *iso)
+int read_exif(char *file_name, int *shutter, int *iso, int *width, int *height)
 {
 	struct exif_iso_shutter exif;
 	ExifData* ed = exif_data_new_from_file(file_name);
@@ -45,6 +51,10 @@ int read_exif(char *file_name, int *shutter, int *iso)
 		*shutter = exif.shutter;
 	if(iso)
 		*iso = exif.iso;
+	if(width)
+		*width = exif.width;
+	if(height)
+		*height = exif.height;
 	return 0;
 }
 

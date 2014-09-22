@@ -47,13 +47,20 @@ int main(int argc,char *argv[])
 				in[i] = (unsigned char *)malloc(width * height * 3);
 			}
 			out = (unsigned char *)malloc(width * height * 3);
+			time1 = timestamp();
 			for(i = 0; i < 4; i++)
 			{
 				file = get_iterator_name(name, i);
 				decompress_jpeg(file, in[i], &size, &width, &height);
 			}
+			time2 = timestamp();
+			printf("decompress_jpeg cost time:%ld\n", time2 - time1);
 			shlaLowLight(in, out, &width, &height);
+			time1 = timestamp();
+			printf("lowlight cost time:%ld\n", time1 - time2);
 			compress_jpeg_rgb888(out, width, height, "lowlight.jpeg");
+			time2 = timestamp();
+			printf("compress_jpeg cost time:%ld\n", time2 - time1);
 			for(i = 0; i < 4; i++)
 				free(in[i]);
 			free(out);
@@ -72,7 +79,7 @@ int main(int argc,char *argv[])
 			}
 			out = (unsigned char *)malloc(width * height * 3);
 			time1 = timestamp();
-			for(i = 0; i < 4; i++)
+			for(i = 0; i < 3; i++)
 			{
 				file = get_iterator_name(name, i);
 				decompress_jpeg(file, in[i], &size, &width, &height);

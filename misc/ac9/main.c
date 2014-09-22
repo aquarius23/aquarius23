@@ -81,10 +81,23 @@ int main(int argc,char *argv[])
 				free(in[i]);
 			free(out);
 		}
+		else if(strcmp("autofix", cmd) == 0)
+		{
+			unsigned char *in, *out;
+			read_exif(name, &shutter, &iso, &width, &height);
+			printf("iso:shutter = %d:%d width:height = %d:%d\n", iso, shutter, width, height);
+			in = (unsigned char *)malloc(width * height * 3);
+			out = (unsigned char *)malloc(width * height * 3);
+			decompress_jpeg(name, in, &size, &width, &height);
+			shlaAutoFix(in, out, width, height);
+			compress_jpeg_rgb888(out, width, height, "autofix.jpeg");
+			free(in);
+			free(out);
+		}
 	}
 	else
 	{
-		printf("cmd file-prefix\ncmd:\n     lowlight\n     hdr\n");
+		printf("cmd file-prefix\ncmd:\n     lowlight\n     hdr\n     autofix\n");
 	}
 	return 0;
 }

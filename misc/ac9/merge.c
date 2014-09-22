@@ -58,59 +58,34 @@ EXIT:
 	return res;
 }
 
-/*int shlaAutoFix()
+int shlaAutoFix(unsigned char *inData, unsigned char *outData, int width, int height)
 {
 	int res = 0;
 	BMPINFO src = {0};
 	BMPINFO dst = {0};
-	int w = 1280;
-	int h = 720;
-	int size = (w*h*3)/2;
-	char *srcdata = new char[size];
-	unsigned char* outData = NULL;
-	unsigned char* inData = NULL;
-	char* outFilePath = NULL;
-	cout << "------------------ AUTOFIX Effect is start ------------------" << endl;
-	
-	readFile("/home/cwx/shla/testbed_linux/data/src_autofix/1280x720.i420", size, srcdata);
-  outData = (unsigned char*)SHLA_MemAlloc(size);
-  inData = (unsigned char*)srcdata;
-  
-	src.dwPixelFormat = BMPFORMAT_YCBCR_I420;
+	int w = width;
+	int h = height;
+
+	src.dwPixelFormat = BMPFORMAT_RGB24_R8G8B8;
 	src.lWidth  = w;
 	src.lHeight = h;
-	src.lPitch[0] = w;
-	src.lPitch[1] = w/2;
-	src.lPitch[2] = w/2;
+	src.lPitch[0] = w * 3;
 	src.pPlane[0] = inData;
-	src.pPlane[1] = inData + w * h;
-	src.pPlane[2] = inData + w * h + (w * h)/4;
 
-	dst.dwPixelFormat = BMPFORMAT_YCBCR_I420;
-	dst.lWidth  = w;
-	dst.lHeight = h;
-	dst.lPitch[0] = w;
-	dst.lPitch[1] = w/2;
-	dst.lPitch[2] = w/2;
+	dst.dwPixelFormat = src.dwPixelFormat;
+	dst.lWidth = src.lWidth;
+	dst.lHeight = src.lHeight;
+	dst.lPitch[0] = src.lPitch[0];
 	dst.pPlane[0] = outData;
-	dst.pPlane[1] = outData + w * h;
-	dst.pPlane[2] = outData + w * h + (w * h)/4;
-	
+
 	CHECK(SHLA_Autofix(&src, &dst));
-	
-	outFilePath = getOutPath(dst.lWidth, dst.lHeight, "_AUTOFIX", ".I420");
-	cout << "outFilePath is: "<< outFilePath << endl;
-	saveFile(outFilePath, size, (const char*)outData);
 EXIT:
-	if(NULL != outData)
-		SHLA_MemFree(outData);
 	if(res == 0)
-		cout << "AUTOFIX effect is success" << endl;
+		printf("AUTOFIX effect is success\n");
 	else
-		cout << "AUTOFIX effect is error res = "<< res << endl;
-	cout << "------------------ AUTOFIX Effect is end ------------------" << endl;
+		printf("AUTOFIX effect is error res = %d\n", res);
   return res;
-}*/
+}
 
 int shlaHDR(unsigned char **inData, unsigned char *outData, int *width, int *height)
 {

@@ -45,7 +45,7 @@ int main(int argc,char *argv[])
 			{
 				in[i] = (unsigned char *)malloc(width * height * 3);
 			}
-			out = (unsigned char *)malloc(width * height);
+			out = (unsigned char *)malloc(width * height * 3);
 			for(i = 0; i < 4; i++)
 			{
 				file = get_iterator_name(name, i);
@@ -53,6 +53,9 @@ int main(int argc,char *argv[])
 			}
 			shlaLowLight(in, out, &width, &height);
 			compress_jpeg_rgb888(out, width, height, "lowlight.jpeg");
+			for(i = 0; i < 4; i++)
+				free(in[i]);
+			free(out);
 		}
 		else if(strcmp("hdr", cmd) == 0)
 		{
@@ -66,7 +69,7 @@ int main(int argc,char *argv[])
 			{
 				in[i] = (unsigned char *)malloc(width * height * 3);
 			}
-			out = (unsigned char *)malloc(width * height);
+			out = (unsigned char *)malloc(width * height * 3);
 			for(i = 0; i < 4; i++)
 			{
 				file = get_iterator_name(name, i);
@@ -74,6 +77,9 @@ int main(int argc,char *argv[])
 			}
 			shlaHDR(in, out, &width, &height);
 			compress_jpeg_rgb888(out, width, height, "hdr.jpeg");
+			for(i = 0; i < 3; i++)
+				free(in[i]);
+			free(out);
 		}
 	}
 	else

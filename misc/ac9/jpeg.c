@@ -59,7 +59,7 @@ int read_exif(char *file_name, int *shutter, int *iso)
 	return 0;
 }
 
-int decompress_jpeg(const char *jpeg_file, unsigned char *rgb, int *size)
+int decompress_jpeg(const char *jpeg_file, unsigned char *rgb, int *size, int *width, int *height)
 {
 	struct jpeg_decompress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -78,7 +78,10 @@ int decompress_jpeg(const char *jpeg_file, unsigned char *rgb, int *size)
 	jpeg_start_decompress(&cinfo);
 	row_width = cinfo.output_width * cinfo.output_components;
 	buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, row_width, 1);
-	printf("width:height:component = %d:%d:%d\n", cinfo.output_width, cinfo.output_height, cinfo.out_color_components);
+	if(width)
+		*width = cinfo.output_width;
+	if(height)
+		*height = cinfo.output_height;
 	while(cinfo.output_scanline < cinfo.output_height)
 	{
 		jpeg_read_scanlines(&cinfo, buffer, 1);
@@ -126,9 +129,9 @@ int compress_jpeg_rgb888(const unsigned char *rgb, int width, int height, const 
 
 int main(void)
 {
-	int size, shutter, iso;
-	decompress_jpeg("1.jpeg", rgb, &size);
-	printf("rgb size = %d\n", size);
+	int size, shutter, iso, width, height;
+	decompress_jpeg("1.jpeg", rgb, &size, &width, &height);
+	printf("rgb size = %d width:height = %d:%d\n", size, width, height);
 	compress_jpeg_rgb888(rgb, 3264, 2448, "2.jpeg");
 	read_exif("1.jpeg", &shutter, &iso);
 	save_buffer("1.rgb", rgb, size);

@@ -1,4 +1,4 @@
-object = jpeg.o main.o merge.o
+object = jpeg.o main.o merge.o utils.o
 CFLAGS = -Wall -O2
 CC = g++
 
@@ -7,6 +7,7 @@ main: $(object)
 
 jpeg.o: jpeg.c
 merge.o: merge.c
+utils.o: utils.c
 main.o: main.c
 .PHONY: clean
 clean:

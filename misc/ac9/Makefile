@@ -1,12 +1,12 @@
-object = jpeg.o
+object = jpeg.o main.o
 CFLAGS = -Wall -O2
 CC = gcc
 
-mysdl: $(object)
+main: $(object)
 	$(CC) -o jpeg $(object) -ljpeg -lexif
 
 jpeg.o: jpeg.c
-
+main.o: main.c
 .PHONY: clean
 clean:
 	rm -f jpeg $(object)

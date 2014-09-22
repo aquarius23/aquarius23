@@ -10,19 +10,8 @@ struct exif_iso_shutter
 	int shutter;
 	void *ifd;
 };
-unsigned char rgb[3264*2448*3];
 
-void save_buffer(const char *file, void *buf, int size)
-{
-	FILE *p = fopen(file, "wb+");
-	if(p > 0)
-	{
-		fwrite(buf, size, 1, p);
-		fclose(p);
-	}
-}
-
-void read_exif_entry(ExifEntry *ee, void *user_data)
+static void read_exif_entry(ExifEntry *ee, void *user_data)
 {
 	int one;
 	char v[1024];
@@ -36,7 +25,7 @@ void read_exif_entry(ExifEntry *ee, void *user_data)
 	//printf("%s: %s\n", title, value);
 }
 
-void read_exif_content(ExifContent *ec, void *user_data)
+static void read_exif_content(ExifContent *ec, void *user_data)
 {
 	ExifIfd ifd = exif_content_get_ifd(ec);
 	struct exif_iso_shutter *exif = (struct exif_iso_shutter *)user_data;
@@ -124,18 +113,6 @@ int compress_jpeg_rgb888(const unsigned char *rgb, int width, int height, const 
 	jpeg_finish_compress(&cinfo);
 	jpeg_destroy_compress(&cinfo);
 	fclose(out_file);
-	return 0;
-}
-
-int main(void)
-{
-	int size, shutter, iso, width, height;
-	decompress_jpeg("1.jpeg", rgb, &size, &width, &height);
-	printf("rgb size = %d width:height = %d:%d\n", size, width, height);
-	compress_jpeg_rgb888(rgb, 3264, 2448, "2.jpeg");
-	read_exif("1.jpeg", &shutter, &iso);
-	save_buffer("1.rgb", rgb, size);
-	printf("shutter:iso = 1/%d sec:%d\n", shutter, iso);
 	return 0;
 }
 

@@ -21,6 +21,16 @@ class stockmanager():
 		ret = []
 		for line in list:
 			day_exchange = line.split(',')
+			start = string.atof(day_exchange[1])
+			end = string.atof(day_exchange[3])
+			low = string.atof(day_exchange[4])
+			high = string.atof(day_exchange[2])
+			day_exchange[1] = start
+			day_exchange[2] = end
+			day_exchange[3] = low
+			day_exchange[4] = high
+			day_exchange[5] = string.atoi(day_exchange[5])
+			day_exchange[6] = string.atoi(day_exchange[6])
 			ret.append(day_exchange)
 		return ret
 

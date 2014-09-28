@@ -5,6 +5,7 @@ import stockutils
 import stockdb
 import stockparser
 import stockconfig
+import macd
 
 class stockmanager():
 	parser = stockparser.stock_parser()
@@ -52,5 +53,7 @@ class stockmanager():
 
 x = stockmanager()
 x = x.get_stock_index('300397')
+m = macd.macd()
+x = m.cal_macd(x)
 for i in x:
 	print i

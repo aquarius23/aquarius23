@@ -15,6 +15,8 @@ class stockmanager():
 
 	def __get_stock_index_jidu(self, name, year, jidu):
 		data = self.db.read_data_jidu(name, year, jidu)
+		if len(data) <= 0:
+			return []
 		list = data.split('\n')
 		ret = []
 		for line in list:
@@ -39,4 +41,6 @@ class stockmanager():
 		return index
 
 x = stockmanager()
-x.get_stock_index('600015')
+x = x.get_stock_index('300397')
+for i in x:
+	print i

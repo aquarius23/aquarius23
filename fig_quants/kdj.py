@@ -21,7 +21,9 @@ class kdj():
 		J = 50
 		J2 = 50
 		nine = []
+		ret = []
 		for day in list:
+			result = []
 			if len(nine) < 9:
 				nine.append(day)
 			else:
@@ -34,8 +36,9 @@ class kdj():
 				D = D*(2.0/3.0) + K*(1.0/3.0)
 				J = 3*K - 2*D
 				J2 = 3*D - 2*K
-			print K
-			print D
-			print J
-			print J2
-			print '----------'
+			result.append(K)
+			result.append(D)
+			result.append(J)
+			result.append(J2)
+			ret.append(result)
+		return ret

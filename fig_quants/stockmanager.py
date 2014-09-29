@@ -6,6 +6,7 @@ import stockdb
 import stockparser
 import stockconfig
 import macd
+import kdj
 
 class stockmanager():
 	parser = stockparser.stock_parser()
@@ -53,7 +54,7 @@ class stockmanager():
 
 x = stockmanager()
 x = x.get_stock_index('300397')
-m = macd.macd()
-x = m.cal_macd(x)
+m = kdj.kdj()
+x = m.cal_kdj(x)
 for i in x:
 	print i

@@ -70,7 +70,7 @@ extern "C" {
 	int SHLA_HDR(IN BMPINFO **ppSrcBitmap, IN IMAGEINFO **ppImageInfo, IN int lBitmapCnt, OUT BMPINFO *pDstBitmap);
 	int SHLA_Lowlight(IN BMPINFO **ppSrcBitmap, IN IMAGEINFO **ppImageInfo, IN int lBitmapCnt, OUT BMPINFO *pDstBitmap);
 
-	int SHLA_ALIGN(IN BMPINFO **pSrcBitmap, IN IMAGEINFO **ppImageInfo, IN int lBitmapCnt, OUT LPSHLARECT p_mRect, OUT double **ppMatrix);
+	int SHLA_ALIGN(IN BMPINFO **pSrcBitmap, IN IMAGEINFO **ppImageInfo, IN int lBitmapCnt, OUT LPSHLARECT p_mRect, OUT double **ppMatrix, OUT long *pImageReference);
 	int SHLA_XFORM(IN BMPINFO **pSrcBitmap, IN int lBitmapCnt, IN LPSHLARECT p_mRect, IN double **ppMatrix, IN OUT BMPINFO **pDstBitmap);
 
 #ifdef __cplusplus

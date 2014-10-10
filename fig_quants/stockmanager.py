@@ -8,6 +8,7 @@ import stockconfig
 import macd
 import kdj
 import boll
+import ma
 
 class stockmanager():
 	parser = stockparser.stock_parser()
@@ -54,8 +55,8 @@ class stockmanager():
 		return index
 
 x = stockmanager()
-x = x.get_stock_index('300397')
-m = boll.boll()
-x = m.cal_boll(x)
+x = x.get_stock_index('002204')
+m = ma.ma()
+x = m.cal_ma(x)
 for i in x:
 	print i

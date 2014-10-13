@@ -15,6 +15,7 @@ class ma():
 		return MA
 
 	def cal_ma(self, list):
+		three = []
 		five = []
 		ten = []
 		twenty = []
@@ -23,6 +24,12 @@ class ma():
 		for day in list:
 			result = []
 			end = day[2]
+
+			if len(three) < 3:
+				three.append(end)
+			else:
+				three.remove(three[0])
+				three.append(end)
 
 			if len(five) < 5:
 				five.append(end)
@@ -48,6 +55,8 @@ class ma():
 				thirty.remove(thirty[0])
 				thirty.append(end)
 
+			result.append(end)
+			result.append(self.__cal_ma(three))
 			result.append(self.__cal_ma(five))
 			result.append(self.__cal_ma(ten))
 			result.append(self.__cal_ma(twenty))

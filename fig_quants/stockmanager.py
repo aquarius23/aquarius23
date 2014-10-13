@@ -9,6 +9,7 @@ from index import macd
 from index import kdj
 from index import boll
 from index import ma
+from index import volume_ma
 
 class stockmanager():
 	parser = stockparser.stock_parser()
@@ -56,7 +57,7 @@ class stockmanager():
 
 x = stockmanager()
 x = x.get_stock_index('002204')
-m = ma.ma()
+m = volume_ma.volume_ma()
 x = m.cal_ma(x)
 for i in x:
 	print i

@@ -5,10 +5,10 @@ import stockutils
 import stockdb
 import stockparser
 import stockconfig
-import macd
-import kdj
-import boll
-import ma
+from index import macd
+from index import kdj
+from index import boll
+from index import ma
 
 class stockmanager():
 	parser = stockparser.stock_parser()

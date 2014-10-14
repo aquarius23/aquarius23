@@ -3,6 +3,7 @@
 import sys
 import string
 
+#[MB,UP,DN]
 class boll():
 
 	def cal_ma_md(self, list):

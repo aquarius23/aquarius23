@@ -3,6 +3,7 @@
 import sys
 import string
 
+#[K,D,J,J2]
 class kdj():
 
 	def find_low_high(self, list):

@@ -3,6 +3,7 @@
 import sys
 import string
 
+#[1,3,5,10,20,30]
 class volume_ma():
 
 	def __cal_ma(self, list):

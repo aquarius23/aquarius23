@@ -2,6 +2,7 @@
 #!coding=utf-8
 import string
 
+#[DIF,DEA,MACD]
 class macd():
 	def cal_macd(self, list):
 		EMA12 = list[0][2]
@@ -18,7 +19,7 @@ class macd():
 			DIF = EMA12 - EMA26
 			DEA = DEA*(8.0/10.0) + DIF*(2.0/10.0)
 			MACD = 2*(DIF-DEA)
-			result.append(day[0])
+			#result.append(day[0])
 			result.append(DIF)
 			result.append(DEA)
 			result.append(MACD)

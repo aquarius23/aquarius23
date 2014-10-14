@@ -10,10 +10,10 @@ class kdj():
 		low = sys.float_info.max;
 		high = 0.0;
 		for day in list:
-			if day[3] < low:
-				low = day[3]
-			if day[4] > high:
-				high = day[4]
+			if day[0] < low:
+				low = day[0]
+			if day[1] > high:
+				high = day[1]
 		return low, high
 
 	def cal_kdj(self, list):
@@ -26,10 +26,10 @@ class kdj():
 		for day in list:
 			result = []
 			if len(nine) < 9:
-				nine.append(day)
+				nine.append(day[3:5])
 			else:
 				nine.remove(nine[0])
-				nine.append(day)
+				nine.append(day[3:5])
 				low, high = self.find_low_high(nine)
 				end = day[2]
 				RSV = (end-low)/(high-low)*100.0

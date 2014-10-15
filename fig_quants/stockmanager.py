@@ -12,6 +12,7 @@ from index import ma
 from index import volume_ma
 from index import price_range
 from index import volume_range
+from index import closeprice_range
 
 class stockmanager():
 	parser = stockparser.stock_parser()
@@ -59,7 +60,7 @@ class stockmanager():
 
 x = stockmanager()
 x = x.get_stock_index('002204')
-m = volume_range.volume_range()
+m = closeprice_range.closeprice_range()
 x,y = m.cal_range(x)
 for i in x:
 	print i

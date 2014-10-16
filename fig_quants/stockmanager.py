@@ -13,6 +13,7 @@ from index import volume_ma
 from index import price_range
 from index import volume_range
 from index import closeprice_range
+from index import kline
 
 class stockmanager():
 	parser = stockparser.stock_parser()
@@ -60,7 +61,7 @@ class stockmanager():
 
 x = stockmanager()
 x = x.get_stock_index('002204')
-m = closeprice_range.closeprice_range()
-x,y = m.cal_range(x)
+m = kline.kline()
+x = m.cal_kline(x)
 for i in x:
 	print i

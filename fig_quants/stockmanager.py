@@ -18,6 +18,42 @@ from index import kline
 class stockmanager():
 	parser = stockparser.stock_parser()
 	db = stockdb.stockdb()
+	macd = macd.macd()
+	kdj = kdj.kdj()
+	boll = boll.boll()
+	ma = ma.ma()
+	volume_ma = volume_ma.volume_ma()
+	price_range = price_range.price_range()
+	volume_range = volume_range.volume_range()
+	closeprice_range = closeprice_range.closeprice_range()
+	kline = kline.kline()
+
+	def cal_macd(self, list):
+		return self.macd.cal_macd(list)
+
+	def cal_kdj(self, list):
+		return self.kdj.cal_kdj(list)
+
+	def cal_boll(self, list):
+		return self.boll.cal_boll(list)
+
+	def cal_ma(self, list):
+		return self.ma.cal_ma(list)
+
+	def cal_volume_ma(self, list):
+		return self.volume_ma.cal_ma(list)
+
+	def cal_price_range(self, list):
+		return self.price_range.cal_range(list)
+
+	def cal_volume_range(self, list):
+		return self.volume_range.cal_range(list)
+
+	def cal_closeprice_range(self, list):
+		return self.closeprice_range.cal_range(list)
+
+	def cal_kline(self, list):
+		return self.kline.cal_kline(list)
 
 	def get_stock_list(self):
 		return self.parser.get_stock_list()
@@ -59,9 +95,8 @@ class stockmanager():
 			start_year, start_jidu = stockutils.next_jidu(start_year, start_jidu)
 		return index
 
-x = stockmanager()
-x = x.get_stock_index('002204')
-m = kline.kline()
-x = m.cal_kline(x)
+manager = stockmanager()
+x = manager.get_stock_index('002204')
+x = manager.cal_kline(x)
 for i in x:
 	print i

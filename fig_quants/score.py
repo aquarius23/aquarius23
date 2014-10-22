@@ -21,8 +21,13 @@ class score():
 			pos = pos + 1
 		return pos
 
-	def update(self, current, end):
-		cal_level(current)
+	def update(self, current, low, middle, high):
+		low = (low - current) / current
+		middle = (middle - current) / current
+		high = (high - current) / current
+		low_pos = self.cal_level(low*100)
+		middle_pos = self.cal_level(middle*100)
+		high_pos = self.cal_level(high*100)
 
 	def get_level(self):
 		return self.level

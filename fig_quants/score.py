@@ -28,6 +28,9 @@ class score():
 		low_pos = self.cal_level(low*100)
 		middle_pos = self.cal_level(middle*100)
 		high_pos = self.cal_level(high*100)
+		self.low[low_pos] = self.low[low_pos] + 1
+		self.middle[middle_pos] = self.middle[middle_pos] + 1
+		self.high[high_pos] = self.high[high_pos] + 1
 
 	def get_level(self):
 		return self.level

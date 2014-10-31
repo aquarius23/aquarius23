@@ -1,6 +1,5 @@
 #!/usr/bin/python
 #!coding=utf-8
-import stockmanager
 
 class score():
 	level = [-30.0, -20.0, -10.0, -5.0, -3.0, -1.0, 1, 3, 5, 10, 20, 30]

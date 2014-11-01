@@ -3,20 +3,15 @@
 import score
 
 class stockscore():
-	day1 = score.score()
-	day3 = score.score()
-	day5 = score.score()
-	day10 = score.score()
-	day20 = score.score()
-	day30 = score.score()
+	days = [1,3,5,10,20,30]
+	days_score = []
+	for day in days:
+		day_score = score.score()
+		days_score.append(day_score)
 
 	def reset(self):
-		self.day1.reset()
-		self.day3.reset()
-		self.day5.reset()
-		self.day10.reset()
-		self.day20.reset()
-		self.day30.reset()
+		for score in self.days_score:
+			score.reset()
 
 	def __fix_index(self, current, size, increase):
 		ret = current + increase
@@ -36,18 +31,11 @@ class stockscore():
 
 	def update(self, current, index, low, middle, high):
 		size = len(middle)
-		index1 = self.__fix_index(index, size, 1)
-		self.day1.update(current, low[index1], middle[index1], high[index1])
-		index3 = self.__fix_index(index, size, 3)
-		self.day3.update(current, low[index3], middle[index3], high[index3])
-		index5 = self.__fix_index(index, size, 5)
-		self.day5.update(current, low[index5], middle[index5], high[index5])
-		index10 = self.__fix_index(index, size, 10)
-		self.day10.update(current, low[index10], middle[index10], high[index10])
-		index20 = self.__fix_index(index, size, 20)
-		self.day20.update(current, low[index20], middle[index20], high[index20])
-		index30 = self.__fix_index(index, size, 30)
-		self.day30.update(current, low[index30], middle[index30], high[index30])
+		index_day = 0
+		for day in self.days:
+			real_index = self.__fix_index(index, size, day)
+			self.days_score[index_day].update(current, low[real_index], middle[real_index], high[real_index])
+			index_day = index_day + 1
 
 	def get_level(self):
-		return self.day1.get_level()
+		return self.days_score[0].get_level()

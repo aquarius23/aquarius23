@@ -24,6 +24,16 @@ class stockscore():
 			ret = size - 1
 		return ret
 
+	def normalize(self, list):
+		sum = 0
+		ret = []
+		for item in list:
+			sum = sum + item
+		for item in list:
+			nor = (float(item)/float(sum))*100.0
+			ret.append(nor)
+		return ret
+
 	def update(self, current, index, low, middle, high):
 		size = len(middle)
 		index1 = self.__fix_index(index, size, 1)

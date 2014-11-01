@@ -19,7 +19,7 @@ class stockscore():
 			ret = size - 1
 		return ret
 
-	def normalize(self, list):
+	def __normalize(self, list):
 		sum = 0
 		ret = []
 		for item in list:
@@ -39,3 +39,14 @@ class stockscore():
 
 	def get_level(self):
 		return self.days_score[0].get_level()
+
+	def __common_get(self, name):
+		ret = []
+		for score in self.days_score:
+			if name == 'low':
+				ret.append(self.__normalize(score.get_low()))
+			elif name == 'middle':
+				ret.append(self.__normalize(score.get_middle()))
+			elif name == 'high':
+				ret.append(self.__normalize(score.get_high()))
+		return ret

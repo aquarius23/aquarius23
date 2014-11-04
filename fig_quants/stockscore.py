@@ -25,7 +25,9 @@ class stockscore():
 		for item in list:
 			sum = sum + item
 		for item in list:
-			nor = (float(item)/float(sum))*100.0
+			nor = 0
+			if sum != 0:
+				nor = (float(item)/float(sum))*100.0
 			ret.append(nor)
 		return ret
 
@@ -34,7 +36,10 @@ class stockscore():
 		index_day = 0
 		for day in self.days:
 			real_index = self.__fix_index(index, size, day)
-			self.days_score[index_day].update(current, low[real_index], middle[real_index], high[real_index])
+			low_v = low[real_index][index_day]
+			middle_v = middle[real_index][index_day]
+			high_v = high[real_index][index_day]
+			self.days_score[index_day].update(current, low_v, middle_v, high_v)
 			index_day = index_day + 1
 
 	def get_level(self):
@@ -50,3 +55,13 @@ class stockscore():
 			elif name == 'high':
 				ret.append(self.__normalize(score.get_high()))
 		return ret
+
+	def get_low(self):
+		return self.__common_get('low')
+
+	def get_middle(self):
+		return self.__common_get('middle')
+
+	def get_high(self):
+		return self.__common_get('high')
+

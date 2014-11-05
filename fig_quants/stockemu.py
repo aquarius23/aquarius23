@@ -36,7 +36,29 @@ class stockemu():
 		self.closeprice_range_low, self.closeprice_range_high = self.manager.cal_closeprice_range(exchange)
 		self.kline = self.manager.cal_kline(exchange)
 
-	#def filter(self, index):
+	def filter(self, index):
+		if self.filter_macd(index, self.macd) != 1:
+			return 0
+		if self.filter_kdj(index, self.kdj) != 1:
+			return 0
+		if self.filter_boll(index, self.boll) != 1:
+			return 0
+		if self.filter_ma(index, self.ma) != 1:
+			return 0
+		if self.filter_volume_ma(index, self.volume_ma) != 1:
+			return 0
+		if self.filter_price_range(index, self.price_range_low, self.price_range_high) != 1:
+			return 0
+		if self.filter_volume_range(index, self.volume_range_low, self,volume_range_high) != 1:
+			return 0
+		if self.filter_closeprice_range(index, self.closeprice_range_low, self.closeprice_range_high) != 1:
+			return 0
+		if self.filter_kline(self, self.kline) != 1:
+			return 0
+		if self.filter_exchange(self, self.exchange) != 1:
+			return 0
+		return 1
+
 	def filter_macd(self, index, macd):
 		return 1
 
@@ -61,7 +83,7 @@ class stockemu():
 	def filter_closeprice_range(self, low, high):
 		return 1
 
-	def filter_kline(self, low, high):
+	def filter_kline(self, kline):
 		return 1
 
 	def filter_exchange(self, exchange):

@@ -38,7 +38,7 @@ class stockemu():
 		index = 0
 		for item in self.exchange:
 			current = item[2]#close price
-			if self.filter(self, index) == 1:
+			if self.filter(index) == 1:
 				self.score.update(current, index, self.closeprice_range_low, self.ma, self.closeprice_range_high)
 			index = index + 1
 
@@ -69,7 +69,7 @@ class stockemu():
 			return 0
 		if self.filter_price_range(index, self.price_range_low, self.price_range_high) != 1:
 			return 0
-		if self.filter_volume_range(index, self.volume_range_low, self,volume_range_high) != 1:
+		if self.filter_volume_range(index, self.volume_range_low, self.volume_range_high) != 1:
 			return 0
 		if self.filter_closeprice_range(index, self.closeprice_range_low, self.closeprice_range_high) != 1:
 			return 0
@@ -94,18 +94,18 @@ class stockemu():
 	def filter_volume_ma(self, index, volume_ma):
 		return 1
 
-	def filter_price_range(self, low, high):
+	def filter_price_range(self, index, low, high):
 		return 1
 
-	def filter_volume_range(self, low, high):
+	def filter_volume_range(self, index, low, high):
 		return 1
 
-	def filter_closeprice_range(self, low, high):
+	def filter_closeprice_range(self, index, low, high):
 		return 1
 
-	def filter_kline(self, kline):
+	def filter_kline(self, index, kline):
 		return 1
 
-	def filter_exchange(self, exchange):
+	def filter_exchange(self, index, exchange):
 		return 1
 

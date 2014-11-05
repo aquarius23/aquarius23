@@ -20,11 +20,22 @@ class stockemu():
 	closeprice_range_high = []
 	kline = []
 	exchange = []
+	size = 0
+	current_index = 0
 
 	def reset(self):
 		self.score.reset()
 
+	def fix_index(self, adjust):
+		if adjust > 0:
+			adjust = 0
+		index = self.current_index + adjust
+		if index < 0:
+			index = 0
+		return index
+
 	def feed(self, exchange):
+		self.size = len(exchange)
 		self.exchange = exchange
 		self.macd = self.manager.cal_macd(exchange)
 		self.kdj = self.manager.cal_kdj(exchange)
@@ -37,6 +48,7 @@ class stockemu():
 		self.kline = self.manager.cal_kline(exchange)
 
 	def filter(self, index):
+		self.current_index = index
 		if self.filter_macd(index, self.macd) != 1:
 			return 0
 		if self.filter_kdj(index, self.kdj) != 1:

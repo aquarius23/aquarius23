@@ -37,3 +37,33 @@ class stockemu():
 		self.kline = self.manager.cal_kline(exchange)
 
 	#def filter(self, index):
+	def filter_macd(self, index, macd):
+		return 1
+
+	def filter_kdj(self, index, kdj):
+		return 1
+
+	def filter_boll(self, index, boll):
+		return 1
+
+	def filter_ma(self, index, ma):
+		return 1
+
+	def filter_volume_ma(self, index, volume_ma):
+		return 1
+
+	def filter_price_range(self, low, high):
+		return 1
+
+	def filter_volume_range(self, low, high):
+		return 1
+
+	def filter_closeprice_range(self, low, high):
+		return 1
+
+	def filter_kline(self, low, high):
+		return 1
+
+	def filter_exchange(self, exchange):
+		return 1
+

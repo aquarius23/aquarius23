@@ -16,7 +16,7 @@ class stockscore():
 	def __fix_index(self, current, size, increase):
 		ret = current + increase
 		if ret > (size - 1):
-			ret = size - 1
+			ret = -1
 		return ret
 
 	def __normalize(self, list):
@@ -36,10 +36,11 @@ class stockscore():
 		index_day = 0
 		for day in self.days:
 			real_index = self.__fix_index(index, size, day)
-			low_v = low[real_index][index_day]
-			middle_v = middle[real_index][index_day]
-			high_v = high[real_index][index_day]
-			self.days_score[index_day].update(current, low_v, middle_v, high_v)
+			if real_index >= 0:
+				low_v = low[real_index][index_day]
+				middle_v = middle[real_index][index_day]
+				high_v = high[real_index][index_day]
+				self.days_score[index_day].update(current, low_v, middle_v, high_v)
 			index_day = index_day + 1
 
 	def get_level(self):

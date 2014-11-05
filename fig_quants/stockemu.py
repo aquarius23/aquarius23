@@ -34,6 +34,14 @@ class stockemu():
 			index = 0
 		return index
 
+	def run(self):
+		index = 0
+		for item in self.exchange:
+			current = item[2]#close price
+			if self.filter(self, index) == 1:
+				self.score.update(current, index, self.closeprice_range_low, self.ma, self.closeprice_range_high)
+			index = index + 1
+
 	def feed(self, exchange):
 		self.size = len(exchange)
 		self.exchange = exchange

@@ -109,3 +109,12 @@ class stockemu():
 	def filter_exchange(self, index, exchange):
 		return 1
 
+	def get_low(self):
+		return self.score.get_low()
+
+	def get_middle(self):
+		return self.score.get_middle()
+
+	def get_high(self):
+		return self.score.get_high()
+

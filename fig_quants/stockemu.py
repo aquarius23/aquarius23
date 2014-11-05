@@ -57,53 +57,53 @@ class stockemu():
 
 	def filter(self, index):
 		self.current_index = index
-		if self.filter_macd(index, self.macd) != 1:
+		if self.filter_macd(self.exchange, index, self.macd) != 1:
 			return 0
-		if self.filter_kdj(index, self.kdj) != 1:
+		if self.filter_kdj(self.exchange, index, self.kdj) != 1:
 			return 0
-		if self.filter_boll(index, self.boll) != 1:
+		if self.filter_boll(self.exchange, index, self.boll) != 1:
 			return 0
-		if self.filter_ma(index, self.ma) != 1:
+		if self.filter_ma(self.exchange, index, self.ma) != 1:
 			return 0
-		if self.filter_volume_ma(index, self.volume_ma) != 1:
+		if self.filter_volume_ma(self.exchange, index, self.volume_ma) != 1:
 			return 0
-		if self.filter_price_range(index, self.price_range_low, self.price_range_high) != 1:
+		if self.filter_price_range(self.exchange, index, self.price_range_low, self.price_range_high) != 1:
 			return 0
-		if self.filter_volume_range(index, self.volume_range_low, self.volume_range_high) != 1:
+		if self.filter_volume_range(self.exchange, index, self.volume_range_low, self.volume_range_high) != 1:
 			return 0
-		if self.filter_closeprice_range(index, self.closeprice_range_low, self.closeprice_range_high) != 1:
+		if self.filter_closeprice_range(self.exchange, index, self.closeprice_range_low, self.closeprice_range_high) != 1:
 			return 0
-		if self.filter_kline(self, self.kline) != 1:
+		if self.filter_kline(self.exchange, index, self.kline) != 1:
 			return 0
-		if self.filter_exchange(self, self.exchange) != 1:
+		if self.filter_exchange(index, self.exchange) != 1:
 			return 0
 		return 1
 
-	def filter_macd(self, index, macd):
+	def filter_macd(self, exchange, index, macd):
 		return 1
 
-	def filter_kdj(self, index, kdj):
+	def filter_kdj(self, exchange, index, kdj):
 		return 1
 
-	def filter_boll(self, index, boll):
+	def filter_boll(self, exchange, index, boll):
 		return 1
 
-	def filter_ma(self, index, ma):
+	def filter_ma(self, exchange, index, ma):
 		return 1
 
-	def filter_volume_ma(self, index, volume_ma):
+	def filter_volume_ma(self, exchange, index, volume_ma):
 		return 1
 
-	def filter_price_range(self, index, low, high):
+	def filter_price_range(self, exchange, index, low, high):
 		return 1
 
-	def filter_volume_range(self, index, low, high):
+	def filter_volume_range(self, exchange, index, low, high):
 		return 1
 
-	def filter_closeprice_range(self, index, low, high):
+	def filter_closeprice_range(self, exchange, index, low, high):
 		return 1
 
-	def filter_kline(self, index, kline):
+	def filter_kline(self, exchange, index, kline):
 		return 1
 
 	def filter_exchange(self, index, exchange):

@@ -178,15 +178,16 @@ static inline unsigned short get_bits(unsigned char **src, int *pos, unsigned sh
 static void *bayerx2bayer16(void *src, int width, int height, int bpp)
 {
 	int size = width * height;
+	unsigned char *bitstream = src;
 	void *dst = malloc(size * 2);
 	if(dst)
 	{
 		int i;
-		unsigned short remain, *b_dst = dst;
-		int pos = 0, remain = 0;
+		unsigned short remain = 0, *b_dst = dst;
+		int pos = 0;
 		for(i = 0; i < size; i++)
 		{
-
+			*b_dst++ = get_bits(&bitstream, &pos, &remain, bpp);
 		}
 	}
 	return dst;

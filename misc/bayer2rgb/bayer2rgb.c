@@ -150,6 +150,48 @@ usage( char * name )
 	printf("   --help,-h      this helpful message\n");
 }
 
+static inline unsigned short get_bits(unsigned char **src, int *pos, unsigned short *remain, int bits)
+{
+	int bit;
+	unsigned char c;
+	unsigned short ret = *remain;
+	bits -= *pos;
+	while(bits)
+	{
+		if(bits > 8)
+			bit = 8;
+		else
+			bit = bits;
+		c = **src;
+		*src = *src + 1;
+		ret = (ret << bit) | (c >> (8 - bit));
+		bits -= bit;
+		if(bits <= 0)
+		{
+			*remain = c & ((1 << (8 - bit)) - 1);
+			*pos = 8 - bit;
+		}
+	}
+	return ret;
+}
+
+static void *bayerx2bayer16(void *src, int width, int height, int bpp)
+{
+	int size = width * height;
+	void *dst = malloc(size * 2);
+	if(dst)
+	{
+		int i;
+		unsigned short remain, *b_dst = dst;
+		int pos = 0, remain = 0;
+		for(i = 0; i < size; i++)
+		{
+
+		}
+	}
+	return dst;
+}
+
 int
 main( int argc, char ** argv )
 {

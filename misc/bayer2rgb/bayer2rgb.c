@@ -187,7 +187,7 @@ static void *bayerx2bayer16(void *src, int width, int height, int bpp)
 		int pos = 0;
 		for(i = 0; i < size; i++)
 		{
-			*b_dst++ = get_bits(&bitstream, &pos, &remain, bpp);
+			*b_dst++ = get_bits(&bitstream, &pos, &remain, bpp) << (16 - bpp);
 		}
 	}
 	return dst;
@@ -196,7 +196,7 @@ static void *bayerx2bayer16(void *src, int width, int height, int bpp)
 int
 main( int argc, char ** argv )
 {
-    uint32_t in_size=0, out_size=0, width=0, height=0, bpp=0;
+    uint32_t in_size=0, out_size=0, width=0, height=0, bpp=0, real_bpp=0;
     int first_color = DC1394_COLOR_FILTER_RGGB;
 	int tiff = 0;
 	int method = DC1394_BAYER_METHOD_BILINEAR;
@@ -289,6 +289,13 @@ main( int argc, char ** argv )
     in_size = lseek(input_fd, 0, SEEK_END );
     lseek(input_fd, 0, 0);
 
+	if((bpp != 8) && (bpp != 16))
+	{
+		real_bpp = bpp;
+		bpp = 16;
+	}
+	else
+		real_bpp = bpp;
     out_size = width * height * (bpp / 8) * 3 + tiff;
 
     ftruncate(output_fd, out_size );
@@ -318,13 +325,13 @@ main( int argc, char ** argv )
 		rgb_start = put_tiff(rgb, width, height, bpp);
 	}
 #if 1
-	switch(bpp)
+	switch(real_bpp)
 	{
+		void *new_bayer;
 		case 8:
 			dc1394_bayer_decoding_8bit((const uint8_t*)bayer, (uint8_t*)rgb_start, width, height, first_color, method);
 			break;
 		case 16:
-		default:
             {
                 uint8_t tmp=0;
                 uint32_t i=0;
@@ -336,6 +343,23 @@ main( int argc, char ** argv )
             }
 			dc1394_bayer_decoding_16bit((const uint16_t*)bayer, (uint16_t*)rgb_start, width, height, first_color, method, bpp);
 			break;
+
+		default:
+			new_bayer = bayerx2bayer16(bayer, width, height, real_bpp);
+			if(new_bayer){
+            {
+                uint8_t tmp=0;
+                uint32_t i=0;
+                for(i=0;i<width*height*2;i+=2){
+                    tmp = *(((uint8_t*)new_bayer)+i);
+                    *(((uint8_t*)new_bayer)+i) = *(((uint8_t*)new_bayer)+i+1);
+                    *(((uint8_t*)new_bayer)+i+1) = tmp;
+                }
+            }
+			dc1394_bayer_decoding_16bit((const uint16_t*)new_bayer, (uint16_t*)rgb_start, width, height, first_color, method, bpp);
+			free(new_bayer);}
+			break;
+
 	}
 #endif
 

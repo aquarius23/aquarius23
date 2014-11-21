@@ -175,6 +175,32 @@ static inline unsigned short get_bits(unsigned char **src, int *pos, unsigned sh
 	return ret;
 }
 
+static inline unsigned short get_bits2(unsigned char **src, int *pos, unsigned short *remain, int bits)
+{
+	int bit;
+	unsigned char c;
+	unsigned short ret = *remain;
+	bits -= *pos;
+	while(bits)
+	{
+		if(bits > 8)
+			bit = 8;
+		else
+			bit = bits;
+		c = **src;
+		*src = *src + 1;
+		ret = ret | ((unsigned short)(c & ((1 << bit) - 1)) << *pos);
+		bits -= bit;
+		*pos += bit;
+		if(bits <= 0)
+		{
+			*remain = c >> bit;
+			*pos = 8 - bit;
+		}
+	}
+	return ret;
+}
+
 static void *bayerx2bayer16(void *src, int width, int height, int bpp)
 {
 	int size = width * height;
@@ -187,7 +213,7 @@ static void *bayerx2bayer16(void *src, int width, int height, int bpp)
 		int pos = 0;
 		for(i = 0; i < size; i++)
 		{
-			*b_dst++ = get_bits(&bitstream, &pos, &remain, bpp) << (16 - bpp);
+			*b_dst++ = get_bits2(&bitstream, &pos, &remain, bpp) << (16 - bpp);
 		}
 	}
 	return dst;
@@ -348,13 +374,13 @@ main( int argc, char ** argv )
 			new_bayer = bayerx2bayer16(bayer, width, height, real_bpp);
 			if(new_bayer){
             {
-                uint8_t tmp=0;
+                /*uint8_t tmp=0;
                 uint32_t i=0;
                 for(i=0;i<width*height*2;i+=2){
                     tmp = *(((uint8_t*)new_bayer)+i);
                     *(((uint8_t*)new_bayer)+i) = *(((uint8_t*)new_bayer)+i+1);
                     *(((uint8_t*)new_bayer)+i+1) = tmp;
-                }
+                }*/
             }
 			dc1394_bayer_decoding_16bit((const uint16_t*)new_bayer, (uint16_t*)rgb_start, width, height, first_color, method, bpp);
 			free(new_bayer);}

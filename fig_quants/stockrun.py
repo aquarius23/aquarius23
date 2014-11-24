@@ -47,6 +47,9 @@ class stockrun():
 		self.closeprice_range_low, self.closeprice_range_high = self.manager.cal_closeprice_range(exchange)
 		self.kline = self.manager.cal_kline(exchange)
 
+	def get_lable(self, index):
+		return self.get_state(index, self.exchange, self.kline)
+
 	def get_feature(self, index):
 		self.current_index = index
 		features = []
@@ -80,6 +83,9 @@ class stockrun():
 		exchange_feature = self.feature_exchange(index, self.exchange)
 		features.append(exchange_feature)
 		return features
+
+	def get_state(self, index, exchange, kline):
+		return []
 
 	def feature_macd(self, exchange, index, macd):
 		return []

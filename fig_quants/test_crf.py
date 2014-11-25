@@ -5,14 +5,24 @@ import stockrun
 
 class myrun(stockrun.stockrun):
 
+	def lable_feature(self, lable, feature):
+		print '-------------------'
+		print lable
+		print feature
+
+	def get_state(self, index, exchange, kline):
+		return 'up'
+
 	def feature_kdj(self, exchange, index, kdj):
-		if kdj[index][2] > 0:
-			return 0
 		adj1 = self.fix_index(-1)
-		return []
+		ret = []
+		ret.append('kdj')
+		return ret
 
 	def feature_macd(self, exchange, index, macd):
-		return []
+		ret = []
+		ret.append('macd')
+		return ret
 
 	def feature_boll(self, exchange, index, macd):
 		return []

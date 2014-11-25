@@ -60,34 +60,34 @@ class stockrun():
 		self.current_index = index
 		features = []
 		macd_feature = self.feature_macd(self.exchange, index, self.macd)
-		features.append(macd_feature)
+		features.extend(macd_feature)
 
 		kdj_feature = self.feature_kdj(self.exchange, index, self.kdj)
-		features.append(kdj_feature)
+		features.extend(kdj_feature)
 
 		boll_feature = self.feature_boll(self.exchange, index, self.boll)
-		features.append(boll_feature)
+		features.extend(boll_feature)
 
 		ma_feature = self.feature_ma(self.exchange, index, self.ma)
-		features.append(ma_feature)
+		features.extend(ma_feature)
 
 		volume_ma_feature = self.feature_volume_ma(self.exchange, index, self.volume_ma)
-		features.append(volume_ma_feature)
+		features.extend(volume_ma_feature)
 
 		price_range_feature = self.feature_price_range(self.exchange, index, self.price_range_low, self.price_range_high)
-		features.append(price_range_feature)
+		features.extend(price_range_feature)
 
 		volume_range_feature = self.feature_volume_range(self.exchange, index, self.volume_range_low, self.volume_range_high)
-		features.append(volume_range_feature)
+		features.extend(volume_range_feature)
 
 		closeprice_range_feature = self.feature_closeprice_range(self.exchange, index, self.closeprice_range_low, self.closeprice_range_high)
-		features.append(closeprice_range_feature)
+		features.extend(closeprice_range_feature)
 
 		kline_feature = self.feature_kline(self.exchange, index, self.kline)
-		features.append(kline_feature)
+		features.extend(kline_feature)
 
 		exchange_feature = self.feature_exchange(index, self.exchange)
-		features.append(exchange_feature)
+		features.extend(exchange_feature)
 		return features
 
 	def lable_feature(self, lable, feature):

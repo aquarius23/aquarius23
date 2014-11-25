@@ -31,8 +31,14 @@ class stockrun():
 	def run(self):
 		index = 0
 		for item in self.exchange:
-			feature = self.get_feature(index)
+			lable, feature = self.get_lable_feature(index)
+			self.lable_feature(lable, feature)
 			index = index + 1
+
+	def get_lable_feature(self, index):
+		lable = self.get_lable(index)
+		feature = self.get_feature(index)
+		return lable, feature
 
 	def feed(self, exchange):
 		self.size = len(exchange)
@@ -83,6 +89,9 @@ class stockrun():
 		exchange_feature = self.feature_exchange(index, self.exchange)
 		features.append(exchange_feature)
 		return features
+
+	def lable_feature(self, lable, feature):
+		pass
 
 	def get_state(self, index, exchange, kline):
 		return []

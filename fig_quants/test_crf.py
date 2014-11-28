@@ -16,12 +16,17 @@ class myrun(stockrun.stockrun):
 	def feature_kdj(self, exchange, index, kdj):
 		adj1 = self.fix_index(-1)
 		ret = []
-		ret.append('kdj')
+		j =  kdj[index][2]
+		if j < 20:
+			ret.append('j=-1')
+		elif j >80:
+			ret.append('j=1')
+		else:
+			ret.append('j=0')
 		return ret
 
 	def feature_macd(self, exchange, index, macd):
 		ret = []
-		ret.append('macd')
 		return ret
 
 	def feature_boll(self, exchange, index, macd):
@@ -30,6 +35,7 @@ class myrun(stockrun.stockrun):
 manager = stockmanager.stockmanager()
 list = manager.get_stock_list()
 list = ['600015','600030','600036','600050','600029']
+list = ['600015']
 for index in list:
 	print index
 	e = manager.get_stock_index(index)

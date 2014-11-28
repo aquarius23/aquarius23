@@ -21,11 +21,11 @@ class stockrun():
 	current_index = 0
 
 	def fix_index(self, adjust):
-		if adjust > 0:
-			adjust = 0
 		index = self.current_index + adjust
 		if index < 0:
 			index = 0
+		if index > self.size - 1:
+			index = self.size - 1
 		return index
 
 	def run(self):

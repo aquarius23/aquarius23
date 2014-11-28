@@ -28,18 +28,18 @@ class stockcrftrainer():
 
 	def get_model(file):
 		# Use L2-regularized SGD and 1st-order dyad features.
-		trainer.select('l2sgd', 'crf1d')
+		self.trainer.select('l2sgd', 'crf1d')
 
 		# This demonstrates how to list parameters and obtain their values.
-		for name in trainer.params():
-			print name, trainer.get(name), trainer.help(name)
+		for name in self.trainer.params():
+			print name, self.trainer.get(name), self.trainer.help(name)
 
 		# Set the coefficient for L2 regularization to 0.1
-		trainer.set('c2', '0.1')
+		self.trainer.set('c2', '0.1')
 
 		# Start training; the training process will invoke trainer.message()
 		# to report the progress.
-		trainer.train(file, -1)
+		self.trainer.train(file, -1)
 
 
 class stockcrftagger():

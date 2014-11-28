@@ -21,6 +21,6 @@ class stockcrfrun(stockrun.stockrun):
 			self.crftag.remove(self.crftag[0])
 			self.crffeature.remove(self.crffeature[0])
 		if len(self.crftag) == self.chain:
-			print '------------------'
-			print self.crftag
-			print self.crffeature
+			return self.crftag, self.crffeature
+		else:
+			return [],[]

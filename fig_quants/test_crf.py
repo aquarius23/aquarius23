@@ -12,7 +12,6 @@ class myrun(stockcrfrun.stockcrfrun):
 		print feature
 
 	def get_state(self, index, exchange, kline):
-		ret = []
 		next = self.fix_index(1)
 		today = kline[index][0]
 		if today >= 1:
@@ -30,8 +29,7 @@ class myrun(stockcrfrun.stockcrfrun):
 		else:
 			tomorrow = 0
 
-		ret.append(str(tomorrow-today) + str(tomorrow))
-		return ret
+		return str(tomorrow-today) + str(tomorrow)
 
 	def feature_kdj(self, exchange, index, kdj):
 		adj1 = self.fix_index(-1)
@@ -66,6 +64,7 @@ for index in list:
 	run.feed(e)
 	for i, day in enumerate(e):
 		tag, feature = run.get_lable_feature(i)
-		run.set_tag_feature(tag, feature)
-		trainer.set_tag_feature(tag, feature)
+		tag, feature = run.set_tag_feature(tag, feature)
+		if tag != []:
+			trainer.set_tag_feature(tag, feature)
 	trainer.get_model('crf.txt')

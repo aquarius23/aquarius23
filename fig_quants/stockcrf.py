@@ -12,7 +12,7 @@ class stockcrftrainer():
 	# Create a Trainer object.
 	trainer = crftrainer()
 
-	def set_tag_feature(tags, features):
+	def set_tag_feature(self, tags, features):
 		xseq = crfsuite.ItemSequence()
 		yseq = crfsuite.StringList()
 		count = 0
@@ -26,7 +26,7 @@ class stockcrftrainer():
 			count = count + 1
 		self.trainer.append(xseq, yseq, 0)
 
-	def get_model(file):
+	def get_model(self, file):
 		# Use L2-regularized SGD and 1st-order dyad features.
 		self.trainer.select('l2sgd', 'crf1d')
 
@@ -46,11 +46,11 @@ class stockcrftagger():
 	# Create a tagger object.
 	tagger = crfsuite.Tagger()
 
-	def open_model(file):
+	def open_model(self, file):
 		# Load the model to the tagger.
 		self.tagger.open(file)
 
-	def tag_lable(features):
+	def tag_lable(self, features):
 		# Tag the sequence.
 		xseq = crfsuite.ItemSequence()
 		for feature in features:

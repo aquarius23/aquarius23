@@ -29,7 +29,7 @@ class myrun(stockcrfrun.stockcrfrun):
 		else:
 			tomorrow = 0
 
-		return str(tomorrow-today) + str(tomorrow)
+		return str(tomorrow)
 
 	def feature_kdj(self, exchange, index, kdj):
 		adj1 = self.fix_index(-1)
@@ -45,6 +45,11 @@ class myrun(stockcrfrun.stockcrfrun):
 
 	def feature_macd(self, exchange, index, macd):
 		ret = []
+		macd = macd[index][2]
+		if macd >= 0:
+			ret.append('macd=1')
+		else:
+			ret.append('macd=-1')
 		return ret
 
 	def feature_boll(self, exchange, index, macd):
@@ -54,7 +59,7 @@ manager = stockmanager.stockmanager()
 trainer = stockcrf.stockcrftrainer()
 list = manager.get_stock_list()
 list = ['600015','600030','600036','600050','600029']
-list = ['600015']
+list = ['sh000001']
 for index in list:
 	print index
 	e = manager.get_stock_index(index)

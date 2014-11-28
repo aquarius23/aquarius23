@@ -1,9 +1,9 @@
 #!/usr/bin/python
 #!coding=utf-8
 import stockmanager
-import stockrun
+import stockcrfrun
 
-class myrun(stockrun.stockrun):
+class myrun(stockcrfrun.stockcrfrun):
 
 	def lable_feature(self, lable, feature):
 		print '-------------------'
@@ -60,4 +60,6 @@ for index in list:
 		continue
 	run = myrun()
 	run.feed(e)
-	run.run()
+	for i, day in enumerate(e):
+		tag, feature = run.get_lable_feature(i)
+		run.set_tag_feature(tag, feature)

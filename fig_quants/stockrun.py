@@ -54,6 +54,7 @@ class stockrun():
 		self.kline = self.manager.cal_kline(exchange)
 
 	def get_lable(self, index):
+		self.current_index = index
 		return self.get_state(index, self.exchange, self.kline)
 
 	def get_feature(self, index):

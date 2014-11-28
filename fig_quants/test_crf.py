@@ -11,7 +11,10 @@ class myrun(stockrun.stockrun):
 		print feature
 
 	def get_state(self, index, exchange, kline):
-		return 'up'
+		next = self.fix_index(1)
+		today = kline[index][0]
+		tomorrow = kline[next][0]
+		return str(today) + '=' + str(tomorrow)
 
 	def feature_kdj(self, exchange, index, kdj):
 		adj1 = self.fix_index(-1)

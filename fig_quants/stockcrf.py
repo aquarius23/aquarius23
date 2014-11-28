@@ -40,3 +40,29 @@ class stockcrftrainer():
 		# Start training; the training process will invoke trainer.message()
 		# to report the progress.
 		trainer.train(file, -1)
+
+
+class stockcrftagger():
+	# Create a tagger object.
+	tagger = crfsuite.Tagger()
+
+	def open_model(file):
+		# Load the model to the tagger.
+		self.tagger.open(file)
+
+	def tag_lable(features):
+		# Tag the sequence.
+		xseq = crfsuite.ItemSequence()
+		for feature in features:
+			item = crfsuite.Item()
+			for field in feature:
+				item.append(crfsuite.Attribute(field))
+			xseq.append(item)
+		self.tagger.set(xseq)
+		# Obtain the label sequence predicted by the tagger.
+		tags = self.tagger.viterbi()
+		# Output the probability of the predicted label sequence.
+		print self.tagger.probability(tags)
+		for t, y in enumerate(tags):
+			# Output the predicted labels with their marginal probabilities.
+			print '%s:%f' % (y, self.tagger.marginal(y, t))

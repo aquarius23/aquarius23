@@ -133,6 +133,8 @@ class stockrun():
 
 	def filter(self, index):
 		self.current_index = index
+		if self.filter_exchange(index, self.exchange) != 1:
+			return 0
 		if self.filter_macd(self.exchange, index, self.macd) != 1:
 			return 0
 		if self.filter_kdj(self.exchange, index, self.kdj) != 1:
@@ -150,8 +152,6 @@ class stockrun():
 		if self.filter_closeprice_range(self.exchange, index, self.closeprice_range_low, self.closeprice_range_high) != 1:
 			return 0
 		if self.filter_kline(self.exchange, index, self.kline) != 1:
-			return 0
-		if self.filter_exchange(index, self.exchange) != 1:
 			return 0
 		return 1
 

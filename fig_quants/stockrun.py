@@ -98,9 +98,6 @@ class stockrun():
 		features.extend(exchange_feature)
 		return features
 
-	def lable_feature(self, lable, feature):
-		pass
-
 	def get_state(self, index, exchange, kline):
 		return []
 

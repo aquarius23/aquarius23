@@ -1,9 +1,12 @@
 #!/usr/bin/python
 #!coding=utf-8
 import stockmanager
+import stockscore
 
 class stockrun():
 	manager = stockmanager.stockmanager()
+	score = stockscore.stockscore()
+	score.reset()
 	macd = []
 	kdj = []
 	boll = []
@@ -20,6 +23,9 @@ class stockrun():
 	size = 0
 	current_index = 0
 
+	def reset_score(self):
+		self.score.reset()
+
 	def fix_index(self, adjust):
 		index = self.current_index + adjust
 		if index < 0:
@@ -31,8 +37,9 @@ class stockrun():
 	def run(self):
 		index = 0
 		for item in self.exchange:
-			lable, feature = self.get_lable_feature(index)
-			self.lable_feature(lable, feature)
+			current = item[2]#close price
+			if self.filter(index) == 1:
+				self.score.update(current, index, self.closeprice_range_low, self.ma, self.closeprice_range_high)
 			index = index + 1
 
 	def get_lable_feature(self, index):
@@ -127,3 +134,65 @@ class stockrun():
 	def feature_exchange(self, index, exchange):
 		return []
 
+	def filter(self, index):
+		self.current_index = index
+		if self.filter_macd(self.exchange, index, self.macd) != 1:
+			return 0
+		if self.filter_kdj(self.exchange, index, self.kdj) != 1:
+			return 0
+		if self.filter_boll(self.exchange, index, self.boll) != 1:
+			return 0
+		if self.filter_ma(self.exchange, index, self.ma) != 1:
+			return 0
+		if self.filter_volume_ma(self.exchange, index, self.volume_ma) != 1:
+			return 0
+		if self.filter_price_range(self.exchange, index, self.price_range_low, self.price_range_high) != 1:
+			return 0
+		if self.filter_volume_range(self.exchange, index, self.volume_range_low, self.volume_range_high) != 1:
+			return 0
+		if self.filter_closeprice_range(self.exchange, index, self.closeprice_range_low, self.closeprice_range_high) != 1:
+			return 0
+		if self.filter_kline(self.exchange, index, self.kline) != 1:
+			return 0
+		if self.filter_exchange(index, self.exchange) != 1:
+			return 0
+		return 1
+
+	def filter_macd(self, exchange, index, macd):
+		return 1
+
+	def filter_kdj(self, exchange, index, kdj):
+		return 1
+
+	def filter_boll(self, exchange, index, boll):
+		return 1
+
+	def filter_ma(self, exchange, index, ma):
+		return 1
+
+	def filter_volume_ma(self, exchange, index, volume_ma):
+		return 1
+
+	def filter_price_range(self, exchange, index, low, high):
+		return 1
+
+	def filter_volume_range(self, exchange, index, low, high):
+		return 1
+
+	def filter_closeprice_range(self, exchange, index, low, high):
+		return 1
+
+	def filter_kline(self, exchange, index, kline):
+		return 1
+
+	def filter_exchange(self, index, exchange):
+		return 1
+
+	def get_low(self):
+		return self.score.get_low()
+
+	def get_middle(self):
+		return self.score.get_middle()
+
+	def get_high(self):
+		return self.score.get_high()

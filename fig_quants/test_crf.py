@@ -64,10 +64,4 @@ for index in list:
 	run.feed(e)
 	for tag, feature in run.tag_feature():
 		trainer.set_tag_feature(tag, feature)
-	trainer.get_model('crf.txt')
-
-	crftag = stockcrf.stockcrftagger()
-	crftag.open_model('crf.txt')
-	tag, feature = run.last_tag_feature()
-	if feature != []:
-		crftag.tag_lable(feature)
+	trainer.get_model('crf.bin')

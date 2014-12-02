@@ -69,9 +69,6 @@ for index in list:
 	crftag = stockcrf.stockcrftagger()
 	crftag.open_model('crf.txt')
 	size = len(e)
-	run.reset()
-	for i in range(size-5, size):
-		tag, feature = run.get_lable_feature(i)
-		tag, feature = run.set_tag_feature(tag, feature)
-		if feature != []:
-			crftag.tag_lable(feature)
+	tag, feature = run.last_tag_feature()
+	if feature != []:
+		crftag.tag_lable(feature)

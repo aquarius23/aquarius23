@@ -9,7 +9,6 @@ class stockcrfrun(stockrun.stockrun):
 	crffeature = []
 
 	def reset(self):
-		self.size = 0
 		self.crftag = []
 		self.crffeature = []
 
@@ -31,6 +30,16 @@ class stockcrfrun(stockrun.stockrun):
 		self.reset()
 		self.size = len(exchange)
 		self.feed_stock(exchange)
+
+	def last_tag_feature(self):
+		if self.size < self.chain:
+			return [],[]
+		self.reset()
+		for i in range(self.size-self.chain, self.size):
+			tag, feature = self.get_lable_feature(i)
+			tag, feature = self.set_tag_feature(tag, feature)
+			if tag != []:
+				return tag, feature
 
 	def tag_feature(self):
 		if self.size >= self.chain:

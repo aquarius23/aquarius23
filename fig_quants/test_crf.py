@@ -67,11 +67,8 @@ for index in list:
 		continue
 	run = myrun()
 	run.feed(e)
-	for i, day in enumerate(e):
-		tag, feature = run.get_lable_feature(i)
-		tag, feature = run.set_tag_feature(tag, feature)
-		if tag != []:
-			trainer.set_tag_feature(tag, feature)
+	for tag, feature in run.tag_feature():
+		trainer.set_tag_feature(tag, feature)
 	trainer.get_model('crf.txt')
 
 	crftag = stockcrf.stockcrftagger()

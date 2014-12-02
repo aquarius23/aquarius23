@@ -40,7 +40,7 @@ class stockrun():
 		feature = self.get_feature(index)
 		return lable, feature
 
-	def feed(self, exchange):
+	def feed_stock(self, exchange):
 		self.size = len(exchange)
 		self.exchange = exchange
 		self.macd = self.manager.cal_macd(exchange)

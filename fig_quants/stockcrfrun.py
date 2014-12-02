@@ -4,10 +4,12 @@ import stockrun
 
 class stockcrfrun(stockrun.stockrun):
 	chain = 5
+	size = 0
 	crftag = []
 	crffeature = []
 
 	def reset(self):
+		self.size = 0
 		self.crftag = []
 		self.crffeature = []
 
@@ -24,3 +26,16 @@ class stockcrfrun(stockrun.stockrun):
 			return self.crftag, self.crffeature
 		else:
 			return [],[]
+
+	def feed(self, exchange):
+		self.reset()
+		self.size = len(exchange)
+		self.feed_stock(exchange)
+
+	def tag_feature(self):
+		if self.size >= self.chain:
+			for i in range(0, self.size):
+				tag, feature = self.get_lable_feature(i)
+				tag, feature = self.set_tag_feature(tag, feature)
+				if tag != []:
+					yield tag, feature

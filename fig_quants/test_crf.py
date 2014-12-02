@@ -6,11 +6,6 @@ import stockcrf
 
 class myrun(stockcrfrun.stockcrfrun):
 
-	def lable_feature(self, lable, feature):
-		print '-------------------'
-		print lable
-		print feature
-
 	def get_state(self, index, exchange, kline):
 		next = self.fix_index(1)
 		today = kline[index][0]

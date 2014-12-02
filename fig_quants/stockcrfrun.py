@@ -41,6 +41,13 @@ class stockcrfrun(stockrun.stockrun):
 			if tag != []:
 				return tag, feature
 
+	def tag_feature_by_index(self, index):
+		if self.size < self.chain:
+			return [],[]
+		tag, feature = self.get_lable_feature(index)
+		tag, feature = self.set_tag_feature(tag, feature)
+		return tag, feature
+
 	def tag_feature(self):
 		if self.size >= self.chain:
 			for i in range(0, self.size):

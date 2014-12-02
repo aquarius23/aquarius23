@@ -2,9 +2,9 @@
 #!coding=utf-8
 import stockmanager
 import stockscore
-import stockemu
+import stockcrfrun
 
-class myemu(stockemu.stockemu):
+class myemu(stockcrfrun.stockcrfrun):
 
 	def filter_kdj(self, exchange, index, kdj):
 		if kdj[index][2] > 0:

@@ -158,7 +158,24 @@ class crfrule(crfrulebase.crfrulebase):
 		return ret
 
 	def feature_volume_ma(self, exchange, index, volume_ma):
-		return []
+		ret = []
+		end = volume_ma[index][5]
+		sort = []
+		for i, item in enumerate(volume_ma[index]):
+			x = []
+			x.append(str(i))
+			x.append(item)
+			sort.append(x)
+		x=[]
+		x.append('e')
+		x.append(end)
+		sort.append(x)
+		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
+		x='v_ma'
+		for i in sort:
+			x = x+i[0]
+		ret.append(x)
+		return ret
 
 	def feature_kline(self, exchange, index, kline):
 		return []

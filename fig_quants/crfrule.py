@@ -25,15 +25,32 @@ class crfrule(crfrulebase.crfrulebase):
 		return str(tomorrow)
 
 	def feature_kdj(self, exchange, index, kdj):
-		adj1 = self.fix_index(-1)
+		adj_1 = self.fix_index(-1)
 		ret = []
 		j =  kdj[index][2]
+		k = kdj[index][0]
+		d = kdj[index][1]
+		j_1 = kdj[adj_1][2]
 		if j < 20:
 			ret.append('j=-1')
 		elif j >80:
 			ret.append('j=1')
 		else:
 			ret.append('j=0')
+
+		if j > j_1:
+			ret.append('j+')
+		elif j < j_1:
+			ret.append('j-')
+		else:
+			ret.append('j=')
+
+		if k < d:
+			ret.append('k<d')
+		elif k > d:
+			ret.append('k>d')
+		else:
+			ret.append('k=d')
 		return ret
 
 	def feature_macd(self, exchange, index, macd):

@@ -27,12 +27,14 @@ class myemu(stockcrfrun.stockcrfrun):
 		tag, feature = self.tag_feature_by_index(index)
 		if feature != []:
 			tag, p, m = self.mycrftag.tag_lable(feature)
+			if tag[-1] == '1':
+				print p
 		return 1
 
 manager = stockmanager.stockmanager()
 list = manager.get_stock_list()
 list = ['600015','600030','600036','600050','600029']
-list = ['600015']
+list = ['sh000001']
 for index in list:
 	print index
 	e = manager.get_stock_index(index)

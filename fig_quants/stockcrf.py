@@ -62,7 +62,9 @@ class stockcrftagger():
 		# Obtain the label sequence predicted by the tagger.
 		tags = self.tagger.viterbi()
 		# Output the probability of the predicted label sequence.
-		print self.tagger.probability(tags)
-		for t, y in enumerate(tags):
+		probabilities = self.tagger.probability(tags)
+		marginal = self.tagger.marginal(tags[-1], len(tags)-1)
+		return tags, probabilities, marginal
+		#for t, y in enumerate(tags):
 			# Output the predicted labels with their marginal probabilities.
-			print '%s:%f' % (y, self.tagger.marginal(y, t))
+			#print '%s:%f' % (y, self.tagger.marginal(y, t))

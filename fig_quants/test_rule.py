@@ -26,7 +26,7 @@ class myemu(stockcrfrun.stockcrfrun):
 	def filter_exchange(self, index, exchange):
 		tag, feature = self.tag_feature_by_index(index)
 		if feature != []:
-			self.mycrftag.tag_lable(feature)
+			tag, p, m = self.mycrftag.tag_lable(feature)
 		return 1
 
 manager = stockmanager.stockmanager()

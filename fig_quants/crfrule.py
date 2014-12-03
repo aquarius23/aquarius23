@@ -178,7 +178,10 @@ class crfrule(crfrulebase.crfrulebase):
 		return ret
 
 	def feature_kline(self, exchange, index, kline):
-		return []
+		ret = []
+		ret.append('quekou=' + str(kline[index][5]))
+		ret.append('baoxian=' + str(kline[index][6]))
+		return ret
 
 	def feature_exchange(self, index, exchange):
 		return []

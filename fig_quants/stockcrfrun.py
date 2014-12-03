@@ -30,6 +30,7 @@ class stockcrfrun(stockrun.stockrun):
 
 	def feed(self, exchange):
 		self.reset()
+		self.crfrule.set_fix_index(self.fix_index)
 		self.size = len(exchange)
 		self.feed_stock(exchange)
 
@@ -74,13 +75,13 @@ class stockcrfrun(stockrun.stockrun):
 		return self.crfrule.feature_ma(exchange, index, ma)
 
 	def feature_volume_ma(self, exchange, index, volume_ma):
-		return self.feature_volume_ma(exchange, index, volume_ma)
+		return self.crfrule.feature_volume_ma(exchange, index, volume_ma)
 
 	def feature_price_range(self, exchange, index, low, high):
-		return self.feature_price_range(exchange, index, low, high)
+		return self.crfrule.feature_price_range(exchange, index, low, high)
 
 	def feature_volume_range(self, exchange, index, low, high):
-		return self.feature_volume_range(exchange, index, low, high)
+		return self.crfrule.feature_volume_range(exchange, index, low, high)
 
 	def feature_closeprice_range(self, exchange, index, low, high):
 		return self.crfrule.feature_closeprice_range(exchange, index, low, high)

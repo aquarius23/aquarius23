@@ -2,6 +2,9 @@
 #!coding=utf-8
 
 class crfrulebase():
+	def set_fix_index(self, fix_index):
+		self.fix_index = fix_index
+
 	def get_state(self, index, exchange, kline):
 		return []
 

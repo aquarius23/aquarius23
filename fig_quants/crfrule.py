@@ -55,10 +55,11 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_macd(self, exchange, index, macd):
 		ret = []
-		macd = macd[index][2]
-		macd_1 = macd[self.fix_index(-1)][2]
+		adj_1 = self.fix_index(-1)
+		macd_1 = macd[adj_1][2]
 		dif = macd[index][0]
 		dea = macd[index][1]
+		macd = macd[index][2]
 		if macd > 0:
 			ret.append('macd=1')
 		elif macd < 0:

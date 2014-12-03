@@ -10,6 +10,7 @@ class myemu(stockcrfrun.stockcrfrun):
 	mycrftag.open_model('crf.bin')
 
 	def filter_kdj(self, exchange, index, kdj):
+		return 1
 		if kdj[index][2] > 0:
 			return 0
 		adj1 = self.fix_index(-1)
@@ -29,7 +30,8 @@ class myemu(stockcrfrun.stockcrfrun):
 			tag, p, m = self.mycrftag.tag_lable(feature)
 			if tag[-1] == '1':
 				print p
-		return 1
+				return 1
+		return 0
 
 manager = stockmanager.stockmanager()
 list = manager.get_stock_list()

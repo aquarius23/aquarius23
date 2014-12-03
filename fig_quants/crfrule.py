@@ -82,6 +82,31 @@ class crfrule(crfrulebase.crfrulebase):
 			ret.append('macd=')
 		return ret
 
-	def feature_boll(self, exchange, index, macd):
-		return []
+	def feature_boll(self, exchange, index, boll):
+		ret = []
+		end = exchange[index][2]
+		MB = boll[index][0]
+		UP = boll[index][1]
+		DN = boll[index][2]
+		if MB < end:
+			ret.append('MB<end')
+		elif MB > end:
+			ret.append('MB>end')
+		else:
+			ret.append('MB=end')
+
+		if UP < end:
+			ret.append('UP<end')
+		elif UP > end:
+			ret.append('UP>end')
+		else:
+			ret.append('UP=end')
+
+		if DN < end:
+			ret.append('DN<end')
+		elif DN > end:
+			ret.append('DN>end')
+		else:
+			ret.append('DN=end')
+		return ret
 

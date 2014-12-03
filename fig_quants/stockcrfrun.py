@@ -1,12 +1,14 @@
 #!/usr/bin/python
 #!coding=utf-8
 import stockrun
+import crfrule
 
 class stockcrfrun(stockrun.stockrun):
 	chain = 5
 	size = 0
 	crftag = []
 	crffeature = []
+	crfrule = crfrule.crfrule()
 
 	def reset(self):
 		self.crftag = []
@@ -55,3 +57,36 @@ class stockcrfrun(stockrun.stockrun):
 				tag, feature = self.set_tag_feature(tag, feature)
 				if tag != []:
 					yield tag, feature
+
+	def get_state(self, index, exchange, kline):
+		return self.crfrule.get_state(index, exchange, kline)
+
+	def feature_macd(self, exchange, index, macd):
+		return self.crfrule.feature_macd(exchange, index, macd)
+
+	def feature_kdj(self, exchange, index, kdj):
+		return self.crfrule.feature_kdj(exchange, index, kdj)
+
+	def feature_boll(self, exchange, index, boll):
+		return self.crfrule.feature_boll(exchange, index, boll)
+
+	def feature_ma(self, exchange, index, ma):
+		return self.crfrule.feature_ma(exchange, index, ma)
+
+	def feature_volume_ma(self, exchange, index, volume_ma):
+		return self.feature_volume_ma(exchange, index, volume_ma)
+
+	def feature_price_range(self, exchange, index, low, high):
+		return self.feature_price_range(exchange, index, low, high)
+
+	def feature_volume_range(self, exchange, index, low, high):
+		return self.feature_volume_range(exchange, index, low, high)
+
+	def feature_closeprice_range(self, exchange, index, low, high):
+		return self.crfrule.feature_closeprice_range(exchange, index, low, high)
+
+	def feature_kline(self, exchange, index, kline):
+		return self.crfrule.feature_kline(exchange, index, kline)
+
+	def feature_exchange(self, index, exchange):
+		return self.crfrule.feature_exchange(index, exchange)

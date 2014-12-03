@@ -110,3 +110,49 @@ class crfrule(crfrulebase.crfrulebase):
 			ret.append('DN=end')
 		return ret
 
+	def feature_ma(self, exchange, index, ma):
+		ret = []
+		adj_1 = self.fix_index(-1)
+		ma1_1 = ma[adj_1][0]
+		ma3_1 = ma[adj_1][1]
+		ma5_1 = ma[adj_1][2]
+		ma1 = ma[index][0]
+		ma3 = ma[index][1]
+		ma5 = ma[index][2]
+		end = exchange[index][2]
+		sort = []
+		for i, item in enumerate(ma[index]):
+			x = []
+			x.append(str(i))
+			x.append(item)
+			sort.append(x)
+		x=[]
+		x.append('e')
+		x.append(end)
+		sort.append(x)
+		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
+		x='ma'
+		for i in sort:
+			x = x+i[0]
+		ret.append(x)
+		if ma1_1 < ma1:
+			ret.append('ma1+')
+		elif ma1_1 > ma1:
+			ret.append('ma1-')
+		else:
+			ret.append('ma1=')
+
+		if ma3_1 < ma3:
+			ret.append('ma3+')
+		elif ma3_1 > ma3:
+			ret.append('ma3-')
+		else:
+			ret.append('ma3=')
+
+		if ma5_1 < ma5:
+			ret.append('ma5+')
+		elif ma5_1 > ma5:
+			ret.append('ma5-')
+		else:
+			ret.append('ma5=')
+		return ret

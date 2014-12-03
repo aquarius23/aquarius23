@@ -156,3 +156,12 @@ class crfrule(crfrulebase.crfrulebase):
 		else:
 			ret.append('ma5=')
 		return ret
+
+	def feature_volume_ma(self, exchange, index, volume_ma):
+		return []
+
+	def feature_kline(self, exchange, index, kline):
+		return []
+
+	def feature_exchange(self, index, exchange):
+		return []

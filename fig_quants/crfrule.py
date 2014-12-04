@@ -244,10 +244,19 @@ class crfrule(crfrulebase.crfrulebase):
 		ret.append('quekou=' + str(kline[index][5]))
 		ret.append('baoxian=' + str(kline[index][6]))
 		state='state='
+		kl0='kl0'
+		kl1='kl1'
+		kl2='kl2'
 		for i in range(-4,1):
 			adj = self.fix_index(i)
 			state = state + self.__get_state(adj, exchange, kline)
+			kl0 = kl0 + str((int)(kline[adj][0]))
+			kl1 = kl1 + str((int)(kline[adj][1]))
+			kl2 = kl2 + str((int)(kline[adj][2]))
 		ret.append(state)
+		ret.append(kl0)
+		ret.append(kl1)
+		ret.append(kl2)
 		return ret
 
 	def feature_exchange(self, index, exchange):

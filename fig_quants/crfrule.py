@@ -7,18 +7,18 @@ class crfrule(crfrulebase.crfrulebase):
 	def get_state(self, index, exchange, kline):
 		next = self.fix_index(1)
 		today = kline[index][0]
-		if today >= 1:
-			today = 1
-		elif today <= -1:
-			today = -1
-		else:
-			today = 0
 
 		tomorrow = kline[next][0]
 		if tomorrow >= 1:
-			tomorrow = 1
+			if tomorrow >= 3:
+				tomorrow = 3
+			else:
+				tomorrow = 1
 		elif tomorrow <= -1:
-			tomorrow = -1
+			if tomorrow <= -3:
+				tomorrow = -3
+			else:
+				tomorrow = -1
 		else:
 			tomorrow = 0
 

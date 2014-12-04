@@ -54,6 +54,20 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_macd(self, exchange, index, macd):
 		ret = []
+		sort = []
+		for i in range(-5,1):
+			adj = self.fix_index(i)
+			item = macd[adj][2]
+			x = []
+			x.append(str(abs(i)))
+			x.append(item)
+			sort.append(x)
+		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
+		x='macd_sort='
+		for i in sort:
+			x = x+i[0]
+		ret.append(x)
+
 		adj_1 = self.fix_index(-1)
 		macd_1 = macd[adj_1][2]
 		dif = macd[index][0]

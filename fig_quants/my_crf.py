@@ -16,7 +16,11 @@ for index in list:
 	trainer = stockcrf.stockcrftrainer()
 	run = stockcrfrun.stockcrfrun()
 	run.feed(e)
+	count = 0
 	for tag, feature in run.tag_feature():
+		count = count + 1
 		trainer.set_tag_feature(tag, feature)
-	trainer.get_model('crf/'+str(index)+'.bin')
+	print 'count = '+ str(count)
+	if count > 0:
+		trainer.get_model('crf/'+str(index)+'.bin')
 	trainer.clear()

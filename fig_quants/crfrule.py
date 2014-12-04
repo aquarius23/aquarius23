@@ -118,7 +118,6 @@ class crfrule(crfrulebase.crfrulebase):
 		ma3 = ma[index][1]
 		ma5 = ma[index][2]
 		end = exchange[index][2]
-		end_1 = exchange[adj_1][2]
 
 		sort = []
 		for i, item in enumerate(ma[index]):
@@ -126,10 +125,6 @@ class crfrule(crfrulebase.crfrulebase):
 			x.append(str(i))
 			x.append(item)
 			sort.append(x)
-		x=[]
-		x.append('e')
-		x.append(end)
-		sort.append(x)
 		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
 		x='ma'
 		for i in sort:
@@ -142,10 +137,6 @@ class crfrule(crfrulebase.crfrulebase):
 			x.append(str(i))
 			x.append(item)
 			sort.append(x)
-		x=[]
-		x.append('e')
-		x.append(end_1)
-		sort.append(x)
 		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
 		x='ma_1'
 		for i in sort:
@@ -176,22 +167,31 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_volume_ma(self, exchange, index, volume_ma):
 		ret = []
-		end = volume_ma[index][5]
 		sort = []
 		for i, item in enumerate(volume_ma[index]):
 			x = []
 			x.append(str(i))
 			x.append(item)
 			sort.append(x)
-		x=[]
-		x.append('e')
-		x.append(end)
-		sort.append(x)
 		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
 		x='v_ma'
 		for i in sort:
 			x = x+i[0]
 		ret.append(x)
+
+		adj_1 = self.fix_index(-1)
+		sort = []
+		for i, item in enumerate(volume_ma[adj_1]):
+			x = []
+			x.append(str(i))
+			x.append(item)
+			sort.append(x)
+		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
+		x='v_ma'
+		for i in sort:
+			x = x+i[0]
+		ret.append(x)
+
 		return ret
 
 	def feature_kline(self, exchange, index, kline):

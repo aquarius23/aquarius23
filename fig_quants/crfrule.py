@@ -192,6 +192,12 @@ class crfrule(crfrulebase.crfrulebase):
 			x = x+i[0]
 		ret.append(x)
 
+		v_1=volume_ma[adj_1][0]
+		v=volume_ma[index][0]
+		vb=(int)((v/v_1)*10)
+		if vb > 30:
+			vb = (vb/10)*10
+		ret.append('vb='+str(vb))
 		return ret
 
 	def feature_kline(self, exchange, index, kline):

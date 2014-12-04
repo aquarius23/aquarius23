@@ -28,7 +28,7 @@ class myemu(stockcrfrun.stockcrfrun):
 		tag, feature = self.tag_feature_by_index(index)
 		if feature != []:
 			tag, p, m = self.mycrftag.tag_lable(feature)
-			if tag[-1] == '1':
+			if tag[-1] == '3' and p > 0.05:
 				print p
 				return 1
 		return 0

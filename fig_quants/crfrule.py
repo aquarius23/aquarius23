@@ -118,6 +118,8 @@ class crfrule(crfrulebase.crfrulebase):
 		ma3 = ma[index][1]
 		ma5 = ma[index][2]
 		end = exchange[index][2]
+		end_1 = exchange[adj_1][2]
+
 		sort = []
 		for i, item in enumerate(ma[index]):
 			x = []
@@ -133,6 +135,23 @@ class crfrule(crfrulebase.crfrulebase):
 		for i in sort:
 			x = x+i[0]
 		ret.append(x)
+
+		sort = []
+		for i, item in enumerate(ma[adj_1]):
+			x = []
+			x.append(str(i))
+			x.append(item)
+			sort.append(x)
+		x=[]
+		x.append('e')
+		x.append(end_1)
+		sort.append(x)
+		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
+		x='ma_1'
+		for i in sort:
+			x = x+i[0]
+		ret.append(x)
+
 		if ma1_1 < ma1:
 			ret.append('ma1+')
 		elif ma1_1 > ma1:

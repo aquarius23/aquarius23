@@ -31,12 +31,10 @@ class crfrule(crfrulebase.crfrulebase):
 		k = kdj[index][0]
 		d = kdj[index][1]
 		j_1 = kdj[adj_1][2]
-		if j < 20:
-			ret.append('j=-1')
-		elif j >80:
-			ret.append('j=1')
-		else:
-			ret.append('j=0')
+		j_1_level = (int)(j_1/10)
+		j_level = (int)(j/10)
+		ret.append('j_1='+str(j_1_level))
+		ret.append('j1='+str(j_level))
 
 		if j > j_1:
 			ret.append('j+')

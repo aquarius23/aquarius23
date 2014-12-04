@@ -12,6 +12,9 @@ class stockcrftrainer():
 	# Create a Trainer object.
 	trainer = crftrainer()
 
+	def clear(self):
+		self.trainer.clear()
+
 	def set_tag_feature(self, tags, features):
 		xseq = crfsuite.ItemSequence()
 		yseq = crfsuite.StringList()
@@ -49,6 +52,9 @@ class stockcrftagger():
 	def open_model(self, file):
 		# Load the model to the tagger.
 		self.tagger.open(file)
+
+	def close_model(self):
+		self.tagger.close()
 
 	def tag_lable(self, features):
 		# Tag the sequence.

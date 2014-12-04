@@ -5,8 +5,8 @@ import crfsuite
 # Inherit crfsuite.Trainer to implement message() function, which receives
 # progress messages from a training process.
 class crftrainer(crfsuite.Trainer):
-    def message(self, s):
-        print s
+	def message(self, s):
+		pass
 
 class stockcrftrainer():
 	# Create a Trainer object.
@@ -31,8 +31,8 @@ class stockcrftrainer():
 		self.trainer.select('l2sgd', 'crf1d')
 
 		# This demonstrates how to list parameters and obtain their values.
-		for name in self.trainer.params():
-			print name, self.trainer.get(name), self.trainer.help(name)
+		#for name in self.trainer.params():
+			#print name, self.trainer.get(name), self.trainer.help(name)
 
 		# Set the coefficient for L2 regularization to 0.1
 		self.trainer.set('c2', '0.1')

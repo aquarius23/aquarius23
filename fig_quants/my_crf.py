@@ -18,4 +18,4 @@ for index in list:
 	run.feed(e)
 	for tag, feature in run.tag_feature():
 		trainer.set_tag_feature(tag, feature)
-	trainer.get_model(index+'.bin')
+	trainer.get_model('crf/'+str(index)+'.bin')

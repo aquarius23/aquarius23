@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #!coding=utf-8
 import crfrulebase
-
+ma_feature_size = 6
 class crfrule(crfrulebase.crfrulebase):
 
 	def get_state(self, index, exchange, kline):
@@ -121,6 +121,8 @@ class crfrule(crfrulebase.crfrulebase):
 
 		sort = []
 		for i, item in enumerate(ma[index]):
+			if i >= ma_feature_size:
+				break
 			x = []
 			x.append(str(i))
 			x.append(item)
@@ -133,6 +135,8 @@ class crfrule(crfrulebase.crfrulebase):
 
 		sort = []
 		for i, item in enumerate(ma[adj_1]):
+			if i >= ma_feature_size:
+				break
 			x = []
 			x.append(str(i))
 			x.append(item)
@@ -169,6 +173,8 @@ class crfrule(crfrulebase.crfrulebase):
 		ret = []
 		sort = []
 		for i, item in enumerate(volume_ma[index]):
+			if i > ma_feature_size:
+				break;
 			x = []
 			x.append(str(i))
 			x.append(item)
@@ -182,6 +188,8 @@ class crfrule(crfrulebase.crfrulebase):
 		adj_1 = self.fix_index(-1)
 		sort = []
 		for i, item in enumerate(volume_ma[adj_1]):
+			if i > ma_feature_size:
+				break;
 			x = []
 			x.append(str(i))
 			x.append(item)

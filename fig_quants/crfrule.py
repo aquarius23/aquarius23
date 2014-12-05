@@ -126,13 +126,6 @@ class crfrule(crfrulebase.crfrulebase):
 		ret = []
 		adj_1 = self.fix_index(-1)
 		adj_2 = self.fix_index(-2)
-		ma1_1 = ma[adj_1][0]
-		ma3_1 = ma[adj_1][1]
-		ma5_1 = ma[adj_1][2]
-		ma1 = ma[index][0]
-		ma3 = ma[index][1]
-		ma5 = ma[index][2]
-		end = exchange[index][2]
 
 		sort = []
 		for item in ma[index]:
@@ -149,26 +142,28 @@ class crfrule(crfrulebase.crfrulebase):
 			sort.append(item)
 		ret.append(self.build_sort_feature('ma_2', sort))
 
-		if ma1_1 < ma1:
-			ret.append('ma1+')
-		elif ma1_1 > ma1:
-			ret.append('ma1-')
-		else:
-			ret.append('ma1=')
-
-		if ma3_1 < ma3:
-			ret.append('ma3+')
-		elif ma3_1 > ma3:
-			ret.append('ma3-')
-		else:
-			ret.append('ma3=')
-
-		if ma5_1 < ma5:
-			ret.append('ma5+')
-		elif ma5_1 > ma5:
-			ret.append('ma5-')
-		else:
-			ret.append('ma5=')
+		ma1_sort = []
+		ma3_sort = []
+		ma5_sort = []
+		ma1_trend = []
+		for i in range(-5,1):
+			adj = self.fix_index(i)
+			adj_1 = self.fix_index(i-1)
+			y = ma[adj_1][0]
+			t = ma[adj][0]
+			if t > y:
+				ma1_trend.append('+')
+			elif t < y:
+				ma1_trend.append('-')
+			else:
+				ma1_trend.append('=')
+			ma1_sort.append(ma[adj][0])
+			ma3_sort.append(ma[adj][1])
+			ma5_sort.append(ma[adj][2])
+		ret.append(self.build_sort_feature('ma1_s', ma1_sort))
+		ret.append(self.build_sort_feature('ma3_s', ma3_sort))
+		ret.append(self.build_sort_feature('ma5_s', ma5_sort))
+		ret.extend(self.build_feature('ma1_t', ma1_trend))
 		return ret
 
 	def feature_volume_ma(self, exchange, index, volume_ma):

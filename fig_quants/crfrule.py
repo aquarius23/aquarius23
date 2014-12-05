@@ -201,6 +201,31 @@ class crfrule(crfrulebase.crfrulebase):
 				vb = (vb/10)*10
 			vbx.append(':'+str(vb))
 		ret.extend(self.build_feature('vb-', vbx))
+
+		vbx = []
+		for i in range(-5,1):
+			adj = self.fix_index(i)
+			adj_1 = self.fix_index(i-1)
+			v_1=volume_ma[adj_1][1]
+			v=volume_ma[adj][0]
+			vb=(int)((v/v_1)*10)
+			if vb > 30:
+				vb = (vb/10)*10
+			vbx.append(':'+str(vb))
+		ret.extend(self.build_feature('vb3-', vbx))
+
+		vbx = []
+		for i in range(-5,1):
+			adj = self.fix_index(i)
+			adj_1 = self.fix_index(i-1)
+			v_1=volume_ma[adj_1][2]
+			v=volume_ma[adj][0]
+			vb=(int)((v/v_1)*10)
+			if vb > 30:
+				vb = (vb/10)*10
+			vbx.append(':'+str(vb))
+		ret.extend(self.build_feature('vb5-', vbx))
+
 		return ret
 
 	def feature_kline(self, exchange, index, kline):

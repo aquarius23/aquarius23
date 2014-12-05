@@ -5,6 +5,13 @@ class crfrulebase():
 	def set_fix_index(self, fix_index):
 		self.fix_index = fix_index
 
+	def build_feature(self, name, list):
+		ret = []
+		for i,item in enumerate(list):
+			feature = name+str(i)+'='+item
+			ret.append(feature)
+		return ret
+
 	def get_state(self, index, exchange, kline):
 		return []
 

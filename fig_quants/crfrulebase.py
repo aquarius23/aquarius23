@@ -10,6 +10,15 @@ class crfrulebase():
 		for i,item in enumerate(list):
 			feature = name+str(i)+'='+item
 			ret.append(feature)
+		size = len(list)
+		new = list[:]
+		for i in range(0,size):
+			all=''
+			for item in new:
+				all = all + item
+			feature = name+str(i)+'-'+str(size)+'='+all
+			ret.append(feature)
+			new.remove(new[0])
 		return ret
 
 	def get_state(self, index, exchange, kline):

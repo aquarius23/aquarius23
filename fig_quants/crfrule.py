@@ -125,6 +125,7 @@ class crfrule(crfrulebase.crfrulebase):
 	def feature_ma(self, exchange, index, ma):
 		ret = []
 		adj_1 = self.fix_index(-1)
+		adj_2 = self.fix_index(-2)
 		ma1_1 = ma[adj_1][0]
 		ma3_1 = ma[adj_1][1]
 		ma5_1 = ma[adj_1][2]
@@ -142,6 +143,11 @@ class crfrule(crfrulebase.crfrulebase):
 		for item in ma[adj_1]:
 			sort.append(item)
 		ret.append(self.build_sort_feature('ma_1', sort))
+
+		sort = []
+		for item in ma[adj_2]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('ma_2', sort))
 
 		if ma1_1 < ma1:
 			ret.append('ma1+')

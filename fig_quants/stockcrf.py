@@ -6,7 +6,7 @@ import crfsuite
 # progress messages from a training process.
 class crftrainer(crfsuite.Trainer):
 	def message(self, s):
-		pass
+		print s
 
 class stockcrftrainer():
 	# Create a Trainer object.

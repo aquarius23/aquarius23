@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #!coding=utf-8
 import crfrulebase
-ma_feature_size = 6
+
 class crfrule(crfrulebase.crfrulebase):
 	def __get_state(self, index, exchange, kline):
 		today = kline[index][0]
@@ -134,32 +134,14 @@ class crfrule(crfrulebase.crfrulebase):
 		end = exchange[index][2]
 
 		sort = []
-		for i, item in enumerate(ma[index]):
-			if i >= ma_feature_size:
-				break
-			x = []
-			x.append(str(i))
-			x.append(item)
-			sort.append(x)
-		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
-		x='ma'
-		for i in sort:
-			x = x+i[0]
-		ret.append(x)
+		for item in ma[index]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('ma', sort))
 
 		sort = []
-		for i, item in enumerate(ma[adj_1]):
-			if i >= ma_feature_size:
-				break
-			x = []
-			x.append(str(i))
-			x.append(item)
-			sort.append(x)
-		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
-		x='ma_1'
-		for i in sort:
-			x = x+i[0]
-		ret.append(x)
+		for item in ma[adj_1]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('ma_1', sort))
 
 		if ma1_1 < ma1:
 			ret.append('ma1+')
@@ -186,33 +168,15 @@ class crfrule(crfrulebase.crfrulebase):
 	def feature_volume_ma(self, exchange, index, volume_ma):
 		ret = []
 		sort = []
-		for i, item in enumerate(volume_ma[index]):
-			if i > ma_feature_size:
-				break;
-			x = []
-			x.append(str(i))
-			x.append(item)
-			sort.append(x)
-		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
-		x='v_ma'
-		for i in sort:
-			x = x+i[0]
-		ret.append(x)
+		for item in volume_ma[index]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('v_ma', sort))
 
 		adj_1 = self.fix_index(-1)
 		sort = []
-		for i, item in enumerate(volume_ma[adj_1]):
-			if i > ma_feature_size:
-				break;
-			x = []
-			x.append(str(i))
-			x.append(item)
-			sort.append(x)
-		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
-		x='v_ma'
-		for i in sort:
-			x = x+i[0]
-		ret.append(x)
+		for item in volume_ma[adj_1]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('v_ma', sort))
 
 		vbx = []
 		for i in range(-5,1):

@@ -21,6 +21,19 @@ class crfrulebase():
 			new.remove(new[0])
 		return ret
 
+	def build_sort_feature(self, name, list):
+		sort = []
+		for i, item in enumerate(list):
+			x = []
+			x.append(str(i))
+			x.append(item)
+			sort.append(x)
+		sort.sort(cmp = lambda x,y: cmp(x[1],y[1]))
+		ret = name
+		for i in sort:
+			ret = ret+i[0]
+		return ret
+
 	def get_state(self, index, exchange, kline):
 		return []
 

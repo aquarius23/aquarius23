@@ -96,30 +96,27 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_boll(self, exchange, index, boll):
 		ret = []
-		end = exchange[index][2]
-		MB = boll[index][0]
-		UP = boll[index][1]
-		DN = boll[index][2]
-		if MB < end:
-			ret.append('MB<end')
-		elif MB > end:
-			ret.append('MB>end')
-		else:
-			ret.append('MB=end')
+		adj_1 = self.fix_index(-1)
+		adj_2 = self.fix_index(-2)
 
-		if UP < end:
-			ret.append('UP<end')
-		elif UP > end:
-			ret.append('UP>end')
-		else:
-			ret.append('UP=end')
+		sort = []
+		for item in boll[index]:
+			sort.append(item)
+		sort.append(exchange[index][2])
+		ret.append(self.build_sort_feature('boll', sort))
 
-		if DN < end:
-			ret.append('DN<end')
-		elif DN > end:
-			ret.append('DN>end')
-		else:
-			ret.append('DN=end')
+		sort = []
+		for item in boll[adj_1]:
+			sort.append(item)
+		sort.append(exchange[adj_1][2])
+		ret.append(self.build_sort_feature('boll_1', sort))
+
+		sort = []
+		for item in boll[adj_2]:
+			sort.append(item)
+		sort.append(exchange[adj_2][2])
+		ret.append(self.build_sort_feature('boll_2', sort))
+
 		return ret
 
 	def feature_ma(self, exchange, index, ma):

@@ -26,37 +26,48 @@ class crfrule(crfrulebase.crfrulebase):
 		return str(tomorrow)
 
 	def feature_kdj(self, exchange, index, kdj):
-		adj_1 = self.fix_index(-1)
 		ret = []
+		adj_1 = self.fix_index(-1)
+		adj_2 = self.fix_index(-2)
+
 		sort = []
+		for item in kdj[index]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('kdj', sort))
+
+		sort = []
+		for item in kdj[adj_1]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('kdj_1', sort))
+
+		sort = []
+		for item in kdj[adj_2]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('kdj_2', sort))
+
+		kdj1_sort = []
+		kdj2_sort = []
+		kdj3_sort = []
+		kdj1_trend = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)
-			item = kdj[adj][2]
-			sort.append(item)
-		ret.append(self.build_sort_feature('j_sort=', sort))
+			adj_1 = self.fix_index(i-1)
+			y = kdj[adj_1][2]
+			t = kdj[adj][2]
+			if t > y:
+				kdj1_trend.append('+')
+			elif t < y:
+				kdj1_trend.append('-')
+			else:
+				kdj1_trend.append('=')
+			kdj1_sort.append(kdj[adj][0])
+			kdj2_sort.append(kdj[adj][1])
+			kdj3_sort.append(kdj[adj][2])
+		ret.append(self.build_sort_feature('kdj1_s', kdj1_sort))
+		ret.append(self.build_sort_feature('kdj2_s', kdj2_sort))
+		ret.append(self.build_sort_feature('kdj3_s', kdj3_sort))
+		ret.extend(self.build_feature('kdj1_t', kdj1_trend))
 
-		j =  kdj[index][2]
-		k = kdj[index][0]
-		d = kdj[index][1]
-		j_1 = kdj[adj_1][2]
-		j_1_level = (int)(j_1/10)
-		j_level = (int)(j/10)
-		ret.append('j_1='+str(j_1_level))
-		ret.append('j1='+str(j_level))
-
-		if j > j_1:
-			ret.append('j+')
-		elif j < j_1:
-			ret.append('j-')
-		else:
-			ret.append('j=')
-
-		if k < d:
-			ret.append('k<d')
-		elif k > d:
-			ret.append('k>d')
-		else:
-			ret.append('k=d')
 		return ret
 
 	def feature_macd(self, exchange, index, macd):

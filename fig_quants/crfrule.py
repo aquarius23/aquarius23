@@ -178,6 +178,12 @@ class crfrule(crfrulebase.crfrulebase):
 			sort.append(item)
 		ret.append(self.build_sort_feature('v_ma_1', sort))
 
+		adj_2 = self.fix_index(-2)
+		sort = []
+		for item in volume_ma[adj_2]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('v_ma_2', sort))
+
 		vbx = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)

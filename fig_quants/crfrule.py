@@ -176,7 +176,7 @@ class crfrule(crfrulebase.crfrulebase):
 		sort = []
 		for item in volume_ma[adj_1]:
 			sort.append(item)
-		ret.append(self.build_sort_feature('v_ma', sort))
+		ret.append(self.build_sort_feature('v_ma_1', sort))
 
 		vbx = []
 		for i in range(-5,1):

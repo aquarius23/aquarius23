@@ -61,37 +61,46 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_macd(self, exchange, index, macd):
 		ret = []
+		adj_1 = self.fix_index(-1)
+		adj_2 = self.fix_index(-2)
+
 		sort = []
+		for item in macd[index]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('macd', sort))
+
+		sort = []
+		for item in macd[adj_1]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('macd_1', sort))
+
+		sort = []
+		for item in macd[adj_2]:
+			sort.append(item)
+		ret.append(self.build_sort_feature('macd_2', sort))
+
+		macd1_sort = []
+		macd2_sort = []
+		macd3_sort = []
+		macd1_trend = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)
-			item = macd[adj][2]
-			sort.append(item)
-		ret.append(self.build_sort_feature('macd_sort=', sort))
-		adj_1 = self.fix_index(-1)
-		macd_1 = macd[adj_1][2]
-		dif = macd[index][0]
-		dea = macd[index][1]
-		macd = macd[index][2]
-		if macd > 0:
-			ret.append('macd=1')
-		elif macd < 0:
-			ret.append('macd=-1')
-		else:
-			ret.append('macd=0')
-
-		if dif < dea:
-			ret.append('dif<dea')
-		elif dif > dea:
-			ret.append('dif>dea')
-		else:
-			ret.append('dif=dea')
-
-		if macd < macd_1:
-			ret.append('macd-')
-		elif macd > macd_1:
-			ret.append('macd+')
-		else:
-			ret.append('macd=')
+			adj_1 = self.fix_index(i-1)
+			y = macd[adj_1][2]
+			t = macd[adj][2]
+			if t > y:
+				macd1_trend.append('+')
+			elif t < y:
+				macd1_trend.append('-')
+			else:
+				macd1_trend.append('=')
+			macd1_sort.append(macd[adj][0])
+			macd2_sort.append(macd[adj][1])
+			macd3_sort.append(macd[adj][2])
+		ret.append(self.build_sort_feature('macd1_s', macd1_sort))
+		ret.append(self.build_sort_feature('macd2_s', macd2_sort))
+		ret.append(self.build_sort_feature('macd3_s', macd3_sort))
+		ret.extend(self.build_feature('macd1_t', macd1_trend))
 		return ret
 
 	def feature_boll(self, exchange, index, boll):

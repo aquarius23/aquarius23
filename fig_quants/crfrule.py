@@ -7,12 +7,18 @@ class crfrule(crfrulebase.crfrulebase):
 		today = kline[index][0]
 		if today >= 1:
 			if today >= 3:
-				today = 3
+				if today >= 5:
+					today = 5
+				else:
+					today = 3
 			else:
 				today = 1
 		elif today <= -1:
 			if today <= -3:
-				today = -3
+				if today <= -5:
+					today = -5
+				else:
+					today = -3
 			else:
 				today = -1
 		else:

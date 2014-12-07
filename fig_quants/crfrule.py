@@ -67,17 +67,27 @@ class crfrule(crfrulebase.crfrulebase):
 		kdj2_sort = []
 		kdj3_sort = []
 		kdj1_trend = []
+		kd_trend = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			y = kdj[adj_1][2]
 			t = kdj[adj][2]
+			k = kdj[adj][0]
+			d = kdj[adj][1]
 			if t > y:
 				kdj1_trend.append('+')
 			elif t < y:
 				kdj1_trend.append('-')
 			else:
 				kdj1_trend.append('=')
+
+			if k > d:
+				kd_trend.append('+')
+			elif k < d:
+				kd_trend.append('-')
+			else:
+				kd_trend.append('=')
 			kdj1_sort.append(kdj[adj][0])
 			kdj2_sort.append(kdj[adj][1])
 			kdj3_sort.append(kdj[adj][2])
@@ -85,7 +95,7 @@ class crfrule(crfrulebase.crfrulebase):
 		ret.append(self.build_sort_feature('kdj2_s', kdj2_sort))
 		ret.append(self.build_sort_feature('kdj3_s', kdj3_sort))
 		ret.extend(self.build_feature('kdj1_t', kdj1_trend))
-
+		ret.extend(self.build_feature('kd_t', kd_trend))
 		return ret
 
 	def feature_macd(self, exchange, index, macd):

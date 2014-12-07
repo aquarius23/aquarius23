@@ -164,13 +164,13 @@ class crfrule(crfrulebase.crfrulebase):
 			end = exchange[adj][2]
 			pos = 0
 			if end < dn:
-				pos = 0
+				pos = '0'
 			elif end > up:
-				pos = 3
+				pos = '3'
 			elif end < mb:
-				pos = 1
+				pos = '1'
 			else:
-				pos = 2
+				pos = '2'
 			boll_trend.append(pos)
 		ret.extend(self.build_feature('boll', boll_trend))
 		return ret

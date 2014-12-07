@@ -155,27 +155,24 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_boll(self, exchange, index, boll):
 		ret = []
-		adj_1 = self.fix_index(-1)
-		adj_2 = self.fix_index(-2)
-
-		sort = []
-		for item in boll[index]:
-			sort.append(item)
-		sort.append(exchange[index][2])
-		ret.append(self.build_sort_feature('boll', sort))
-
-		sort = []
-		for item in boll[adj_1]:
-			sort.append(item)
-		sort.append(exchange[adj_1][2])
-		ret.append(self.build_sort_feature('boll_1', sort))
-
-		sort = []
-		for item in boll[adj_2]:
-			sort.append(item)
-		sort.append(exchange[adj_2][2])
-		ret.append(self.build_sort_feature('boll_2', sort))
-
+		boll_trend = []
+		for i in range(-5,1):
+			adj = self.fix_index(i)
+			mb = boll[adj][0]
+			up = boll[adj][1]
+			dn = boll[adj][2]
+			end = exchange[adj][2]
+			pos = 0
+			if end < dn:
+				pos = 0
+			elif end > up:
+				pos = 3
+			elif end < mb:
+				pos = 1
+			else:
+				pos = 2
+			boll_trend.append(pos)
+		ret.extend(self.build_feature('boll', boll_trend)
 		return ret
 
 	def feature_ma(self, exchange, index, ma):

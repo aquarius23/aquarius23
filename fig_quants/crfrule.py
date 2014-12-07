@@ -122,6 +122,7 @@ class crfrule(crfrulebase.crfrulebase):
 		macd2_sort = []
 		macd3_sort = []
 		macd1_trend = []
+		macd12_trend = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
@@ -133,6 +134,15 @@ class crfrule(crfrulebase.crfrulebase):
 				macd1_trend.append('-')
 			else:
 				macd1_trend.append('=')
+
+			dif = macd[adj][0]
+			dea = macd[adj][1]
+			if dea > dif:
+				macd12_trend.append('+')
+			elif dea < dif:
+				macd12_trend.append('-')
+			else:
+				macd12_trend.append('=')
 			macd1_sort.append(macd[adj][0])
 			macd2_sort.append(macd[adj][1])
 			macd3_sort.append(macd[adj][2])
@@ -140,6 +150,7 @@ class crfrule(crfrulebase.crfrulebase):
 		ret.append(self.build_sort_feature('macd2_s', macd2_sort))
 		ret.append(self.build_sort_feature('macd3_s', macd3_sort))
 		ret.extend(self.build_feature('macd1_t', macd1_trend))
+		ret.extend(self.build_feature('macd12_t', macd12_trend))
 		return ret
 
 	def feature_boll(self, exchange, index, boll):

@@ -172,7 +172,7 @@ class crfrule(crfrulebase.crfrulebase):
 			else:
 				pos = 2
 			boll_trend.append(pos)
-		ret.extend(self.build_feature('boll', boll_trend)
+		ret.extend(self.build_feature('boll', boll_trend))
 		return ret
 
 	def feature_ma(self, exchange, index, ma):

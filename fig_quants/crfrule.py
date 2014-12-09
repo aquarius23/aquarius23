@@ -49,24 +49,6 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_macd(self, exchange, index, macd):
 		ret = []
-		adj_1 = self.fix_index(-1)
-		adj_2 = self.fix_index(-2)
-
-		sort = []
-		for item in macd[index]:
-			sort.append(item)
-		ret.append(self.build_sort_feature('macd', sort))
-
-		sort = []
-		for item in macd[adj_1]:
-			sort.append(item)
-		ret.append(self.build_sort_feature('macd_1', sort))
-
-		sort = []
-		for item in macd[adj_2]:
-			sort.append(item)
-		ret.append(self.build_sort_feature('macd_2', sort))
-
 		macd1_sort = []
 		macd2_sort = []
 		macd3_sort = []

@@ -278,7 +278,6 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_kline(self, exchange, index, kline):
 		ret = []
-		state=[]
 		kl0=[]
 		kl1=[]
 		kl2=[]
@@ -287,7 +286,6 @@ class crfrule(crfrulebase.crfrulebase):
 		kl6=[]
 		for i in range(-5,1):
 			adj = self.fix_index(i)
-			state.append(':'+self.__get_state(adj, exchange, kline))
 			x = (int)(kline[adj][0])
 			if x > 10:
 				x = 10
@@ -307,7 +305,6 @@ class crfrule(crfrulebase.crfrulebase):
 			kl4.append(':'+str((int)(kline[index][4]*10)))
 			kl5.append(':'+str(kline[index][5]))
 			kl6.append(':'+str(kline[index][6]))
-		ret.extend(self.build_feature('state-', state))
 		ret.extend(self.build_feature('kl0-', kl0))
 		ret.extend(self.build_feature('kl1-', kl1))
 		ret.extend(self.build_feature('kl2-', kl2))

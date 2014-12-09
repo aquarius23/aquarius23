@@ -33,36 +33,6 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_kdj(self, exchange, index, kdj):
 		ret = []
-		adj_1 = self.fix_index(-1)
-		adj_2 = self.fix_index(-2)
-		adj_3 = self.fix_index(-3)
-		adj_4 = self.fix_index(-4)
-
-		sort = []
-		for item in kdj[index]:
-			sort.append(item)
-		ret.append(self.build_sort_feature('kdj', sort))
-
-		sort = []
-		for item in kdj[adj_1]:
-			sort.append(item)
-		ret.append(self.build_sort_feature('kdj_1', sort))
-
-		sort = []
-		for item in kdj[adj_2]:
-			sort.append(item)
-		ret.append(self.build_sort_feature('kdj_2', sort))
-
-		sort = []
-		for item in kdj[adj_3]:
-			sort.append(item)
-		ret.append(self.build_sort_feature('kdj_3', sort))
-
-		sort = []
-		for item in kdj[adj_4]:
-			sort.append(item)
-		ret.append(self.build_sort_feature('kdj_4', sort))
-
 		kd_trend = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)

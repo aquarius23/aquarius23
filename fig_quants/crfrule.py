@@ -113,6 +113,10 @@ class crfrule(crfrulebase.crfrulebase):
 			sort.append(item)
 		ret.append(self.build_sort_feature('ma_2', sort))
 
+		ma1_sort = []
+		ma3_sort = []
+		ma5_sort = []
+		ma10_sort = []
 		ma5s_trend = []
 		ma5e_trend = []
 		ma5l_trend = []
@@ -132,6 +136,14 @@ class crfrule(crfrulebase.crfrulebase):
 			end = exchange[adj][2]
 			low = exchange[adj][3]
 			high = exchange[adj][4]
+			ma1_sort.append(ma[adj][0])
+			ma3_sort.append(ma[adj][1])
+			ma5_sort.append(ma[adj][2])
+			ma10_sort.append(ma[adj][3])
+			ret.append(self.build_sort_feature('ma1_s', ma1_sort))
+			ret.append(self.build_sort_feature('ma3_s', ma3_sort))
+			ret.append(self.build_sort_feature('ma5_s', ma5_sort))
+			ret.append(self.build_sort_feature('ma10_s', ma10_sort))
 			ma5s_trend.append(self.compare(start, t5))
 			ma5e_trend.append(self.compare(end, t5))
 			ma5l_trend.append(self.compare(low, t5))

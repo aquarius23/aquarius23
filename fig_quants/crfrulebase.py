@@ -5,6 +5,14 @@ class crfrulebase():
 	def set_fix_index(self, fix_index):
 		self.fix_index = fix_index
 
+	def compare(self, a, b):
+		if a > b:
+			return '+'
+		elif a < b:
+			return '-'
+		else:
+			return '='
+
 	def cal_position(self, price, mb, up, dn):
 		pos = 0
 		if price < dn:

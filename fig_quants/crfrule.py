@@ -38,12 +38,7 @@ class crfrule(crfrulebase.crfrulebase):
 			adj = self.fix_index(i)
 			k = kdj[adj][0]
 			d = kdj[adj][1]
-			if k > d:
-				kd_trend.append('+')
-			elif k < d:
-				kd_trend.append('-')
-			else:
-				kd_trend.append('=')
+			kd_trend.append(self.compare(k, d))
 		ret.extend(self.build_feature('kd_t', kd_trend))
 		return ret
 
@@ -59,21 +54,10 @@ class crfrule(crfrulebase.crfrulebase):
 			adj_1 = self.fix_index(i-1)
 			y = macd[adj_1][2]
 			t = macd[adj][2]
-			if t > y:
-				macd1_trend.append('+')
-			elif t < y:
-				macd1_trend.append('-')
-			else:
-				macd1_trend.append('=')
-
+			macd1_trend.append(self.compare(t, y))
 			dif = macd[adj][0]
 			dea = macd[adj][1]
-			if dea > dif:
-				macd12_trend.append('+')
-			elif dea < dif:
-				macd12_trend.append('-')
-			else:
-				macd12_trend.append('=')
+			macd12_trend.append(self.compare(dif, dea))
 			macd1_sort.append(macd[adj][0])
 			macd2_sort.append(macd[adj][1])
 			macd3_sort.append(macd[adj][2])
@@ -138,12 +122,7 @@ class crfrule(crfrulebase.crfrulebase):
 			adj_1 = self.fix_index(i-1)
 			y = ma[adj_1][0]
 			t = ma[adj][0]
-			if t > y:
-				ma1_trend.append('+')
-			elif t < y:
-				ma1_trend.append('-')
-			else:
-				ma1_trend.append('=')
+			ma1_trend.append(self.compare(t, y))
 			ma1_sort.append(ma[adj][0])
 			ma3_sort.append(ma[adj][1])
 			ma5_sort.append(ma[adj][2])

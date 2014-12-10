@@ -31,7 +31,7 @@ for index in list:
 			state = -10
 		elif state > 10:
 			state = 10
-		state = (int)(state * 2)
+		state = (int)(round((state * 2)))
 		state = state + 20 #base0 = -10
 		result[state] = result[state] + 1
 nor = __normalize(result)

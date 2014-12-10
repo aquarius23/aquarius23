@@ -40,7 +40,7 @@ class stockcrftrainer():
 		# Set the coefficient for L2 regularization to 0.1
 		self.trainer.set('c2', '0.1')
 
-		self.trainer.set('max_iterations', '2000')
+		self.trainer.set('max_iterations', '5000')
 		# Start training; the training process will invoke trainer.message()
 		# to report the progress.
 		self.trainer.train(file, -1)

@@ -86,24 +86,27 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_boll(self, exchange, index, boll):
 		ret = []
-		boll_trend = []
+		boll_s_trend = []
+		boll_e_trend = []
+		boll_l_trend = []
+		boll_h_trend = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)
 			mb = boll[adj][0]
 			up = boll[adj][1]
 			dn = boll[adj][2]
+			start = exchange[adj][1]
 			end = exchange[adj][2]
-			pos = 0
-			if end < dn:
-				pos = '0'
-			elif end > up:
-				pos = '3'
-			elif end < mb:
-				pos = '1'
-			else:
-				pos = '2'
-			boll_trend.append(pos)
-		ret.extend(self.build_feature('boll', boll_trend))
+			low = exchange[adj][3]
+			high = exchange[adj][4]
+			boll_s_trend.append(self.cal_position(start, mb, up, dn))
+			boll_e_trend.append(self.cal_position(end, mb, up, dn))
+			boll_l_trend.append(self.cal_position(low, mb, up, dn))
+			boll_h_trend.append(self.cal_position(high, mb, up, dn))
+		ret.extend(self.build_feature('boll_s', boll_s_trend))
+		ret.extend(self.build_feature('boll_e', boll_e_trend))
+		ret.extend(self.build_feature('boll_l', boll_l_trend))
+		ret.extend(self.build_feature('boll_h', boll_h_trend))
 		return ret
 
 	def feature_ma(self, exchange, index, ma):

@@ -5,6 +5,18 @@ class crfrulebase():
 	def set_fix_index(self, fix_index):
 		self.fix_index = fix_index
 
+	def cal_position(self, price, mb, up, dn):
+		pos = 0
+		if price < dn:
+			pos = 0
+		elif price > up:
+			pos = 3
+		elif price < mb:
+			pos = 1
+		else:
+			pos = 2
+		return str(pos)
+
 	def build_feature(self, name, list):
 		ret = []
 		for i,item in enumerate(list):

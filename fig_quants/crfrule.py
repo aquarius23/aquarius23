@@ -182,6 +182,22 @@ class crfrule(crfrulebase.crfrulebase):
 			sort.append(item)
 		ret.append(self.build_sort_feature('v_ma_2', sort))
 
+		ma1_sort = []
+		ma3_sort = []
+		ma5_sort = []
+		ma10_sort = []
+		for i in range(-5,1):
+			adj = self.fix_index(i)
+			adj_1 = self.fix_index(i-1)
+			ma1_sort.append(volume_ma[adj][0])
+			ma3_sort.append(volume_ma[adj][1])
+			ma5_sort.append(volume_ma[adj][2])
+			ma10_sort.append(volume_ma[adj][3])
+		ret.append(self.build_sort_feature('vma1_s', ma1_sort))
+		ret.append(self.build_sort_feature('vma3_s', ma3_sort))
+		ret.append(self.build_sort_feature('vma5_s', ma5_sort))
+		ret.append(self.build_sort_feature('vma10_s', ma10_sort))
+
 		vbx = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)

@@ -113,23 +113,42 @@ class crfrule(crfrulebase.crfrulebase):
 			sort.append(item)
 		ret.append(self.build_sort_feature('ma_2', sort))
 
-		ma1_sort = []
-		ma3_sort = []
-		ma5_sort = []
-		ma1_trend = []
+		ma5s_trend = []
+		ma5e_trend = []
+		ma5l_trend = []
+		ma5h_trend = []
+		ma10s_trend = []
+		ma10e_trend = []
+		ma10l_trend = []
+		ma10h_trend = []
 		for i in range(-5,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			y = ma[adj_1][0]
 			t = ma[adj][0]
-			ma1_trend.append(self.compare(t, y))
-			ma1_sort.append(ma[adj][0])
-			ma3_sort.append(ma[adj][1])
-			ma5_sort.append(ma[adj][2])
-		ret.append(self.build_sort_feature('ma1_s', ma1_sort))
-		ret.append(self.build_sort_feature('ma3_s', ma3_sort))
-		ret.append(self.build_sort_feature('ma5_s', ma5_sort))
-		ret.extend(self.build_feature('ma1_t', ma1_trend))
+			t5 = ma[adj][2]
+			t10 = ma[adj][3]
+			start = exchange[adj][1]
+			end = exchange[adj][2]
+			low = exchange[adj][3]
+			high = exchange[adj][4]
+			ma5s_trend.append(self.compare(start, t5))
+			ma5e_trend.append(self.compare(end, t5))
+			ma5l_trend.append(self.compare(low, t5))
+			ma5h_trend.append(self.compare(high, t5))
+			ma10s_trend.append(self.compare(start, t10))
+			ma10e_trend.append(self.compare(end, t10))
+			ma10l_trend.append(self.compare(low, t10))
+			ma10h_trend.append(self.compare(high, t10))
+		ret.extend(self.build_feature('ma5s_t', ma5s_trend))
+		ret.extend(self.build_feature('ma5e_t', ma5e_trend))
+		ret.extend(self.build_feature('ma5l_t', ma5l_trend))
+		ret.extend(self.build_feature('ma5h_t', ma5h_trend))
+		ret.extend(self.build_feature('ma10s_t', ma10s_trend))
+		ret.extend(self.build_feature('ma10e_t', ma10e_trend))
+		ret.extend(self.build_feature('ma10l_t', ma10l_trend))
+		ret.extend(self.build_feature('ma10h_t', ma10h_trend))
+
 		return ret
 
 	def feature_volume_ma(self, exchange, index, volume_ma):

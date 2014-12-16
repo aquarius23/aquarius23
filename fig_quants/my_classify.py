@@ -1,5 +1,6 @@
 #!/usr/bin/python
 #!coding=utf-8
+import string
 import stocksort
 import stockmanager
 import stockcrfrun
@@ -37,4 +38,36 @@ def get_crf_modle(list, name):
 manager = stockmanager.stockmanager()
 sort = stocksort.get_sort(0)
 list = get_max_filter(20, sort)
-get_crf_modle(list, 'crftemp.bin')
+#get_crf_modle(list, 'crftemp.bin')
+
+mycrftag = stockcrf.stockcrftagger()
+mycrftag.open_model('crftemp.bin')
+
+class myemu(stockcrfrun.stockcrfrun):
+	def filter_exchange(self, index, exchange):
+		tag, feature = self.tag_feature_by_index(index)
+		if index < 30:
+			return 0
+		if feature != []:
+			tag, p, m = mycrftag.tag_lable(feature)
+			ret = string.atoi(tag[-1])
+			if ret >= 3 and p > 0.3 and m > 0.8:
+				print str(p) + '  ' + str(m)
+				return 1
+		return 0
+emu = myemu()
+
+def get_result(list):
+	emu.reset_score()
+	for index in list:
+		print 'emu run: '+index
+		e = manager.get_stock_index(index)
+		if e == []:
+			continue
+		emu.feed(e)
+		emu.run()
+	return emu.get_middle()[0]
+
+sh = get_result(['600016'])
+print sh
+mycrftag.close_model()

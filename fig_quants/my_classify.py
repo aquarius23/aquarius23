@@ -5,6 +5,7 @@ import stocksort
 import stockmanager
 import stockcrfrun
 import stockcrf
+import arccos
 
 def get_max_filter(size, list):
 	ret = []
@@ -52,7 +53,7 @@ class myemu(stockcrfrun.stockcrfrun):
 			tag, p, m = mycrftag.tag_lable(feature)
 			ret = string.atoi(tag[-1])
 			if ret >= 3 and p > 0.3 and m > 0.8:
-				print str(p) + '  ' + str(m)
+				#print str(p) + '  ' + str(m)
 				return 1
 		return 0
 emu = myemu()
@@ -68,6 +69,14 @@ def get_result(list):
 		emu.run()
 	return emu.get_middle()[0]
 
-sh = get_result(['600016'])
-print sh
+zxzj = get_result(['600030'])
+for index in list:
+	index = index[0]
+	print '------------'
+	arg = []
+	arg.append(index)
+	ret = get_result(arg)
+	print ret
+	cos = arccos.vec_acos(zxzj, ret)
+	print 'cos='+str(cos)
 mycrftag.close_model()

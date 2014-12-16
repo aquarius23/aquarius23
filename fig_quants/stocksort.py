@@ -3,6 +3,7 @@
 import stockmanager
 import string
 import stockdb
+import stockconfig
 
 def get_vol():
 	manager = stockmanager.stockmanager()
@@ -12,6 +13,8 @@ def get_vol():
 		print stock
 		e = manager.get_stock_index(stock)
 		if e == []:
+			continue
+		if len(e) < stockconfig.FIG_MIX_CRF:
 			continue
 		sum = 0
 		count = 0

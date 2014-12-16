@@ -13,7 +13,10 @@ def vec_acos(v1, v2):
 		ab = ab + a*b
 		aa = aa + a*a
 		bb = bb + b*b
-	val = ab / (math.sqrt(aa)*math.sqrt(bb))
+	div = math.sqrt(aa)*math.sqrt(bb)
+	if div == 0:
+		return 180
+	val = ab / div
 	val = math.acos(val)
 	deg = math.degrees(val)
 	return deg

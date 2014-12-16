@@ -57,6 +57,14 @@ class stockdb():
 			#time.sleep(1)
 		return ''
 
+	def write_data_crf(self, name, list):
+		str = self.__stocklist2str(list)
+		rawdb.write_file('crf', name, str)
+
+	def read_data_crf(self, name):
+		str = rawdb.read_file('crf', name)
+		return str
+
 	def get_last_update_day(self):
 		day = rawdb.read_file('', 'last')
 		if day == '':

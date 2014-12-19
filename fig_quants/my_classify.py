@@ -70,7 +70,8 @@ def get_result(list):
 	return emu.get_middle()[0]
 
 zxzj = get_result(['600030'])
-for index in list:
+output = []
+for index in sort:
 	index = index[0]
 	print '------------'
 	arg = []
@@ -78,5 +79,12 @@ for index in list:
 	ret = get_result(arg)
 	print ret
 	cos = arccos.vec_acos(zxzj, ret)
+	x = []
+	x.append(index)
+	x.append(cos)
+	output.append(x)
 	print 'cos='+str(cos)
 mycrftag.close_model()
+output.sort(cmp = lambda x,y: cmp(x[1],y[1]))
+for x in output:
+	print x[0]+':'+str(x[1])

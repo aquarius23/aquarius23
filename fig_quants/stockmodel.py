@@ -31,28 +31,28 @@ def get_stock_modle(list, name, c_continue, c_break):
 	trainer.get_model(name)
 
 class stockmodeltag(stockcrfrun.stockcrfrun):
-	crftag = stockcrf.stockcrftagger()
+	stockcrftag = stockcrf.stockcrftagger()
 	manager = stockmanager.stockmanager()
 
-	def open_model(file):
-		self.crftag.open_model(file)
+	def open_model(self, file):
+		self.stockcrftag.open_model(file)
 
-	def close_model():
-		self.crftag.close_model()
+	def close_model(self):
+		self.stockcrftag.close_model()
 
 	def filter_exchange(self, index, exchange):
 		tag, feature = self.tag_feature_by_index(index)
 		if index < 30:
 			return 0
 		if feature != []:
-			tag, p, m = mycrftag.tag_lable(feature)
+			tag, p, m = self.stockcrftag.tag_lable(feature)
 			ret = string.atoi(tag[-1])
 			if ret >= 3 and p > 0.3 and m > 0.8:
-				#print str(p) + '  ' + str(m)
+				print str(p) + '  ' + str(m)
 				return 1
 		return 0
 
-	def get_result(list):
+	def get_result(self, list):
 		self.reset_score()
 		for index in list:
 			print 'emu run: ' + index

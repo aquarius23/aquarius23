@@ -6,6 +6,7 @@ import stockmanager
 import stockcrfrun
 import stockcrf
 import arccos
+import stockmodel
 
 def get_max_filter(size, list):
 	ret = []
@@ -16,30 +17,15 @@ def get_max_filter(size, list):
 		size = size - 1
 	return ret
 
-def get_crf_modle(list, name):
-	trainer = stockcrf.stockcrftrainer()
-	trainer.clear()
-	run = stockcrfrun.stockcrfrun()
-	for index in list:
-		index = index[0]
-		print index
-		e = manager.get_stock_index(index)
-		size = len(e)
-		if e == []:
-			continue
-		run.feed(e)
-		count  = 0
-		for tag, feature in run.tag_feature():
-			count = count + 1
-			if count < 30:
-				continue
-			trainer.set_tag_feature(tag, feature)
-	trainer.get_model(name)
+def c_continue(index, size):
+	return 0
 
+def c_break(index, size):
+	return 0
 manager = stockmanager.stockmanager()
 sort = stocksort.get_sort(0)
-list = get_max_filter(20, sort)
-#get_crf_modle(list, 'crftemp.bin')
+list = get_max_filter(1, sort)
+stockmodel.get_stock_modle(list, 'crftemp.bin', c_continue, c_break)
 
 mycrftag = stockcrf.stockcrftagger()
 mycrftag.open_model('crftemp.bin')

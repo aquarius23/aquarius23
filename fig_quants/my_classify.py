@@ -3,8 +3,6 @@
 import string
 import stocksort
 import stockmanager
-import stockcrfrun
-import stockcrf
 import arccos
 import stockmodel
 

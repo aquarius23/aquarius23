@@ -34,8 +34,9 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 	stockcrftag = stockcrf.stockcrftagger()
 	manager = stockmanager.stockmanager()
 
-	def open_model(self, file):
+	def open_model(self, file, filter):
 		self.stockcrftag.open_model(file)
+		self.tagfilter = filter
 
 	def close_model(self):
 		self.stockcrftag.close_model()
@@ -46,9 +47,7 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 			return 0
 		if feature != []:
 			tag, p, m = self.stockcrftag.tag_lable(feature)
-			ret = string.atoi(tag[-1])
-			if ret >= 3 and p > 0.3 and m > 0.8:
-				print str(p) + '  ' + str(m)
+			if self.tagfilter(index, len(exchange), tag, p, m) == 1:
 				return 1
 		return 0
 

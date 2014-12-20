@@ -27,8 +27,15 @@ sort = stocksort.get_sort(0)
 list = get_max_filter(1, sort)
 #stockmodel.get_stock_modle(list, 'crftemp.bin', c_continue, c_break)
 
+def tag_filter(index, size, tag, p, m):
+	ret = string.atoi(tag[-1])
+	if ret >= 3 and p > 0.3 and m > 0.8:
+		print str(p) + '  ' + str(m)
+		return 1
+	return 0
+
 model = stockmodel.stockmodeltag()
-model.open_model('crftemp.bin')
+model.open_model('crftemp.bin', tag_filter)
 zxzj = model.get_result(['600030'])
 output = []
 for index in sort:

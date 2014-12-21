@@ -5,6 +5,7 @@ import stocksort
 import stockmanager
 import arccos
 import stockmodel
+import stockdb
 
 def get_max_filter(size, list):
 	ret = []
@@ -45,14 +46,54 @@ def cal_cos(model, ref, list):
 	output.sort(cmp = lambda x,y: cmp(x[1],y[1]))
 	return output
 
+def filter_cos(cos, max, thr):
+	count = 0
+	ret = []
+	for item in cos:
+		if item[1] < thr:
+			count = count + 1
+			val = item[:]
+			ret.append(val)
+			if count >= max:
+				break
+	return ret
+
+def delete_index(list, index):
+	for item in list:
+		if index == item[0]:
+			list.remove(item)
+			break
+
+def delete_filter(list, filter):
+	for item in filter:
+		delete_index(list, item[0])
+
 manager = stockmanager.stockmanager()
 sort = stocksort.get_sort(0)
-list = get_max_filter(20, sort)
-#stockmodel.get_stock_modle(list, 'crftemp.bin', c_continue, c_break)
 
-model = stockmodel.stockmodeltag()
-model.open_model('crftemp.bin', tag_filter)
-zxzj = model.get_result(['600030'])
+write_count = 0
+while True:
+	list = get_max_filter(20, sort)
+	print list
+	if len(list) < 10:
+		break
+	stockmodel.get_stock_modle(list, 'crftemp.bin', c_continue, c_break)
 
-print cal_cos(model, zxzj, list)
-model.close_model()
+	model = stockmodel.stockmodeltag()
+	model.open_model('crftemp.bin', tag_filter)
+	arg = []
+	arg.append(list[0][0])
+	ref = model.get_result(arg)
+
+	cos = cal_cos(model, ref, sort)
+	cos = filter_cos(cos, 30, 35)
+	print 'filter cos------'
+	print cos
+	if len(cos) < 10:
+		break
+	db = stockdb.stockdb()
+	name = 'crf'+str(write_count)+'.bin'
+	write_count = write_count + 1
+	db.write_data_crf(name, cos)
+	delete_filter(sort, cos)
+	model.close_model()

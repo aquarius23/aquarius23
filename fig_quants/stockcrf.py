@@ -31,7 +31,7 @@ class stockcrftrainer():
 
 	def get_model(self, file):
 		# Use L2-regularized SGD and 1st-order dyad features.
-		self.trainer.select('l2sgd', 'crf1d')
+		self.trainer.select('lbfgs', 'crf1d')
 
 		# This demonstrates how to list parameters and obtain their values.
 		#for name in self.trainer.params():

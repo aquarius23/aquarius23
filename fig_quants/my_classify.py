@@ -68,6 +68,11 @@ def delete_filter(list, filter):
 	for item in filter:
 		delete_index(list, item[0])
 
+def cos_to_string(list):
+	for item in list:
+		item[1] = str(item[1])
+	return list
+
 manager = stockmanager.stockmanager()
 sort = stocksort.get_sort(0)
 
@@ -94,6 +99,7 @@ while True:
 	db = stockdb.stockdb()
 	name = 'crf'+str(write_count)+'.bin'
 	write_count = write_count + 1
+	cos = cos_to_string(cos)
 	db.write_data_crf(name, cos)
 	delete_filter(sort, cos)
 	model.close_model()

@@ -8,7 +8,6 @@ import stockmanager
 def get_stock_modle(list, name, c_continue, c_break):
 	manager = stockmanager.stockmanager()
 	trainer = stockcrf.stockcrftrainer()
-	trainer.clear()
 	run = stockcrfrun.stockcrfrun()
 	for index in list:
 		index = index[0]
@@ -29,6 +28,7 @@ def get_stock_modle(list, name, c_continue, c_break):
 				break
 			trainer.set_tag_feature(tag, feature)
 	trainer.get_model(name)
+	trainer.clear()
 
 class stockmodeltag(stockcrfrun.stockcrfrun):
 	stockcrftag = stockcrf.stockcrftagger()

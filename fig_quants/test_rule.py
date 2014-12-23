@@ -1,52 +1,24 @@
 #!/usr/bin/python
 #!coding=utf-8
-import stockmanager
-import stockscore
-import stockcrfrun
-import stockcrf
+import string
+import stocksort
+import stockmodel
 
-class myemu(stockcrfrun.stockcrfrun):
-	mycrftag = stockcrf.stockcrftagger()
-	mycrftag.open_model('crf.bin')
-
-	def filter_kdj(self, exchange, index, kdj):
-		return 1
-		if kdj[index][2] > 0:
-			return 0
-		adj1 = self.fix_index(-1)
-		if kdj[adj1][2] > kdj[index][2]:
-			return 0
-		return 1
-
-	def filter_macd(self, exchange, index, macd):
-		return 1
-
-	def filter_boll(self, exchange, index, macd):
-		return 1
-
-	def filter_exchange(self, index, exchange):
-		tag, feature = self.tag_feature_by_index(index)
-		if feature != []:
-			tag, p, m = self.mycrftag.tag_lable(feature)
-			if tag[-1] == '3' and p > 0.05:
-				print p
-				return 1
+def tag_filter(index, size, tag, p, m):
+	ret = string.atoi(tag[-1])
+	if index < (size * 2 / 3):
 		return 0
+	if ret >= 3 and p > 0.3 and m > 0.8:
+		print str(p) + '  ' + str(m)
+		return 1
+	return 0
 
-manager = stockmanager.stockmanager()
-list = manager.get_stock_list()
-list = ['600015','600030','600036','600050','600029']
-list = ['sh000001']
-for index in list:
-	print index
-	e = manager.get_stock_index(index)
-	if e == []:
-		continue
-	emu = myemu()
-	emu.feed(e)
-	emu.run()
-x = emu.get_middle()
-for i in x:
-	print '----------------------'
-	for j in i:
-		print j
+list = stocksort.get_sort_cl(0)
+model = stockmodel.stockmodeltag()
+model.open_model('crftest.bin', tag_filter)
+arg = []
+for item in list:
+	arg.append(item[0])
+result = model.get_result(arg)
+model.close_model()
+print result

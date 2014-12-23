@@ -51,6 +51,25 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 				return 1
 		return 0
 
+	def last_result(self, list):
+		ret = []
+		for index in list:
+			print 'emu run: ' + index
+			e = self.manager.get_stock_index(index)
+			if e == []:
+				continue
+			self.feed(e)
+			tag, feature = self.last_tag_feature()
+			if feature != []:
+				item = []
+				tag, p, m = self.stockcrftag.tag_lable(feature)
+				item.append(index)
+				item.append(tag)
+				item.append(p)
+				item.append(m)
+				ret.append(item)
+		return ret
+
 	def get_result(self, list):
 		self.reset_score()
 		for index in list:

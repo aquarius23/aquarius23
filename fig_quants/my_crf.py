@@ -14,7 +14,7 @@ while(True):
 	list = stocksort.get_sort_cl(index)
 	if list == []:
 		break
-	name = 'crf/' + str(index) + '.crf'
+	name = str(index) + '.crf'
 	index = index + 1
 	stockmodel.get_stock_modle(list, name, c_continue, c_break)
 

@@ -1,21 +1,15 @@
 #!/usr/bin/python
 #!coding=utf-8
-import stockmanager
-import stockcrfrun
-import stockcrf
+import stocksort
+import stockmodel
 
-manager = stockmanager.stockmanager()
-trainer = stockcrf.stockcrftrainer()
-list = manager.get_stock_list()
-run = stockcrfrun.stockcrfrun()
-#list = ['600015','600030','600036','600050','600029']
-list = ['sh000001']
-for index in list:
-	print index
-	e = manager.get_stock_index(index)
-	if e == []:
-		continue
-	run.feed(e)
-	for tag, feature in run.tag_feature():
-		trainer.set_tag_feature(tag, feature)
-trainer.get_model('crf.bin')
+def c_continue(index, size):
+	return 0
+
+def c_break(index, size):
+	return 0
+
+sort = stocksort.get_sort_cl(0)
+print sort
+#stockmodel.get_stock_modle(list, 'crftemp.bin', c_continue, c_break)
+

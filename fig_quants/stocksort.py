@@ -43,3 +43,16 @@ def get_sort(up_sort):
 	else:
 		ret.sort(cmp = lambda x,y: cmp(x[1],y[1]), reverse = True)
 	return ret
+
+def get_sort_cl(index):
+	db = stockdb.stockdb()
+	name = str(index) + '.bin'
+	data = db.read_data_crf(name)
+	if data == '':
+		return []
+	list = data.split('\n')
+	ret = []
+	for line in list:
+		cos = line.split(',')
+		ret.append(cos)
+	return ret

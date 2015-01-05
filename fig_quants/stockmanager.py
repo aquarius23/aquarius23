@@ -79,6 +79,23 @@ class stockmanager():
 			ret.append(day_exchange)
 		return ret
 
+	def get_stock_detailed(self, name, year, month, day):
+		data = self.db.read_data_day(name, year, month, day)
+		if len(data) <= 0:
+			return []
+		list = data.split('\n')
+		ret = []
+		for line in list:
+			one_exchange = line.split(',')
+			new = []
+			price = string.atof(one_exchange[1])
+			hand = string.atoi(one_exchange[2])
+			money = (int)(hand * price * 100)
+			new.append(money)
+			new.append(string.atoi(one_exchange[3]))
+			ret.append(new)
+		return ret
+
 	def get_stock_index(self, name):
 		today = stockutils.get_date().split('-')
 		start = stockconfig.FIG_START_DAY.split('-')

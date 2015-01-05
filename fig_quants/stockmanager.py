@@ -88,8 +88,10 @@ class stockmanager():
 		for line in list:
 			one_exchange = line.split(',')
 			new = []
-			price = string.atof(one_exchange[1])
 			hand = string.atoi(one_exchange[2])
+			if hand == 0:
+				continue
+			price = string.atof(one_exchange[1])
 			money = (int)(hand * price * 100)
 			new.append(money)
 			new.append(string.atoi(one_exchange[3]))

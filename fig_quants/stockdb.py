@@ -65,6 +65,14 @@ class stockdb():
 		str = rawdb.read_file('crf', name)
 		return str
 
+	def write_data_flow(self, name, list):
+		str = self.__stocklist2str(list)
+		rawdb.write_file('flow', name, str)
+
+	def read_data_flow(self, name):
+		str = rawdb.read_file('flow', name)
+		return str
+
 	def get_last_update_day(self):
 		day = rawdb.read_file('', 'last')
 		if day == '':

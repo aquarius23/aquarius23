@@ -24,7 +24,7 @@ class stockflow():
 				flow_big = flow
 		return sum, flow, flow_big
 
-	def read_flow(self, index):
+	def __read_flow(self, index):
 		db = stockdb.stockdb()
 		data = db.read_data_flow(index)
 		if data == '':
@@ -39,7 +39,7 @@ class stockflow():
 
 	def update_flow(self, index):
 		db = stockdb.stockdb()
-		flow = self.read_flow(index)
+		flow = self.__read_flow(index)
 		size = len(flow)
 		manager = stockmanager.stockmanager()
 		days = manager.get_stock_index(index)

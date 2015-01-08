@@ -37,6 +37,18 @@ class stockflow():
 		ret.sort(cmp = lambda x,y: cmp(x[0],y[0]))
 		return ret
 
+	def read_flow(self, index):
+		flow = self.__read_flow(index)
+		miss = []
+		for i, item in enumerate(flow):
+			if len(item) == 1:
+				miss.append(i)
+			elif len(item) == 4:
+				item[1] = string.atoi(item[1])
+				item[2] = string.atoi(item[2])
+				item[3] = string.atoi(item[3])
+		return flow, miss
+
 	def update_flow(self, index):
 		db = stockdb.stockdb()
 		flow = self.__read_flow(index)

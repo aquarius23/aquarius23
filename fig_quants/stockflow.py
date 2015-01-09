@@ -43,6 +43,9 @@ class stockflow():
 		for i, item in enumerate(flow):
 			if len(item) == 1:
 				miss.append(i)
+				item.append(1)
+				item.append(1)
+				item.append(1)
 			elif len(item) == 4:
 				item[1] = string.atoi(item[1])
 				item[2] = string.atoi(item[2])

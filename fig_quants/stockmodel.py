@@ -67,7 +67,7 @@ def get_stock_modle(list, name, c_continue, c_break):
 class stockmodeltag(stockcrfrun.stockcrfrun):
 	stockcrftag = stockcrf.stockcrftagger()
 	manager = stockmanager.stockmanager()
-	flow = stockflow.stockflow()
+	cflow = stockflow.stockflow()
 
 	def open_model(self, file, filter):
 		self.stockcrftag.open_model(file)
@@ -96,7 +96,7 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 			if e == []:
 				continue
 			self.feed(e)
-			rflow, rmiss = self.flow.read_flow(index)
+			rflow, rmiss = self.cflow.read_flow(index)
 			filter = cal_filter(rmiss)
 			if filter_skip(filter, len(e) - 1) == 1:
 				continue
@@ -120,7 +120,7 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 			if e == []:
 				continue
 			self.feed(e)
-			rflow, rmiss = self.flow.read_flow(index)
+			rflow, rmiss = self.cflow.read_flow(index)
 			self.flow_filter = cal_filter(rmiss)
 			self.feed_flow(rflow)
 			self.run()

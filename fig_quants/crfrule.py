@@ -284,7 +284,23 @@ class crfrule(crfrulebase.crfrulebase):
 		return []
 
 	def feature_flow(self, exchange, index, flow):
-		print '-----------------'
-		print exchange[index]
-		print flow[index]
-		return []
+		ret = []
+		diff = []
+		trend = []
+		trend_big = []
+		dir = []
+		dir_big = []
+		for i in range(-5,1):
+			adj = self.fix_index(i)
+			adj_1 = self.fix_index(i-1)
+			trend.append(self.compare(flow[adj][2], flow[adj_1][2]))
+			trend_big.append(self.compare(flow[adj][3], flow[adj_1][3]))
+			diff.append(self.compare(flow[adj][2], flow[adj][3]))
+			dir.append(self.compare(flow[adj][2], 0))
+			dir_big.append(self.compare(flow[adj][3],0))
+		ret.extend(self.build_feature('fl_tr', trend))
+		ret.extend(self.build_feature('fl_trb', trend_big))
+		ret.extend(self.build_feature('fl_dif', diff))
+		ret.extend(self.build_feature('fl_dir', dir))
+		ret.extend(self.build_feature('fl_dirb', dir_big))
+		return ret

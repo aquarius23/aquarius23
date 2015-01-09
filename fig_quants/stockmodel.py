@@ -27,6 +27,12 @@ def __cal_filter(list):
 		pre =  item
 	return ret
 
+def __filter_skip(filter, index):
+	for item in filter:
+		if item == index:
+			return 1
+	return 0
+
 def get_stock_modle(list, name, c_continue, c_break):
 	manager = stockmanager.stockmanager()
 	trainer = stockcrf.stockcrftrainer()
@@ -41,6 +47,7 @@ def get_stock_modle(list, name, c_continue, c_break):
 			continue
 		run.feed(e)
 		rflow, rmiss = flow.read_flow(index)
+		filter = __cal_filter(rmiss)
 		run.feed_flow(rflow)
 		count  = 0
 		for tag, feature in run.tag_feature():
@@ -51,6 +58,8 @@ def get_stock_modle(list, name, c_continue, c_break):
 				continue
 			if c_break(count, size) == 1:
 				break
+			if __filter_skip(filter, count - 1) == 1:
+				continue
 			trainer.set_tag_feature(tag, feature)
 	trainer.get_model(name)
 	trainer.clear()

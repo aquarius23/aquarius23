@@ -8,10 +8,10 @@ import stockflow
 
 def __cal_filter_index(pre, cur):
 	ret = []
-	start = cur - 5
-	end = cur + 5
+	start = cur - 6
+	end = cur + 6
 	if pre != -1:
-		pre = pre + 5
+		pre = pre + 6
 	pre = pre + 1
 	if start < pre:
 		start = pre

@@ -95,6 +95,9 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 				continue
 			self.feed(e)
 			rflow, rmiss = self.flow.read_flow(index)
+			filter = __cal_filter(rmiss)
+			if __filter_skip(filter, len(e) - 1) == 1:
+				return []
 			self.feed_flow(rflow)
 			tag, feature = self.last_tag_feature()
 			if feature != []:

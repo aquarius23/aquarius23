@@ -6,6 +6,27 @@ import stockcrf
 import stockmanager
 import stockflow
 
+def __cal_filter_index(pre, cur):
+	ret = []
+	start = cur - 5
+	end = cur + 5
+	if pre != -1:
+		pre = pre + 5
+	pre = pre + 1
+	if start < pre:
+		start = pre
+	for i in range(start, end + 1):
+		ret.append(i)
+	return ret
+
+def __cal_filter(list):
+	ret = []
+	pre = -1
+	for item in list:
+		ret.extend(__cal_filter_index(pre, item))
+		pre =  item
+	return ret
+
 def get_stock_modle(list, name, c_continue, c_break):
 	manager = stockmanager.stockmanager()
 	trainer = stockcrf.stockcrftrainer()

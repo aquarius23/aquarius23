@@ -282,3 +282,9 @@ class crfrule(crfrulebase.crfrulebase):
 
 	def feature_exchange(self, index, exchange):
 		return []
+
+	def feature_flow(self, exchange, index, flow):
+		print '-----------------'
+		print exchange[index]
+		print flow[index]
+		return []

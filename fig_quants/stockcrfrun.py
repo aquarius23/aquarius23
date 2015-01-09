@@ -91,3 +91,7 @@ class stockcrfrun(stockrun.stockrun):
 
 	def feature_exchange(self, index, exchange):
 		return self.crfrule.feature_exchange(index, exchange)
+
+	def feature_flow(self, exchange, index, flow):
+		return self.crfrule.feature_flow(exchange, index, flow)
+

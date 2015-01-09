@@ -20,6 +20,7 @@ class stockrun():
 	closeprice_range_high = []
 	kline = []
 	exchange = []
+	flow = []
 	size = 0
 	current_index = 0
 
@@ -60,6 +61,9 @@ class stockrun():
 		self.closeprice_range_low, self.closeprice_range_high = self.manager.cal_closeprice_range(exchange)
 		self.kline = self.manager.cal_kline(exchange)
 
+	def feed_flow(self, flow):
+		self.flow = flow
+
 	def get_lable(self, index):
 		self.current_index = index
 		return self.get_state(index, self.exchange, self.kline)
@@ -93,6 +97,9 @@ class stockrun():
 
 		kline_feature = self.feature_kline(self.exchange, index, self.kline)
 		features.extend(kline_feature)
+
+		flow_feature = self.feature_flow(self.exchange, index, self.flow)
+		features.extend(flow_feature)
 
 		exchange_feature = self.feature_exchange(index, self.exchange)
 		features.extend(exchange_feature)
@@ -128,6 +135,9 @@ class stockrun():
 	def feature_kline(self, exchange, index, kline):
 		return []
 
+	def feature_flow(self, exchange, index, flow):
+		return []
+
 	def feature_exchange(self, index, exchange):
 		return []
 
@@ -152,6 +162,8 @@ class stockrun():
 		if self.filter_closeprice_range(self.exchange, index, self.closeprice_range_low, self.closeprice_range_high) != 1:
 			return 0
 		if self.filter_kline(self.exchange, index, self.kline) != 1:
+			return 0
+		if self.filter_flow(self.exchange, index, self.flow) != 1:
 			return 0
 		return 1
 
@@ -180,6 +192,9 @@ class stockrun():
 		return 1
 
 	def filter_kline(self, exchange, index, kline):
+		return 1
+
+	def filter_flow(self, exchange, index, flow):
 		return 1
 
 	def filter_exchange(self, index, exchange):

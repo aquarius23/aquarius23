@@ -4,11 +4,13 @@ import string
 import stockcrfrun
 import stockcrf
 import stockmanager
+import stockflow
 
 def get_stock_modle(list, name, c_continue, c_break):
 	manager = stockmanager.stockmanager()
 	trainer = stockcrf.stockcrftrainer()
 	run = stockcrfrun.stockcrfrun()
+	flow = stockflow.stockflow()
 	for index in list:
 		index = index[0]
 		print index
@@ -17,6 +19,8 @@ def get_stock_modle(list, name, c_continue, c_break):
 		if e == []:
 			continue
 		run.feed(e)
+		rflow, rmiss = flow.read_flow(index)
+		run.feed_flow(rflow)
 		count  = 0
 		for tag, feature in run.tag_feature():
 			count = count + 1
@@ -33,6 +37,7 @@ def get_stock_modle(list, name, c_continue, c_break):
 class stockmodeltag(stockcrfrun.stockcrfrun):
 	stockcrftag = stockcrf.stockcrftagger()
 	manager = stockmanager.stockmanager()
+	flow = stockflow.stockflow()
 
 	def open_model(self, file, filter):
 		self.stockcrftag.open_model(file)
@@ -59,6 +64,8 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 			if e == []:
 				continue
 			self.feed(e)
+			rflow, rmiss = self.flow.read_flow(index)
+			self.feed_flow(rflow)
 			tag, feature = self.last_tag_feature()
 			if feature != []:
 				item = []
@@ -78,6 +85,8 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 			if e == []:
 				continue
 			self.feed(e)
+			rflow, rmiss = self.flow.read_flow(index)
+			self.feed_flow(rflow)
 			self.run()
 		return self.get_middle()[0]
 

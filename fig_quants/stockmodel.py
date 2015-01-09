@@ -19,7 +19,7 @@ def __cal_filter_index(pre, cur):
 		ret.append(i)
 	return ret
 
-def __cal_filter(list):
+def cal_filter(list):
 	ret = []
 	pre = -1
 	for item in list:
@@ -27,7 +27,7 @@ def __cal_filter(list):
 		pre =  item
 	return ret
 
-def __filter_skip(filter, index):
+def filter_skip(filter, index):
 	for item in filter:
 		if item == index:
 			return 1
@@ -47,7 +47,7 @@ def get_stock_modle(list, name, c_continue, c_break):
 			continue
 		run.feed(e)
 		rflow, rmiss = flow.read_flow(index)
-		filter = __cal_filter(rmiss)
+		filter = cal_filter(rmiss)
 		run.feed_flow(rflow)
 		count  = 0
 		for tag, feature in run.tag_feature():
@@ -58,7 +58,7 @@ def get_stock_modle(list, name, c_continue, c_break):
 				continue
 			if c_break(count, size) == 1:
 				break
-			if __filter_skip(filter, count - 1) == 1:
+			if filter_skip(filter, count - 1) == 1:
 				continue
 			trainer.set_tag_feature(tag, feature)
 	trainer.get_model(name)
@@ -77,6 +77,8 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 		self.stockcrftag.close_model()
 
 	def filter_exchange(self, index, exchange):
+		if filter_skip(self.flow_filter, index) == 1:
+			return 0
 		tag, feature = self.tag_feature_by_index(index)
 		if index < 30:
 			return 0
@@ -95,8 +97,8 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 				continue
 			self.feed(e)
 			rflow, rmiss = self.flow.read_flow(index)
-			filter = __cal_filter(rmiss)
-			if __filter_skip(filter, len(e) - 1) == 1:
+			filter = cal_filter(rmiss)
+			if filter_skip(filter, len(e) - 1) == 1:
 				continue
 			self.feed_flow(rflow)
 			tag, feature = self.last_tag_feature()
@@ -119,6 +121,7 @@ class stockmodeltag(stockcrfrun.stockcrfrun):
 				continue
 			self.feed(e)
 			rflow, rmiss = self.flow.read_flow(index)
+			self.flow_filter = cal_filter(rmiss)
 			self.feed_flow(rflow)
 			self.run()
 		return self.get_middle()[0]

@@ -17,6 +17,10 @@ def vec_acos(v1, v2):
 	if div == 0:
 		return 180
 	val = ab / div
+	if val > 1:
+		val = 1
+	if val < -1:
+		val = -1
 	val = math.acos(val)
 	deg = math.degrees(val)
 	return deg

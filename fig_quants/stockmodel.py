@@ -5,13 +5,14 @@ import stockcrfrun
 import stockcrf
 import stockmanager
 import stockflow
+import stockconfig
 
 def __cal_filter_index(pre, cur):
 	ret = []
-	start = cur - 6
-	end = cur + 6
+	start = cur - (stockconfig.FIG_CRF_CHAIN - 1)
+	end = cur + stockconfig.FIG_CRF_DAY
 	if pre != -1:
-		pre = pre + 6
+		pre = pre + stockconfig.FIG_CRF_DAY
 	pre = pre + 1
 	if start < pre:
 		start = pre

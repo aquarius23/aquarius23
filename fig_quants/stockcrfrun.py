@@ -2,9 +2,10 @@
 #!coding=utf-8
 import stockrun
 import crfrule
+import stockconfig
 
 class stockcrfrun(stockrun.stockrun):
-	chain = 5
+	chain = stockconfig.FIG_CRF_CHAIN
 	size = 0
 	crftag = []
 	crffeature = []

@@ -10,9 +10,9 @@ import stockconfig
 def __cal_filter_index(pre, cur):
 	ret = []
 	start = cur - (stockconfig.FIG_CRF_CHAIN - 1)
-	end = cur + stockconfig.FIG_CRF_DAY
+	end = cur + stockconfig.FIG_CRF_DAY + 1
 	if pre != -1:
-		pre = pre + stockconfig.FIG_CRF_DAY
+		pre = pre + stockconfig.FIG_CRF_DAY + 1
 	pre = pre + 1
 	if start < pre:
 		start = pre

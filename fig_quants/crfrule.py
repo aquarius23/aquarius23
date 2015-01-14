@@ -1,8 +1,10 @@
 #!/usr/bin/python
 #!coding=utf-8
 import crfrulebase
+import stockconfig
 
 class crfrule(crfrulebase.crfrulebase):
+	crf_day = -stockconfig.FIG_CRF_DAY
 	def __get_state(self, index, exchange, kline):
 		today = kline[index][0]
 		if today >= 1:
@@ -36,7 +38,7 @@ class crfrule(crfrulebase.crfrulebase):
 		kd_trend = []
 		kdj_sort = []
 		j_trend = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			k = kdj[adj][0]
@@ -56,7 +58,7 @@ class crfrule(crfrulebase.crfrulebase):
 		macd3_sort = []
 		macd1_trend = []
 		macd12_trend = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			y = macd[adj_1][2]
@@ -81,7 +83,7 @@ class crfrule(crfrulebase.crfrulebase):
 		boll_e_trend = []
 		boll_l_trend = []
 		boll_h_trend = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			mb = boll[adj][0]
 			up = boll[adj][1]
@@ -132,7 +134,7 @@ class crfrule(crfrulebase.crfrulebase):
 		ma10e_trend = []
 		ma10l_trend = []
 		ma10h_trend = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			y = ma[adj_1][0]
@@ -193,7 +195,7 @@ class crfrule(crfrulebase.crfrulebase):
 		ma3_sort = []
 		ma5_sort = []
 		ma10_sort = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			ma1_sort.append(volume_ma[adj][0])
@@ -206,7 +208,7 @@ class crfrule(crfrulebase.crfrulebase):
 		ret.append(self.build_sort_feature('vma10_s', ma10_sort))
 
 		vbx = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			v_1=volume_ma[adj_1][0]
@@ -218,7 +220,7 @@ class crfrule(crfrulebase.crfrulebase):
 		ret.extend(self.build_feature('vb-', vbx))
 
 		vbx = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			v_1=volume_ma[adj_1][1]
@@ -230,7 +232,7 @@ class crfrule(crfrulebase.crfrulebase):
 		ret.extend(self.build_feature('vb3-', vbx))
 
 		vbx = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			v_1=volume_ma[adj_1][2]
@@ -251,7 +253,7 @@ class crfrule(crfrulebase.crfrulebase):
 		kl4=[]
 		kl5=[]
 		kl6=[]
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			x = (int)(kline[adj][0])
 			if x > 10:
@@ -290,7 +292,7 @@ class crfrule(crfrulebase.crfrulebase):
 		trend_big = []
 		dir = []
 		dir_big = []
-		for i in range(-5,1):
+		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
 			trend.append(self.compare(flow[adj][2], flow[adj_1][2]))

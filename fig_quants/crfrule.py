@@ -126,6 +126,8 @@ class crfrule(crfrulebase.crfrulebase):
 		ma3_sort = []
 		ma5_sort = []
 		ma10_sort = []
+		ma20_sort = []
+		ma30_sort = []
 		ma5s_trend = []
 		ma5e_trend = []
 		ma5l_trend = []
@@ -134,6 +136,15 @@ class crfrule(crfrulebase.crfrulebase):
 		ma10e_trend = []
 		ma10l_trend = []
 		ma10h_trend = []
+		ma20s_trend = []
+		ma20e_trend = []
+		ma20l_trend = []
+		ma20h_trend = []
+		ma30s_trend = []
+		ma30e_trend = []
+		ma30l_trend = []
+		ma30h_trend = []
+
 		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
@@ -141,6 +152,8 @@ class crfrule(crfrulebase.crfrulebase):
 			t = ma[adj][0]
 			t5 = ma[adj][2]
 			t10 = ma[adj][3]
+			t20 = ma[adj][4]
+			t30 = ma[adj][5]
 			start = exchange[adj][1]
 			end = exchange[adj][2]
 			low = exchange[adj][3]
@@ -149,6 +162,8 @@ class crfrule(crfrulebase.crfrulebase):
 			ma3_sort.append(ma[adj][1])
 			ma5_sort.append(ma[adj][2])
 			ma10_sort.append(ma[adj][3])
+			ma20_sort.append(ma[adj][4])
+			ma30_sort.append(ma[adj][5])
 			ma5s_trend.append(self.compare(start, t5))
 			ma5e_trend.append(self.compare(end, t5))
 			ma5l_trend.append(self.compare(low, t5))
@@ -157,10 +172,20 @@ class crfrule(crfrulebase.crfrulebase):
 			ma10e_trend.append(self.compare(end, t10))
 			ma10l_trend.append(self.compare(low, t10))
 			ma10h_trend.append(self.compare(high, t10))
+			ma20s_trend.append(self.compare(start, t20))
+			ma20e_trend.append(self.compare(end, t20))
+			ma20l_trend.append(self.compare(low, t20))
+			ma20h_trend.append(self.compare(high, t20))
+			ma30s_trend.append(self.compare(start, t30))
+			ma30e_trend.append(self.compare(end, t30))
+			ma30l_trend.append(self.compare(low, t30))
+			ma30h_trend.append(self.compare(high, t30))
 		ret.append(self.build_sort_feature('ma1_s', ma1_sort))
 		ret.append(self.build_sort_feature('ma3_s', ma3_sort))
 		ret.append(self.build_sort_feature('ma5_s', ma5_sort))
 		ret.append(self.build_sort_feature('ma10_s', ma10_sort))
+		ret.append(self.build_sort_feature('ma20_s', ma20_sort))
+		ret.append(self.build_sort_feature('ma30_s', ma30_sort))
 		ret.extend(self.build_feature('ma5s_t', ma5s_trend))
 		ret.extend(self.build_feature('ma5e_t', ma5e_trend))
 		ret.extend(self.build_feature('ma5l_t', ma5l_trend))
@@ -169,6 +194,14 @@ class crfrule(crfrulebase.crfrulebase):
 		ret.extend(self.build_feature('ma10e_t', ma10e_trend))
 		ret.extend(self.build_feature('ma10l_t', ma10l_trend))
 		ret.extend(self.build_feature('ma10h_t', ma10h_trend))
+		ret.extend(self.build_feature('ma20s_t', ma20s_trend))
+		ret.extend(self.build_feature('ma20e_t', ma20e_trend))
+		ret.extend(self.build_feature('ma20l_t', ma20l_trend))
+		ret.extend(self.build_feature('ma20h_t', ma20h_trend))
+		ret.extend(self.build_feature('ma30s_t', ma30s_trend))
+		ret.extend(self.build_feature('ma30e_t', ma30e_trend))
+		ret.extend(self.build_feature('ma30l_t', ma30l_trend))
+		ret.extend(self.build_feature('ma30h_t', ma30h_trend))
 
 		return ret
 
@@ -195,6 +228,8 @@ class crfrule(crfrulebase.crfrulebase):
 		ma3_sort = []
 		ma5_sort = []
 		ma10_sort = []
+		ma20_sort = []
+		ma30_sort = []
 		for i in range(self.crf_day,1):
 			adj = self.fix_index(i)
 			adj_1 = self.fix_index(i-1)
@@ -202,10 +237,14 @@ class crfrule(crfrulebase.crfrulebase):
 			ma3_sort.append(volume_ma[adj][1])
 			ma5_sort.append(volume_ma[adj][2])
 			ma10_sort.append(volume_ma[adj][3])
+			ma20_sort.append(volume_ma[adj][4])
+			ma30_sort.append(volume_ma[adj][5])
 		ret.append(self.build_sort_feature('vma1_s', ma1_sort))
 		ret.append(self.build_sort_feature('vma3_s', ma3_sort))
 		ret.append(self.build_sort_feature('vma5_s', ma5_sort))
 		ret.append(self.build_sort_feature('vma10_s', ma10_sort))
+		ret.append(self.build_sort_feature('vma20_s', ma20_sort))
+		ret.append(self.build_sort_feature('vma30_s', ma30_sort))
 
 		vbx = []
 		for i in range(self.crf_day,1):
@@ -242,6 +281,42 @@ class crfrule(crfrulebase.crfrulebase):
 				vb = (vb/10)*10
 			vbx.append(':'+str(vb))
 		ret.extend(self.build_feature('vb5-', vbx))
+
+		vbx = []
+		for i in range(self.crf_day,1):
+			adj = self.fix_index(i)
+			adj_1 = self.fix_index(i-1)
+			v_1=volume_ma[adj_1][3]
+			v=volume_ma[adj][0]
+			vb=(int)((v/v_1)*10)
+			if vb > 30:
+				vb = (vb/10)*10
+			vbx.append(':'+str(vb))
+		ret.extend(self.build_feature('vb10-', vbx))
+
+		vbx = []
+		for i in range(self.crf_day,1):
+			adj = self.fix_index(i)
+			adj_1 = self.fix_index(i-1)
+			v_1=volume_ma[adj_1][4]
+			v=volume_ma[adj][0]
+			vb=(int)((v/v_1)*10)
+			if vb > 30:
+				vb = (vb/10)*10
+			vbx.append(':'+str(vb))
+		ret.extend(self.build_feature('vb20-', vbx))
+
+		vbx = []
+		for i in range(self.crf_day,1):
+			adj = self.fix_index(i)
+			adj_1 = self.fix_index(i-1)
+			v_1=volume_ma[adj_1][5]
+			v=volume_ma[adj][0]
+			vb=(int)((v/v_1)*10)
+			if vb > 30:
+				vb = (vb/10)*10
+			vbx.append(':'+str(vb))
+		ret.extend(self.build_feature('vb30-', vbx))
 
 		return ret
 

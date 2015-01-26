@@ -6,23 +6,36 @@ import stockparser
 import stockmanager
 
 class stockflow():
-	def cal_flow(self, list):
+	def cal_flow(self, list, start, end):
 		list.sort(cmp = lambda x,y: cmp(x[0],y[0]), reverse = True)
 		size = len(list)
 		sum = 0
 		flow = 0
 		flow_big = 0
+		s_l = 0
+		s_h = 0
+		e_l = 0
+		e_h = 0
 		for i, item in enumerate(list):
 			dir = item[1]
 			money = item[0]
 			sum = sum + money
-			if dir == 1:
-				flow = flow + money
-			elif dir == -1:
-				flow = flow - money
+			money = money * dir
+			flow = flow + money
 			if i == (size / 5): #20%
 				flow_big = flow
-		return sum, flow, flow_big
+
+			price = item[2]
+			if price < start:
+				s_l = s_l + money
+			elif price > start:
+				s_h = s_h + money
+
+			if price < end:
+				e_l = e_l + money
+			elif price > end:
+				e_h = e_h + money
+		return sum, flow, flow_big, s_l, s_h, e_l, e_h
 
 	def __read_flow(self, index):
 		db = stockdb.stockdb()
@@ -77,9 +90,13 @@ class stockflow():
 			record = []
 			record.append(item[0])
 			if new != []:
-				sum, all, big = self.cal_flow(new)
+				sum, all, big, sl, sh, el, eh = self.cal_flow(new, item[1], item[2])
 				record.append(str(sum))
 				record.append(str(all))
 				record.append(str(big))
+				record.append(str(sl))
+				record.append(str(sh))
+				record.append(str(el))
+				record.append(str(eh))
 			flow.append(record)
 		db.write_data_flow(index, flow)

@@ -98,6 +98,7 @@ class stockmanager():
 			money = (int)(hand * price * 100)
 			new.append(money)
 			new.append(string.atoi(one_exchange[3]))
+			new.append(price)
 			ret.append(new)
 		return ret
 

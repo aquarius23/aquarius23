@@ -59,10 +59,18 @@ class stockflow():
 				item.append(1)
 				item.append(1)
 				item.append(1)
-			elif len(item) == 4:
+				item.append(1)
+				item.append(1)
+				item.append(1)
+				item.append(1)
+			elif len(item) == 8:
 				item[1] = string.atoi(item[1])
 				item[2] = string.atoi(item[2])
 				item[3] = string.atoi(item[3])
+				item[4] = string.atoi(item[4])
+				item[5] = string.atoi(item[5])
+				item[6] = string.atoi(item[6])
+				item[7] = string.atoi(item[7])
 		return flow, miss
 
 	def update_flow(self, index):

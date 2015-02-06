@@ -2,6 +2,7 @@
 #!coding=utf-8
 import stockmanager
 import stockscore
+import stockwt
 
 class stockrun():
 	manager = stockmanager.stockmanager()
@@ -21,6 +22,7 @@ class stockrun():
 	kline = []
 	exchange = []
 	flow = []
+	kwt = []
 	size = 0
 	current_index = 0
 
@@ -60,13 +62,18 @@ class stockrun():
 		self.volume_range_low, self.volume_range_high = self.manager.cal_volume_range(exchange)
 		self.closeprice_range_low, self.closeprice_range_high = self.manager.cal_closeprice_range(exchange)
 		self.kline = self.manager.cal_kline(exchange)
+		end = []
+		wt = stockwt.stockwt()
+		for day in exchange:
+			end.append(day[2])
+		self.kwt = wt.walelet_db(end)
 
 	def feed_flow(self, flow):
 		self.flow = flow
 
 	def get_lable(self, index):
 		self.current_index = index
-		return self.get_state(index, self.exchange, self.kline)
+		return self.get_state(index, self.exchange, self.kwt)
 
 	def get_feature(self, index):
 		self.current_index = index

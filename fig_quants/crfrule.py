@@ -6,7 +6,7 @@ import stockconfig
 class crfrule(crfrulebase.crfrulebase):
 	crf_day = -stockconfig.FIG_CRF_DAY
 	def __get_state(self, index, exchange, kline):
-		today = kline[index][0]
+		today = kline[index]
 		if today >= 1:
 			if today >= 3:
 				if today >= 5:

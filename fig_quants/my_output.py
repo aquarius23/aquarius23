@@ -39,9 +39,37 @@ def filter_list(list, threshold):
 			ret.append(item)
 	return ret
 
+def find_item(list, name):
+	for item in list:
+		if item[0] == name:
+			return item
+	return []
+
+def cal_result(result, filter, list, index):
+	for item in filter:
+		name = item[0]
+		exist = find_item(result, name)
+		if exist == []:
+			new = []
+			new.append(name)
+			print 'new item:' + name
+			another = find_item(list, name)
+			if index == 0:
+				new.append(item)
+				new.append(another)
+			else:
+				new.append(another)
+				new.append(item)
+			result.append(new)
+
 def final_result(list1, list2):
+	result = []
 	filter1 = filter_list(list1, 0.7)
 	filter2 = filter_list(list2, 0.7)
+	cal_result(result, filter1, list2, 0)
+	print '------------------------'
+	cal_result(result, filter2, list1, 1)
+	return result
 
 if len(sys.argv) == 3:
 	file1 = sys.argv[1]
@@ -52,4 +80,6 @@ if len(sys.argv) == 3:
 	list2 = get_result(file2)
 	output = final_result(list1, list2)
 	for x in output:
-		print x
+		print '-----'
+		for y in x:
+			print y

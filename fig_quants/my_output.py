@@ -31,10 +31,25 @@ def get_result(buffer):
 			ret.append(result)
 	return ret
 
+def filter_list(list, threshold):
+	ret = []
+	for item in list:
+		p = item[-1]
+		if p > threshold:
+			ret.append(item)
+	return ret
+
+def final_result(list1, list2):
+	filter1 = filter_list(list1, 0.7)
+	filter2 = filter_list(list2, 0.7)
+
 if len(sys.argv) == 3:
 	file1 = sys.argv[1]
 	file2 = sys.argv[2]
 	file1 = read_file(file1)
 	list1 = get_result(file1)
-	for x in list1:
+	file2 = read_file(file2)
+	list2 = get_result(file2)
+	output = final_result(list1, list2)
+	for x in output:
 		print x

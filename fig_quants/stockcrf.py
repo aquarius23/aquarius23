@@ -37,8 +37,8 @@ class stockcrftrainer():
 		#for name in self.trainer.params():
 			#print name, self.trainer.get(name), self.trainer.help(name)
 
-		# Set the coefficient for L2 regularization to 0.1
-		self.trainer.set('c2', '0.1')
+		# Set the coefficient for L2 regularization to 0.2
+		self.trainer.set('c2', '0.2')
 
 		self.trainer.set('max_iterations', '5000')
 		# Start training; the training process will invoke trainer.message()

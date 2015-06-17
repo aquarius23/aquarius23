@@ -33,6 +33,6 @@ unsigned char rgb[MAX_HEIGHT*MAX_WIDTH*3];
 int main(void)
 {
 	read_buffer("1.yuv", yuv, HEIGHT*WIDTH*3/2);
-	yuv2rgb_semi(yuv, (unsigned short *)yuv + WIDTH*HEIGHT, rgb, WIDTH, HEIGHT);
+	yuv2rgb_semi(yuv, (unsigned short *)(yuv + WIDTH*HEIGHT), rgb, WIDTH, HEIGHT);
 	compress_jpeg_rgb888(rgb, WIDTH, HEIGHT, "1.jpeg");
 }

@@ -27,7 +27,10 @@
 
 #include <stdlib.h>
 #include <memory.h>
-
+#define OPENBLAS
+#ifdef OPENBLAS
+#include <cblas.h>
+#endif
 #if     LBFGS_FLOAT == 32 && LBFGS_IEEE_FLOAT
 #define fsigndiff(x, y) (((*(uint32_t*)(x)) ^ (*(uint32_t*)(y))) & 0x80000000U)
 #else
@@ -113,11 +116,15 @@ inline static void vecmul(lbfgsfloatval_t *y, const lbfgsfloatval_t *x, const in
 
 inline static void vecdot(lbfgsfloatval_t* s, const lbfgsfloatval_t *x, const lbfgsfloatval_t *y, const int n)
 {
+#ifdef OPENBLAS
+	*s = cblas_ddot(n, x, 1, y, 1);
+#else
     int i;
     *s = 0.;
     for (i = 0;i < n;++i) {
         *s += x[i] * y[i];
     }
+#endif
 }
 
 inline static void vec2norm(lbfgsfloatval_t* s, const lbfgsfloatval_t *x, const int n)

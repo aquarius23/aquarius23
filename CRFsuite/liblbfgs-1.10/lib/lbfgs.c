@@ -256,7 +256,6 @@ int lbfgs(
     int i, j, k, ls, end, bound;
     lbfgsfloatval_t step;
 
-    ansi_init();
     /* Constant parameters and their default values. */
     lbfgs_parameter_t param = (_param != NULL) ? (*_param) : _defparam;
     const int m = param.m;

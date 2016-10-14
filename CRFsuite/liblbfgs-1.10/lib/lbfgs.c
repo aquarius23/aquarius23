@@ -679,8 +679,7 @@ static int line_search_backtracking(
     dgtest = param->ftol * dginit;
 
     for (;;) {
-        veccpy(x, xp, n);
-        vecadd(x, s, *stp, n);
+        vecadd2(x, xp, s, *stp, n);
 
         /* Evaluate the function and gradient values. */
         *f = cd->proc_evaluate(cd->instance, x, g, cd->n, *stp);
@@ -765,8 +764,7 @@ static int line_search_backtracking_owlqn(
 
     for (;;) {
         /* Update the current point. */
-        veccpy(x, xp, n);
-        vecadd(x, s, *stp, n);
+        vecadd2(x, xp, s, *stp, n);
 
         /* The current point is projected onto the orthant. */
         owlqn_project(x, wp, param->orthantwise_start, param->orthantwise_end);
@@ -896,8 +894,7 @@ static int line_search_morethuente(
             Compute the current value of x:
                 x <- x + (*stp) * s.
          */
-        veccpy(x, xp, n);
-        vecadd(x, s, *stp, n);
+        vecadd2(x, xp, s, *stp, n);
 
         /* Evaluate the function and gradient values. */
         *f = cd->proc_evaluate(cd->instance, x, g, cd->n, *stp);

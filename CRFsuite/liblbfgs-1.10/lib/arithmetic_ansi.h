@@ -87,6 +87,15 @@ inline static void vecadd(lbfgsfloatval_t *y, const lbfgsfloatval_t *x, const lb
     }
 }
 
+inline static void vecadd2(lbfgsfloatval_t *z, const lbfgsfloatval_t *x, const lbfgsfloatval_t *y, const lbfgsfloatval_t c, const int n)
+{
+    int i;
+
+    for (i = 0;i < n;++i) {
+        z[i] = c * y[i] + x[i];
+    }
+}
+
 inline static void vecdiff(lbfgsfloatval_t *z, const lbfgsfloatval_t *x, const lbfgsfloatval_t *y, const int n)
 {
     int i;

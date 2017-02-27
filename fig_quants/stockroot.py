@@ -3,10 +3,10 @@
 import string
 import threading
 import time
-import stockutils
-import stockdb
-import stockparser
 import stockconfig
+from utils import stockutils
+from stockdata import stockdb
+from stockdata import stockparser
 
 class taskthread(threading.Thread):
 	def __init__(self, list, day, update_jidu, thread_id, stock_parser, stock_db):
@@ -53,7 +53,7 @@ class taskthread(threading.Thread):
 
 class stockroot():
 	parser = stockparser.stock_parser()
-	db = stockdb.stockdb()
+	db = stockdb.stockdb(stockconfig.FIG_DB_PATH, stockconfig.FIG_START_DAY)
 	thread_num = stockconfig.FIG_THREAD_NUM
 	started = False
 

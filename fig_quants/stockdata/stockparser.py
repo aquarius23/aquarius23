@@ -39,7 +39,7 @@ def stock_url(index, year, jidu, real_stock):
 		url = url + r'.phtml?'
 	else:
 		url = url + r'/type/S.phtml?'
-		
+
 	url = url + r'year=' + str(year) + r'&jidu=' + str(jidu)
 	return url
 
@@ -78,24 +78,24 @@ class Stocklist(HTMLParser.HTMLParser):
 			for name,value in attrs:
 				if name == 'href':
 					self._level_stack.append(tag)
-	
+
 	def handle_endtag(self, tag):
 		if self._level_stack \
 		and tag == self._level_stack[-1]:
 			self._level_stack.pop()
-	
+
 	def handle_data(self, data):
 		if self._level_stack:
 			pattern = re.compile('\D*[0,3,6]\d{5}\)')
 			stock = pattern.match(data)
-			if stock: 
+			if stock:
 				p = re.compile('\d{6}')
 				number = p.search(data).group()
 				if number:
 					#print number
-					self.mlist.append(number) 
+					self.mlist.append(number)
 
-				name = data.split('(')[0] 
+				name = data.split('(')[0]
 				if name:
 					#print name
 					self.mkey[number] = name
@@ -118,12 +118,12 @@ class Indexlist(HTMLParser.HTMLParser):
 			for name,value in attrs:
 				if value == 'center':
 					self._level_stack.append(tag)
-	
+
 	def handle_endtag(self, tag):
 		if self._level_stack \
 		and tag == self._level_stack[-1]:
 			self._level_stack.pop()
-	
+
 	def handle_data(self, data):
 		if self._level_stack:
 			date_re = re.compile('\d{4}-\d{2}-\d{2}')

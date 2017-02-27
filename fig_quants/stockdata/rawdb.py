@@ -2,11 +2,10 @@
 #!coding=utf-8
 import os
 import zlib
-import stockconfig
 
-def __validate_path(path):
+def __validate_path(path, db):
 	pathlist = path.split('/')
-	file = stockconfig.FIG_DB_PATH
+	file = db
 	for i in pathlist:
 		file = file + '/' + i
 		if os.path.exists(file) == False:
@@ -16,24 +15,24 @@ def __validate_path(path):
 				if os.path.exists(file):
 					print file + 'already exist'
 
-def write_file(path, file, buf):
-	__validate_path(path)
-	file = stockconfig.FIG_DB_PATH + '/' + path + '/' + file
+def write_file(path, file, buf, db):
+	__validate_path(path, db)
+	file = db + '/' + path + '/' + file
 	value = zlib.compress(buf)
 	f = open(file, 'wb')
 	f.write(value)
 	f.flush()
 	f.close()
 
-def is_file_exist(path, file):
-	file = stockconfig.FIG_DB_PATH + '/' + path + '/' + file
+def is_file_exist(path, file, db):
+	file = db + '/' + path + '/' + file
 	return os.path.exists(file)
 
-def read_file(path, file):
+def read_file(path, file, db):
 	buf = ''
-	if is_file_exist(path, file) == False:
+	if is_file_exist(path, file, db) == False:
 		return ''
-	file = stockconfig.FIG_DB_PATH + '/' + path + '/' + file
+	file = db + '/' + path + '/' + file
 	f = open(file, 'rb')
 	if f:
 		f.seek(0, 2)

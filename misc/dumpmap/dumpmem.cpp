@@ -25,7 +25,7 @@ void dump(int dst, int src, int size)
 void dump_mem(int pid, long addr, int size, const char *file)
 {
 	char path[256];
-	snprintf(path, 256, "/proc/%d/mem", pid); 
+	snprintf(path, 256, "/proc/%d/mem", pid);
 	int src = open(path, O_RDONLY);
 	int dst = open(file, O_WRONLY | O_CREAT | O_TRUNC);
 	if (src > 0 && dst > 0) {
